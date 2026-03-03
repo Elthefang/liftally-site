@@ -924,13 +924,19 @@
         <div class="shot-grid">
           <div class="shot-row primary">
             <figure class="shot small left">
-              <img id="leftShot" class="hover-cycle" src="images/1-progress tab-removed.png" data-cycle="images/2-progress tab-removed.png" alt="Liftally – progress tab" />
+              <video id="leftShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+                <source src="Videos/ai%20session%20card%20apply.mp4" type="video/mp4" />
+              </video>
             </figure>
             <figure class="shot main swap">
-              <img id="mainShot" class="hover-cycle" src="images/1-timer-removed.png" data-cycle="images/2-timer-removed.png,images/3-timer-removed.png,images/4-timer-removed.png" alt="Liftally – timer" />
+              <video id="mainShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+                <source src="Videos/compare.mp4" type="video/mp4" />
+              </video>
             </figure>
             <figure class="shot small right">
-              <img id="rightShot" class="hover-cycle" src="images/1- ai session card prompt-removed.png" data-cycle="images/2- ai session card prompt-removed.png" alt="Liftally – AI prompt detail" />
+              <video id="rightShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+                <source src="Videos/prompt.mp4" type="video/mp4" />
+              </video>
             </figure>
             <button class="shot-nav left" aria-label="Previous screenshots">‹</button>
             <button class="shot-nav right" aria-label="Next screenshots">›</button>
@@ -1137,7 +1143,7 @@
       document.querySelectorAll('[data-cycle]').forEach(attachHoverCycle);
     }
 
-    // Chevron navigation between screenshot pages (A/B/C then D/E)
+    // Chevron navigation between screenshot pages (videos)
     const leftShot = document.getElementById('leftShot');
     const mainShot = document.getElementById('mainShot');
     const rightShot = document.getElementById('rightShot');
@@ -1146,26 +1152,25 @@
 
     const pages = [
       {
-        left: { src: 'images/1-progress tab-removed.png', cycle: 'images/2-progress tab-removed.png' }, // B
-        main: { src: 'images/1-timer-removed.png', cycle: 'images/2-timer-removed.png,images/3-timer-removed.png,images/4-timer-removed.png' }, // A
-        right:{ src: 'images/1- ai session card prompt-removed.png', cycle: 'images/2- ai session card prompt-removed.png' } // C
+        left: 'Videos/tap%20session%20card.mp4',
+        main: 'Videos/compare.mp4',
+        right: 'Videos/session%20card%20applyied.mp4'
       },
       {
-        left: { src: 'images/1-ai session card-removed.png', cycle: 'images/2-ai session card-removed.png' }, // D
-        main: { src: 'images/1-swap exercise type-removed.png', cycle: 'images/2-swap exercise type-removed.png' }, // E
-        right:{ src: null, cycle: null }
+        left: 'Videos/RM%20card.mp4',
+        main: 'Videos/swap%20exercise.mp4',
+        right: null
       }
     ];
 
-    function setCycle(img, cycle) {
-      if (!img) return;
-      if (cycle) {
-        img.dataset.cycle = cycle;
-        if (window.matchMedia('(hover: hover)').matches) {
-          attachHoverCycle(img);
-        }
-      } else {
-        img.removeAttribute('data-cycle');
+    function setVideo(el, src) {
+      if (!el) return;
+      const source = el.querySelector('source');
+      if (!source) return;
+      source.src = src || '';
+      el.load();
+      if (src && el.autoplay) {
+        el.play().catch(() => {});
       }
     }
 
@@ -1173,18 +1178,15 @@
     function applyPage(idx) {
       const p = pages[idx];
       if (!p) return;
-      leftShot.src = p.left.src;
-      mainShot.src = p.main.src;
-      setCycle(leftShot, p.left.cycle);
-      setCycle(mainShot, p.main.cycle);
+      setVideo(leftShot, p.left);
+      setVideo(mainShot, p.main);
 
-      if (p.right.src) {
-        rightShot.src = p.right.src;
+      if (p.right) {
         rightShot.parentElement.classList.remove('hidden');
-        setCycle(rightShot, p.right.cycle);
+        setVideo(rightShot, p.right);
       } else {
         rightShot.parentElement.classList.add('hidden');
-        rightShot.removeAttribute('data-cycle');
+        setVideo(rightShot, null);
       }
 
       prevBtn.style.display = idx === 0 ? 'none' : 'inline-flex';
