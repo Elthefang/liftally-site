@@ -811,7 +811,7 @@
       </nav>
       <div style="display:flex;align-items:center;gap:12px;">
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-        <a class="btn btn-primary" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener">Start Free</a>
+        <a class="btn btn-primary" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
       </div>
     </div>
   </header>
@@ -825,7 +825,7 @@
           <h1>Train Like<br/><em>You Mean It.</em></h1>
           <p class="tagline">Your AI coach that reads your sessions, learns your limits, and pushes you past them — without a template in sight.</p>
           <div class="hero-cta">
-            <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener">Start Free</a>
+            <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
             <span class="subtext">Free · No credit card</span>
           </div>
         </div>
@@ -943,7 +943,7 @@
     <section class="cta">
       <div class="container cta-inner reveal">
         <h2>Ready to Stop<br/>Guessing?</h2>
-        <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener">Start Free</a>
+        <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
         <span class="subtext">App Store launch coming soon</span>
       </div>
     </section>
@@ -1204,6 +1204,18 @@
       });
       applyPage(pageIndex);
     }
+
+    // GA4 event: Start Free clicks
+    document.querySelectorAll('[data-gtag="start_free"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'start_free_click', {
+            event_category: 'cta',
+            event_label: 'start_free'
+          });
+        }
+      });
+    });
 
     // Header bg on scroll
     const header = document.querySelector('.site-header');
