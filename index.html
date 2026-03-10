@@ -228,6 +228,14 @@
       background: var(--accent-hover);
     }
 
+    .btn:disabled,
+    .btn[aria-disabled="true"] {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
     .btn-large {
       padding: 16px 40px;
       font-size: 16px;
@@ -679,6 +687,328 @@
       color: var(--text);
     }
 
+    /* ── VOTING ── */
+    .voting {
+      padding: 120px 0;
+      background:
+        radial-gradient(600px 240px at 10% 10%, var(--accent-subtle), transparent 60%),
+        var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .voting-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .voting h2 {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 6vw, 80px);
+      line-height: 0.95;
+      letter-spacing: 2px;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+
+    .voting .lede {
+      color: var(--muted);
+      font-size: 18px;
+      max-width: 520px;
+      margin-bottom: 24px;
+    }
+
+    .vote-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      box-shadow: 0 18px 40px var(--shadow);
+    }
+
+    .vote-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-cond);
+      font-size: 12px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-subtle);
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(251,77,61,0.15);
+    }
+
+    .vote-points {
+      list-style: none;
+      display: grid;
+      gap: 8px;
+      margin: 16px 0 24px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .vote-points li::before {
+      content: '•';
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    .vote-board {
+      display: grid;
+      gap: 10px;
+      margin: 16px 0 20px;
+    }
+
+    .vote-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .vote-bar {
+      position: relative;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.03), rgba(0,0,0,0.0));
+      border: 1px solid var(--border);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      padding: 0 12px;
+      font-size: 14px;
+      color: var(--text);
+      justify-content: center;
+    }
+
+    .vote-bar-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 50%;
+      transition: width 0.6s cubic-bezier(0.16,1,0.3,1);
+      transform: scaleX(0);
+    }
+
+    .vote-bar-fill.left {
+      left: 0;
+      right: 50%;
+      background: linear-gradient(90deg, rgba(38,38,38,0.08), rgba(38,38,38,0.02));
+      transform-origin: right center;
+    }
+
+    .vote-bar-fill.right {
+      left: 50%;
+      right: 0;
+      background: linear-gradient(90deg, rgba(251,77,61,0.06), rgba(251,77,61,0.22));
+      transform-origin: left center;
+    }
+
+    .vote-label {
+      position: relative;
+      z-index: 1;
+      font-weight: 500;
+    }
+
+    .vote-actions {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .vote-veto {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .vote-btn.veto {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+
+    .vote-btn.veto:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .vote-count {
+      font-family: var(--font-cond);
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: var(--muted);
+      min-width: 36px;
+      text-align: right;
+    }
+
+    .vote-count.veto-count {
+      text-align: left;
+      min-width: 28px;
+    }
+
+    .vote-count.bump {
+      color: var(--text);
+      transform: translateY(-2px);
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+
+    .flip-word {
+      display: inline-block;
+      min-width: 7ch;
+      position: relative;
+      transform-origin: center;
+    }
+
+    .flip-word.flip-out {
+      animation: flipOut 0.35s ease;
+    }
+
+    .flip-word.flip-in {
+      animation: flipIn 0.35s ease;
+    }
+
+    @keyframes flipOut {
+      from { transform: rotateX(0deg); opacity: 1; }
+      to { transform: rotateX(90deg); opacity: 0; }
+    }
+
+    @keyframes flipIn {
+      from { transform: rotateX(-90deg); opacity: 0; }
+      to { transform: rotateX(0deg); opacity: 1; }
+    }
+
+    @keyframes barPulse {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.08); }
+      100% { filter: brightness(1); }
+    }
+
+    .vote-bar-fill.pulse {
+      animation: barPulse 0.35s ease;
+    }
+
+    .vote-row .vote-btn {
+      height: 34px;
+      padding: 0 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .vote-suggest {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .vote-cta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .vote-suggest input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .vote-suggest input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-subtle);
+    }
+
+    .vote-status {
+      font-size: 13px;
+      color: var(--muted);
+      min-height: 18px;
+    }
+
+    /* ── SLIDE-IN VOTE CARD ── */
+    .vote-slidein {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: min(320px, 90vw);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: 0 16px 36px var(--shadow);
+      transform: translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.35s;
+      z-index: 120;
+      position: fixed;
+    }
+
+    .vote-slidein.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .vote-slidein h4 {
+      font-family: var(--font-cond);
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: var(--accent);
+    }
+
+    .vote-slidein p {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    .vote-slidein .vote-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .vote-slidein .vote-dismiss {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      font-size: 20px;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .vote-slidein .vote-dismiss:hover {
+      background: var(--surface2);
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
     /* ── FOOTER ── */
     .site-footer {
       border-top: 1px solid var(--border);
@@ -777,6 +1107,7 @@
       .hero-visual { display: none; }
       .feature-grid { grid-auto-columns: calc((100% - 20px) / 2.5); }
       .feedback-inner { flex-direction: column; text-align: center; }
+      .voting-grid { grid-template-columns: 1fr; }
       .features::after { display: none; }
       .shot-row.primary { grid-template-columns: 1fr; }
       .shot-row.secondary { grid-template-columns: 1fr; }
@@ -789,7 +1120,7 @@
     }
   </style>
 </head>
-<body>
+<body data-vote-endpoint="https://script.google.com/macros/s/AKfycbx_Ob6ytcN4kB5sV4AhxOuPw0AR98GxGTUZKY0BKjBeKE_rZ_Jgw0zBAI82SSWyJsxy/exec" data-vote-topic="app-name" data-vote-topic-label="App Name">
 
   <!-- Header -->
   <header class="site-header" id="home">
@@ -806,6 +1137,7 @@
           <li><a href="#home">Home</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#screenshots">Screenshots</a></li>
+          <li><a href="#vote">Vote</a></li>
           <li><a href="#contact">Send Feedback</a></li>
         </ul>
       </nav>
@@ -945,12 +1277,127 @@
       </div>
     </section>
 
+    <!-- Voting -->
+    <section class="voting" id="vote">
+      <div class="container voting-grid">
+        <div class="reveal">
+          <p class="eyebrow">Community Vote</p>
+          <h2>Help Shape<br/><span class="flip-word" id="nameFlip">Liftally</span></h2>
+          <p class="lede">Some users suggested alternative names. We’re running a quick community vote to decide if Liftally should stay or change.</p>
+          <div class="vote-cta">
+            <a class="btn btn-primary btn-large" href="#voteBoard" data-gtag="vote_click">Vote Now</a>
+            <span class="subtext">Under 30s</span>
+          </div>
+        </div>
+        <div class="vote-card reveal">
+          <span class="vote-badge">Community vote</span>
+          <h3>Top contenders</h3>
+          <div class="vote-board" id="voteBoard">
+            <div class="vote-row" data-name="Liftally" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="Liftally">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">Liftally</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="Liftally">Vote</button>
+              </div>
+            </div>
+            <div class="vote-row" data-name="Liftforge" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="Liftforge">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">Liftforge</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="Liftforge">Vote</button>
+              </div>
+            </div>
+            <div class="vote-row" data-name="IronPilot" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="IronPilot">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">IronPilot</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="IronPilot">Vote</button>
+              </div>
+            </div>
+            <div class="vote-row" data-name="Setcraft" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="Setcraft">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">Setcraft</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="Setcraft">Vote</button>
+              </div>
+            </div>
+            <div class="vote-row" data-name="Loadline" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="Loadline">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">Loadline</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="Loadline">Vote</button>
+              </div>
+            </div>
+            <div class="vote-row" data-name="PeakSet" data-count="0" data-veto-count="0">
+              <div class="vote-veto">
+                <button class="btn vote-btn veto" type="button" data-veto="PeakSet">Veto</button>
+                <span class="vote-count veto-count">0</span>
+              </div>
+              <div class="vote-bar">
+                <span class="vote-bar-fill left"></span>
+                <span class="vote-bar-fill right"></span>
+                <span class="vote-label">PeakSet</span>
+              </div>
+              <div class="vote-actions">
+                <span class="vote-count vote-main">0</span>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="PeakSet">Vote</button>
+              </div>
+            </div>
+          </div>
+          <div class="vote-suggest">
+            <input type="text" id="voteSuggestion" maxlength="40" placeholder="Suggest a new name and press Enter" />
+            <div class="vote-status" id="voteStatus" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta">
       <div class="container cta-inner reveal">
         <h2>Ready to Stop<br/>Guessing?</h2>
         <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
-        <span class="subtext">App Store launch coming soon</span>
+        <span class="subtext">Now available on the App Store</span>
       </div>
     </section>
 
@@ -984,10 +1431,11 @@
       home: 'Liftally — Home',
       features: 'Liftally — Features',
       screenshots: 'Liftally — Screenshots',
+      vote: 'Liftally — Vote',
       contact: 'Liftally — Feedback'
     };
 
-    const sections = ['home', 'features', 'screenshots', 'contact']
+    const sections = ['home', 'features', 'screenshots', 'vote', 'contact']
       .map(id => document.getElementById(id))
       .filter(Boolean);
 
@@ -1228,5 +1676,16 @@
         : `rgba(${base},0.85)`;
     });
   </script>
+
+  <!-- Vote slide-in -->
+  <div class="vote-slidein" id="voteSlidein" aria-live="polite">
+    <button class="vote-dismiss" id="voteDismiss" type="button" aria-label="Close vote prompt">&times;</button>
+    <h4>Help Shape Liftally</h4>
+    <p>We’re running a quick community vote on the app name.</p>
+    <div class="vote-actions">
+      <a class="btn btn-primary" href="#voteBoard" data-gtag="vote_click">Vote now</a>
+    </div>
+  </div>
+  <script src="vote.js"></script>
 </body>
 </html>
