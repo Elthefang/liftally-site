@@ -33,7 +33,8 @@
     if (typeof window.gtag !== 'function') return;
     window.gtag('event', name, {
       event_category: category,
-      event_label: label
+      event_label: label,
+      ...(window.liftallyCampaignParams || {})
     });
   }
 

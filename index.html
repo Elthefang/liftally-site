@@ -1143,7 +1143,7 @@
       </nav>
       <div style="display:flex;align-items:center;gap:12px;">
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">🌙</button>
-        <a class="btn btn-primary" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
+        <a class="btn btn-primary" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Start Free</a>
       </div>
     </div>
   </header>
@@ -1157,7 +1157,7 @@
           <h1>Train Like<br/><em>You Mean It.</em></h1>
           <p class="tagline">Your AI coach that reads your sessions, learns your limits, and pushes you past them — without a template in sight.</p>
           <div class="hero-cta">
-            <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
+            <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Start Free</a>
             <span class="subtext">Free · No credit card</span>
           </div>
         </div>
@@ -1396,7 +1396,7 @@
     <section class="cta">
       <div class="container cta-inner reveal">
         <h2>Ready to Stop<br/>Guessing?</h2>
-        <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free">Start Free</a>
+        <a class="btn btn-primary btn-large" href="https://apps.apple.com/tw/app/liftally/id6751095631?l=en-GB" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Start Free</a>
         <span class="subtext">Now available on the App Store</span>
       </div>
     </section>
@@ -1408,7 +1408,7 @@
           <h2>Shape What's Next.</h2>
           <p class="section-lede">Tell us what to improve, what you love, and what features you wish we’d build next. We read everything.</p>
         </div>
-        <a class="btn btn-primary btn-large" href="javascript:void( window.open( 'https://form.jotform.com/260592564773467', 'blank', 'scrollbars=yes, toolbar=no, width=700, height=500' ) )">Send Feedback</a>
+        <a class="btn btn-primary btn-large" href="https://form.jotform.com/260592564773467" target="_blank" rel="noopener" data-gtag="feedback_click" data-propagate-utm="true">Send Feedback</a>
       </div>
     </section>
   </main>
@@ -1655,13 +1655,56 @@
       applyPage(pageIndex);
     }
 
+    const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
+    const currentSearch = new URLSearchParams(window.location.search);
+    const campaignEventParams = {};
+
+    utmKeys.forEach((key) => {
+      const value = currentSearch.get(key);
+      if (value) campaignEventParams[key] = value;
+    });
+
+    window.liftallyCampaignParams = campaignEventParams;
+
+    function appendCurrentUtms(href) {
+      const url = new URL(href, window.location.href);
+      utmKeys.forEach((key) => {
+        const value = currentSearch.get(key);
+        if (value && !url.searchParams.has(key)) {
+          url.searchParams.set(key, value);
+        }
+      });
+      return url.toString();
+    }
+
+    document.querySelectorAll('[data-propagate-utm="true"]').forEach(link => {
+      try {
+        link.href = appendCurrentUtms(link.getAttribute('href'));
+      } catch (_) {
+        // Ignore malformed or non-standard href values.
+      }
+    });
+
     // GA4 event: Start Free clicks
     document.querySelectorAll('[data-gtag="start_free"]').forEach(btn => {
       btn.addEventListener('click', () => {
         if (typeof gtag === 'function') {
           gtag('event', 'start_free_click', {
             event_category: 'cta',
-            event_label: 'start_free'
+            event_label: 'start_free',
+            ...campaignEventParams
+          });
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-gtag="feedback_click"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (typeof gtag === 'function') {
+          gtag('event', 'feedback_click', {
+            event_category: 'feedback',
+            event_label: 'feedback_click',
+            ...campaignEventParams
           });
         }
       });
