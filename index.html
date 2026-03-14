@@ -1256,17 +1256,17 @@
         <div class="shot-grid">
           <div class="shot-row primary">
             <figure class="shot small left">
-              <video id="leftShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+              <video id="leftShot" class="demo-video" muted playsinline loop preload="metadata">
                 <source src="Videos/ai%20session%20card%20apply.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot main swap">
-              <video id="mainShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+              <video id="mainShot" class="demo-video" muted playsinline loop preload="metadata">
                 <source src="Videos/compare.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot small right">
-              <video id="rightShot" class="demo-video" muted playsinline loop autoplay preload="metadata">
+              <video id="rightShot" class="demo-video" muted playsinline loop preload="metadata">
                 <source src="Videos/prompt.mp4" type="video/mp4" />
               </video>
             </figure>
@@ -1591,12 +1591,88 @@
       document.querySelectorAll('[data-cycle]').forEach(attachHoverCycle);
     }
 
-    // Chevron navigation between screenshot pages (videos)
+    // Screenshot video playback
     const leftShot = document.getElementById('leftShot');
     const mainShot = document.getElementById('mainShot');
     const rightShot = document.getElementById('rightShot');
     const prevBtn = document.querySelector('.shot-nav.left');
     const nextBtn = document.querySelector('.shot-nav.right');
+    const screenshotsSection = document.getElementById('screenshots');
+    const screenshotVideos = [leftShot, mainShot, rightShot].filter(Boolean);
+    const desktopHoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    function resetVideo(video) {
+      if (!video) return;
+      video.pause();
+      video.currentTime = 0;
+    }
+
+    function playVideo(video) {
+      if (!video || !video.currentSrc) return;
+      video.play().catch(() => {});
+    }
+
+    function pauseAllScreenshotVideos() {
+      screenshotVideos.forEach(video => {
+        if (!video || video.closest('.hidden')) return;
+        video.pause();
+      });
+    }
+
+    function resetAllScreenshotVideos() {
+      screenshotVideos.forEach(video => {
+        if (!video || video.closest('.hidden')) return;
+        resetVideo(video);
+      });
+    }
+
+    function playVisibleScreenshotVideos() {
+      screenshotVideos.forEach(video => {
+        if (!video || video.closest('.hidden')) return;
+        playVideo(video);
+      });
+    }
+
+    function syncScreenshotPlayback() {
+      if (desktopHoverQuery.matches) {
+        resetAllScreenshotVideos();
+        return;
+      }
+      if (!screenshotsSection) return;
+      const rect = screenshotsSection.getBoundingClientRect();
+      const sectionInView = rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.25;
+      if (sectionInView) {
+        playVisibleScreenshotVideos();
+      } else {
+        pauseAllScreenshotVideos();
+      }
+    }
+
+    screenshotVideos.forEach(video => {
+      video.addEventListener('mouseenter', () => {
+        if (!desktopHoverQuery.matches || video.closest('.hidden')) return;
+        playVideo(video);
+      });
+
+      video.addEventListener('mouseleave', () => {
+        if (!desktopHoverQuery.matches) return;
+        resetVideo(video);
+      });
+    });
+
+    if ('IntersectionObserver' in window && screenshotsSection && !desktopHoverQuery.matches) {
+      const screenshotObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            playVisibleScreenshotVideos();
+          } else {
+            pauseAllScreenshotVideos();
+          }
+        });
+      }, { threshold: 0.35 });
+
+      screenshotObserver.observe(screenshotsSection);
+    }
 
     const pages = [
       {
@@ -1615,11 +1691,10 @@
       if (!el) return;
       const source = el.querySelector('source');
       if (!source) return;
+      resetVideo(el);
       source.src = src || '';
       el.load();
-      if (src && el.autoplay) {
-        el.play().catch(() => {});
-      }
+      if (src) syncScreenshotPlayback();
     }
 
     let pageIndex = 0;
@@ -1654,6 +1729,8 @@
       });
       applyPage(pageIndex);
     }
+
+    desktopHoverQuery.addEventListener('change', syncScreenshotPlayback);
 
     const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
     const currentSearch = new URLSearchParams(window.location.search);
