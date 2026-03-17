@@ -1256,17 +1256,17 @@
         <div class="shot-grid">
           <div class="shot-row primary">
             <figure class="shot small left">
-              <video id="leftShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="leftShot" class="demo-video" muted playsinline autoplay loop preload="metadata">
                 <source src="Videos/ai%20session%20card%20apply.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot main swap">
-              <video id="mainShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="mainShot" class="demo-video" muted playsinline autoplay loop preload="metadata">
                 <source src="Videos/compare.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot small right">
-              <video id="rightShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="rightShot" class="demo-video" muted playsinline autoplay loop preload="metadata">
                 <source src="Videos/prompt.mp4" type="video/mp4" />
               </video>
             </figure>
@@ -1308,79 +1308,19 @@
                 <button class="btn btn-primary vote-btn" type="button" data-vote="Liftally">Vote</button>
               </div>
             </div>
-            <div class="vote-row" data-name="Liftforge" data-count="0" data-veto-count="0">
+            <div class="vote-row" data-name="Gymora" data-count="0" data-veto-count="0">
               <div class="vote-veto">
-                <button class="btn vote-btn veto" type="button" data-veto="Liftforge">Veto</button>
+                <button class="btn vote-btn veto" type="button" data-veto="Gymora">Veto</button>
                 <span class="vote-count veto-count">0</span>
               </div>
               <div class="vote-bar">
                 <span class="vote-bar-fill left"></span>
                 <span class="vote-bar-fill right"></span>
-                <span class="vote-label">Liftforge</span>
+                <span class="vote-label">Gymora</span>
               </div>
               <div class="vote-actions">
                 <span class="vote-count vote-main">0</span>
-                <button class="btn btn-primary vote-btn" type="button" data-vote="Liftforge">Vote</button>
-              </div>
-            </div>
-            <div class="vote-row" data-name="IronPilot" data-count="0" data-veto-count="0">
-              <div class="vote-veto">
-                <button class="btn vote-btn veto" type="button" data-veto="IronPilot">Veto</button>
-                <span class="vote-count veto-count">0</span>
-              </div>
-              <div class="vote-bar">
-                <span class="vote-bar-fill left"></span>
-                <span class="vote-bar-fill right"></span>
-                <span class="vote-label">IronPilot</span>
-              </div>
-              <div class="vote-actions">
-                <span class="vote-count vote-main">0</span>
-                <button class="btn btn-primary vote-btn" type="button" data-vote="IronPilot">Vote</button>
-              </div>
-            </div>
-            <div class="vote-row" data-name="Setcraft" data-count="0" data-veto-count="0">
-              <div class="vote-veto">
-                <button class="btn vote-btn veto" type="button" data-veto="Setcraft">Veto</button>
-                <span class="vote-count veto-count">0</span>
-              </div>
-              <div class="vote-bar">
-                <span class="vote-bar-fill left"></span>
-                <span class="vote-bar-fill right"></span>
-                <span class="vote-label">Setcraft</span>
-              </div>
-              <div class="vote-actions">
-                <span class="vote-count vote-main">0</span>
-                <button class="btn btn-primary vote-btn" type="button" data-vote="Setcraft">Vote</button>
-              </div>
-            </div>
-            <div class="vote-row" data-name="Loadline" data-count="0" data-veto-count="0">
-              <div class="vote-veto">
-                <button class="btn vote-btn veto" type="button" data-veto="Loadline">Veto</button>
-                <span class="vote-count veto-count">0</span>
-              </div>
-              <div class="vote-bar">
-                <span class="vote-bar-fill left"></span>
-                <span class="vote-bar-fill right"></span>
-                <span class="vote-label">Loadline</span>
-              </div>
-              <div class="vote-actions">
-                <span class="vote-count vote-main">0</span>
-                <button class="btn btn-primary vote-btn" type="button" data-vote="Loadline">Vote</button>
-              </div>
-            </div>
-            <div class="vote-row" data-name="PeakSet" data-count="0" data-veto-count="0">
-              <div class="vote-veto">
-                <button class="btn vote-btn veto" type="button" data-veto="PeakSet">Veto</button>
-                <span class="vote-count veto-count">0</span>
-              </div>
-              <div class="vote-bar">
-                <span class="vote-bar-fill left"></span>
-                <span class="vote-bar-fill right"></span>
-                <span class="vote-label">PeakSet</span>
-              </div>
-              <div class="vote-actions">
-                <span class="vote-count vote-main">0</span>
-                <button class="btn btn-primary vote-btn" type="button" data-vote="PeakSet">Vote</button>
+                <button class="btn btn-primary vote-btn" type="button" data-vote="Gymora">Vote</button>
               </div>
             </div>
           </div>
@@ -1608,7 +1548,11 @@
     }
 
     function playVideo(video) {
-      if (!video || !video.currentSrc) return;
+      if (!video) return;
+      const source = video.querySelector('source');
+      if (!video.currentSrc && !(source && source.src)) return;
+      video.muted = true;
+      video.playsInline = true;
       video.play().catch(() => {});
     }
 
@@ -1626,11 +1570,16 @@
       });
     }
 
-    function playVisibleScreenshotVideos() {
-      screenshotVideos.forEach(video => {
-        if (!video || video.closest('.hidden')) return;
-        playVideo(video);
-      });
+    function isScreenshotVideoInView(video) {
+      if (!video || video.closest('.hidden')) return false;
+      const rect = video.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.height <= 0 || viewportHeight <= 0) return false;
+      const visibleTop = Math.max(rect.top, 0);
+      const visibleBottom = Math.min(rect.bottom, viewportHeight);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      const visibilityRatio = visibleHeight / rect.height;
+      return visibilityRatio >= 0.35;
     }
 
     function syncScreenshotPlayback() {
@@ -1638,14 +1587,23 @@
         resetAllScreenshotVideos();
         return;
       }
-      if (!screenshotsSection) return;
-      const rect = screenshotsSection.getBoundingClientRect();
-      const sectionInView = rect.top < window.innerHeight * 0.8 && rect.bottom > window.innerHeight * 0.25;
-      if (sectionInView) {
-        playVisibleScreenshotVideos();
-      } else {
-        pauseAllScreenshotVideos();
-      }
+      screenshotVideos.forEach(video => {
+        if (!video || video.closest('.hidden')) return;
+        if (isScreenshotVideoInView(video)) {
+          playVideo(video);
+        } else {
+          video.pause();
+        }
+      });
+    }
+
+    let screenshotSyncRaf = null;
+    function requestScreenshotPlaybackSync() {
+      if (screenshotSyncRaf !== null) return;
+      screenshotSyncRaf = window.requestAnimationFrame(() => {
+        screenshotSyncRaf = null;
+        syncScreenshotPlayback();
+      });
     }
 
     screenshotVideos.forEach(video => {
@@ -1658,21 +1616,14 @@
         if (!desktopHoverQuery.matches) return;
         resetVideo(video);
       });
+
+      video.addEventListener('loadeddata', requestScreenshotPlaybackSync);
+      video.addEventListener('canplay', requestScreenshotPlaybackSync);
     });
 
-    if ('IntersectionObserver' in window && screenshotsSection && !desktopHoverQuery.matches) {
-      const screenshotObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            playVisibleScreenshotVideos();
-          } else {
-            pauseAllScreenshotVideos();
-          }
-        });
-      }, { threshold: 0.35 });
-
-      screenshotObserver.observe(screenshotsSection);
-    }
+    window.addEventListener('load', requestScreenshotPlaybackSync);
+    window.addEventListener('resize', requestScreenshotPlaybackSync, { passive: true });
+    window.addEventListener('scroll', requestScreenshotPlaybackSync, { passive: true });
 
     const pages = [
       {
@@ -1694,7 +1645,7 @@
       resetVideo(el);
       source.src = src || '';
       el.load();
-      if (src) syncScreenshotPlayback();
+      if (src) requestScreenshotPlaybackSync();
     }
 
     let pageIndex = 0;
