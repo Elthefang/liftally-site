@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "liftally-staging",
+    "staging": "liftally-staging"
+  }
+}

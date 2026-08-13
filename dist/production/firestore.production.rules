@@ -1,0 +1,784 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isPositiveNumber(value, maxValue) {
+      return value is number && value > 0 && value <= maxValue;
+    }
+
+    function isOptionalShortString(data, field, maxLength) {
+      return !data.keys().hasAny([field])
+        || (data[field] is string && data[field].size() <= maxLength);
+    }
+
+    function isPercentileBand(value) {
+      return value is string
+        && value.size() <= 20
+        && (
+          value == "Below P1"
+          || value == "Unavailable"
+          || value.matches("^P([1-9]|[1-9][0-9])\\+?$")
+        );
+    }
+
+    function hasValidBenchmarkSnapshot(data, userId) {
+      return data.keys().hasOnly([
+          "schemaVersion", "ownerUid", "source", "standardKey", "standardLabel", "sex", "unit",
+          "bodyweight", "bodyweightKg", "squat", "bench", "deadlift", "totalKg", "dots", "ipfGl",
+          "weightClassKg", "classRange", "testedStatus", "benchmarkStandard", "totalPercentileBand",
+          "dotsPercentileBand", "benchmarkSampleSize", "sourceDataAsOf", "methodologyVersion",
+          "createdAt", "updatedAt"
+        ])
+        && data.schemaVersion == 1
+        && data.ownerUid == userId
+        && data.ownerUid == request.auth.uid
+        && data.source == "web_weight_class_explorer"
+        && data.standardKey in ["ipf", "usapl", "uspa", "wrpf"]
+        && data.standardLabel is string
+        && data.standardLabel.size() > 0
+        && data.standardLabel.size() <= 40
+        && data.sex in ["men", "women"]
+        && data.unit in ["kg", "lb"]
+        && isPositiveNumber(data.bodyweight, 1500)
+        && isPositiveNumber(data.bodyweightKg, 700)
+        && isPositiveNumber(data.squat, 1500)
+        && isPositiveNumber(data.bench, 1500)
+        && isPositiveNumber(data.deadlift, 1500)
+        && isPositiveNumber(data.totalKg, 2000)
+        && isPositiveNumber(data.dots, 1000)
+        && isPositiveNumber(data.ipfGl, 2000)
+        && data.weightClassKg is string
+        && data.weightClassKg.size() > 0
+        && data.weightClassKg.size() <= 16
+        && data.classRange is string
+        && data.classRange.size() > 0
+        && data.classRange.size() <= 80
+        && data.testedStatus in ["tested", "untested", "unknown"]
+        && data.benchmarkStandard is string
+        && data.benchmarkStandard.size() > 0
+        && data.benchmarkStandard.size() <= 24
+        && isPercentileBand(data.totalPercentileBand)
+        && isPercentileBand(data.dotsPercentileBand)
+        && data.benchmarkSampleSize is int
+        && data.benchmarkSampleSize >= 0
+        && isOptionalShortString(data, "sourceDataAsOf", 24)
+        && isOptionalShortString(data, "methodologyVersion", 16)
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    function hasValidSupportRequest(data) {
+      return data.keys().hasOnly([
+          "schemaVersion", "requesterUid", "source", "type", "message", "email", "createdAt", "status"
+        ])
+        && data.schemaVersion == 1
+        && data.requesterUid == request.auth.uid
+        && data.source in ["website", "weight_class_explorer"]
+        && data.type in ["feedback", "competition_planner_access", "support"]
+        && data.message is string
+        && data.message.size() >= 8
+        && data.message.size() <= 5000
+        && data.email is string
+        && data.email.size() <= 254
+        && (data.email.size() == 0 || data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"))
+        && data.createdAt == request.time
+        && data.status == "open";
+    }
+
+    function hasValidUserProfileBase(data, userId) {
+      return data.keys().hasOnly([
+          "schemaVersion", "uid", "email", "displayName", "createdAt", "updatedAt"
+        ])
+        && data.schemaVersion == 1
+        && data.uid == userId
+        && isOptionalShortString(data, "email", 254)
+        && isOptionalShortString(data, "displayName", 80);
+    }
+
+    function isPublicActiveHeroBoardPost(data) {
+      return data.visibility == "public" && data.status == "active";
+    }
+
+    function hasValidHeroBoardVote(data) {
+      return data.keys().hasOnly(["postId", "userId", "voteType", "createdAt", "updatedAt"])
+        && data.userId == request.auth.uid
+        && data.voteType in ["white", "red"]
+        && hasVotableHeroBoardPost(data);
+    }
+
+    function heroBoardVotePostPath(data) {
+      return /databases/$(database)/documents/heroboard_posts/$(data.postId);
+    }
+
+    function heroBoardPostPath(postId) {
+      return /databases/$(database)/documents/heroboard_posts/$(postId);
+    }
+
+    function hasPublicActiveHeroBoardPostOwnedByOther(postId, ownerUid) {
+      let post = get(heroBoardPostPath(postId)).data;
+      return exists(heroBoardPostPath(postId))
+        && post.visibility == "public"
+        && post.status == "active"
+        && post.ownerUid == ownerUid
+        && post.ownerUid != request.auth.uid;
+    }
+
+    function hasVotableHeroBoardPost(data) {
+      let post = get(heroBoardVotePostPath(data)).data;
+      return exists(heroBoardVotePostPath(data))
+        && post.visibility == "public"
+        && post.status == "active"
+        && post.ownerUid != request.auth.uid;
+    }
+
+    function hasValidHeroBoardReport(data) {
+      return data.keys().hasOnly(["postId", "reporterUid", "ownerUid", "reason", "status", "createdAt", "updatedAt"])
+        && data.reporterUid == request.auth.uid
+        && data.reason in ["questionable_lift", "fake_lift", "unsafe_content", "harassment", "spam", "other"]
+        && data.status == "open"
+        && hasPublicActiveHeroBoardPostOwnedByOther(data.postId, data.ownerUid);
+    }
+
+    function hasValidHeroBoardBlock(data) {
+      return data.keys().hasOnly(["blockerUid", "blockedUid", "createdAt", "updatedAt"])
+        && data.blockerUid == request.auth.uid
+        && data.blockedUid is string
+        && data.blockedUid != request.auth.uid;
+    }
+
+    function hasValidUserFeedback(data) {
+      return data.keys().hasOnly([
+          "issueType",
+          "issueLabel",
+          "details",
+          "contactEmail",
+          "createdAt",
+          "appVersion",
+          "buildNumber",
+          "iosVersion",
+          "deviceModel",
+          "locale",
+          "userId"
+        ])
+        && data.userId == request.auth.uid
+        && data.issueType is string
+        && data.issueType in ["no_issues", "confusing", "bug", "unsure"]
+        && data.issueLabel is string
+        && data.issueLabel.size() > 0
+        && data.issueLabel.size() <= 120
+        && data.details is string
+        && data.details.size() >= 8
+        && data.details.size() <= 5000
+        && data.contactEmail is string
+        && data.contactEmail.size() <= 254
+        && (
+          data.contactEmail.size() == 0
+          || data.contactEmail.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        )
+        && data.createdAt == request.time
+        && data.appVersion is string
+        && data.appVersion.size() <= 40
+        && data.buildNumber is string
+        && data.buildNumber.size() <= 40
+        && data.iosVersion is string
+        && data.iosVersion.size() <= 40
+        && data.deviceModel is string
+        && data.deviceModel.size() <= 80
+        && data.locale is string
+        && data.locale.size() <= 40;
+    }
+
+    function hasValidAITrainerUsageCreate(data) {
+      return data.keys().hasOnly(["trialStartedAt", "trialExpiresAt", "updatedAt"])
+        && data.trialStartedAt is timestamp
+        && data.trialExpiresAt is timestamp
+        && data.updatedAt == request.time
+        && data.trialStartedAt <= request.time
+        && data.trialStartedAt >= request.time - duration.value(10, "m")
+        && data.trialExpiresAt == data.trialStartedAt + duration.value(48, "h");
+    }
+
+    function hasValidAITrainerUsageUpdate(data) {
+      return data.keys().hasOnly(["trialStartedAt", "trialExpiresAt", "updatedAt"])
+        && data.trialStartedAt == resource.data.trialStartedAt
+        && data.trialExpiresAt == resource.data.trialExpiresAt
+        && data.updatedAt == request.time;
+    }
+
+    function hasValidAITrainerTrialWindow(data) {
+      return data.trialStartedAt is timestamp
+        && data.trialExpiresAt is timestamp
+        && data.updatedAt == request.time
+        && data.trialStartedAt <= request.time
+        && data.trialStartedAt >= request.time - duration.value(10, "m")
+        && data.trialExpiresAt == data.trialStartedAt + duration.value(48, "h");
+    }
+
+    function hasValidAITrainerGuestTrialCreate(data) {
+      return data.keys().hasOnly(["trialStartedAt", "trialExpiresAt", "policy", "updatedAt"])
+        && data.policy == "guest_initial"
+        && hasValidAITrainerTrialWindow(data);
+    }
+
+    function hasValidAITrainerGuestTrialUpdate(data) {
+      return data.keys().hasOnly(["trialStartedAt", "trialExpiresAt", "policy", "updatedAt"])
+        && data.policy == resource.data.policy
+        && data.trialStartedAt == resource.data.trialStartedAt
+        && data.trialExpiresAt == resource.data.trialExpiresAt
+        && data.updatedAt == request.time;
+    }
+
+    function hasValidAITrainerMonthlyTrialCreate(data, monthKey) {
+      return data.keys().hasOnly(["monthKey", "trialStartedAt", "trialExpiresAt", "policy", "updatedAt"])
+        && data.monthKey == monthKey
+        && data.policy == "signed_in_monthly"
+        && hasValidAITrainerTrialWindow(data);
+    }
+
+    function hasValidAITrainerMonthlyTrialUpdate(data, monthKey) {
+      return data.keys().hasOnly(["monthKey", "trialStartedAt", "trialExpiresAt", "policy", "updatedAt"])
+        && data.monthKey == monthKey
+        && data.monthKey == resource.data.monthKey
+        && data.policy == resource.data.policy
+        && data.trialStartedAt == resource.data.trialStartedAt
+        && data.trialExpiresAt == resource.data.trialExpiresAt
+        && data.updatedAt == request.time;
+    }
+
+    function hasValidHeroBoardRankBounds(data) {
+      return data.rankValue is number
+        && data.rankValue > 0
+        && data.rankValue <= 600
+        && data.liftWeightKg is number
+        && data.liftWeightKg > 0
+        && data.liftWeightKg <= 600;
+    }
+
+    function hasValidHeroBoardMedia(data) {
+      return !data.keys().hasAny(["storagePath", "mediaType", "uploadStatus", "videoDurationMs", "thumbnailPath"])
+        || (
+          data.keys().hasAll(["storagePath", "mediaType", "uploadStatus"])
+          && data.storagePath is string
+          && data.storagePath.matches("^heroboard_videos/" + request.auth.uid + "/[^/]+\\.(mp4|mov|m4v)$")
+          && data.mediaType == "video"
+          && data.uploadStatus == "ready"
+          && (!data.keys().hasAny(["videoDurationMs"])
+            || (data.videoDurationMs is int && data.videoDurationMs > 0 && data.videoDurationMs <= 60 * 60 * 1000))
+          && (!data.keys().hasAny(["thumbnailPath"])
+            || (data.thumbnailPath is string
+              && data.thumbnailPath.matches("^heroboard_thumbnails/" + request.auth.uid + "/[^/]+\\.jpg$")))
+        );
+    }
+
+    function hasValidClientHeroBoardPostBase(data) {
+      return data.keys().hasOnly([
+          "schemaVersion",
+          "ownerUid",
+          "displayName",
+          "gender",
+          "exerciseType",
+          "liftWeight",
+          "unit",
+          "bodyweightKg",
+          "bodyweightBucket",
+          "categoryKey",
+          "boardKey",
+          "rankEligible",
+          "isLocked",
+          "proofType",
+          "equipmentType",
+          "reps",
+          "liftWeightKg",
+          "rankValue",
+          "rankMetric",
+          "estimatedOneRM",
+          "rmType",
+          "challengeAttemptId",
+          "caption",
+          "storagePath",
+          "mediaType",
+          "uploadStatus",
+          "videoDurationMs",
+          "thumbnailPath",
+          "recordSource",
+          "sessionRecordId",
+          "whiteLightCount",
+          "redLightCount",
+          "derivedLightResult",
+          "status",
+          "visibility",
+          "seeded",
+          "eligibilityStatus",
+          "eligibleBoards",
+          "reason",
+          "lastModifiedAt",
+          "removedAt",
+          "lastValidatedAt",
+          "cleanupState",
+          "cleanupRequestedAt",
+          "cleanupCompletedAt",
+          "cleanupError",
+          "createdAt",
+          "updatedAt"
+        ])
+        && data.ownerUid == request.auth.uid
+        && data.exerciseType in ["squat", "bench", "deadlift"]
+        && (!data.keys().hasAny(["gender"]) || data.gender in ["male", "female", "open"])
+        && (!data.keys().hasAny(["boardKey"]) || data.boardKey in ["best_lifters_dots", "squat_e1rm", "bench_e1rm", "deadlift_e1rm"])
+        && data.equipmentType in ["barbell", "dumbbell", "machine", "smith_machine", "cable", "bodyweight", "unknown"]
+        && data.rankMetric in ["lift_weight_kg", "estimated_1rm", "total_kg", "dots_score"]
+        && hasValidHeroBoardRankBounds(data)
+        && data.liftWeight is number
+        && data.liftWeight > 0
+        && data.liftWeight <= 1500
+        && hasValidHeroBoardMedia(data)
+        && data.isLocked is bool
+        && data.seeded == false
+        && (!data.keys().hasAny(["eligibilityStatus"]) || data.eligibilityStatus in ["feed_only", "not_eligible", "leaderboard_added"])
+        && (!data.keys().hasAny(["eligibleBoards"]) || data.eligibleBoards is list)
+        && (!data.keys().hasAny(["reason"]) || data.reason is string)
+        && (!data.keys().hasAny(["cleanupState"]) || data.cleanupState in ["pending", "completed", "failed"])
+        && (!data.keys().hasAny(["cleanupError"]) || data.cleanupError is string)
+        && data.status in ["active", "hidden", "deleted"]
+        && data.visibility in ["public", "private"];
+    }
+
+    function hasValidClientHeroBoardPostCreate(data) {
+      return hasValidClientHeroBoardPostBase(data)
+        && data.whiteLightCount == 0
+        && data.redLightCount == 0
+        && data.derivedLightResult == "pending"
+        && !data.keys().hasAny(["lastValidatedAt"]);
+    }
+
+    function hasValidClientHeroBoardPostUpdate(data, post) {
+      return hasValidClientHeroBoardPostBase(data)
+        && data.whiteLightCount == post.whiteLightCount
+        && data.redLightCount == post.redLightCount
+        && data.derivedLightResult == post.derivedLightResult
+        && (
+          (!post.keys().hasAny(["removedAt"]) && !data.keys().hasAny(["removedAt"]))
+          || data.removedAt == post.removedAt
+        )
+        && (
+          (!post.keys().hasAny(["cleanupState"]) && !data.keys().hasAny(["cleanupState"]))
+          || data.cleanupState == post.cleanupState
+        )
+        && (
+          (!post.keys().hasAny(["cleanupRequestedAt"]) && !data.keys().hasAny(["cleanupRequestedAt"]))
+          || data.cleanupRequestedAt == post.cleanupRequestedAt
+        )
+        && (
+          (!post.keys().hasAny(["cleanupCompletedAt"]) && !data.keys().hasAny(["cleanupCompletedAt"]))
+          || data.cleanupCompletedAt == post.cleanupCompletedAt
+        )
+        && (
+          (!post.keys().hasAny(["cleanupError"]) && !data.keys().hasAny(["cleanupError"]))
+          || data.cleanupError == post.cleanupError
+        )
+        && (
+          (!post.keys().hasAny(["lastValidatedAt"]) && !data.keys().hasAny(["lastValidatedAt"]))
+          || data.lastValidatedAt == post.lastValidatedAt
+        );
+    }
+
+    function hasValidClientHeroBoardPostRemoval(before, after) {
+      return before.ownerUid == request.auth.uid
+        && after.ownerUid == before.ownerUid
+        && after.diff(before).affectedKeys().hasOnly([
+          "status",
+          "visibility",
+          "updatedAt",
+          "lastModifiedAt",
+          "removedAt",
+          "cleanupState",
+          "cleanupRequestedAt"
+        ])
+        && after.status == "deleted"
+        && after.visibility == "private"
+        && after.removedAt == request.time
+        && after.cleanupState == "pending"
+        && after.cleanupRequestedAt == request.time
+        && !after.keys().hasAny(["cleanupCompletedAt", "cleanupError"]);
+    }
+
+    function bestPointerPostPath(data) {
+      return /databases/$(database)/documents/heroboard_posts/$(data.bestPostId);
+    }
+
+    function hasAllowedLeaderboardEntryKeys(data) {
+      return data.keys().hasOnly([
+          "ownerUid",
+          "displayName",
+          "categoryKey",
+          "boardKey",
+          "rankMetric",
+          "bestPostId",
+          "sourcePostId",
+          "sourcePostIds",
+          "rankValue",
+          "exerciseType",
+          "liftWeight",
+          "unit",
+          "liftWeightKg",
+          "bodyweightKg",
+          "bodyweightBucket",
+          "gender",
+          "rankEligible",
+          "isLocked",
+          "proofType",
+          "equipmentType",
+          "reps",
+          "estimatedOneRMKg",
+          "rmType",
+          "challengeAttemptId",
+          "caption",
+          "storagePath",
+          "mediaType",
+          "uploadStatus",
+          "videoDurationMs",
+          "thumbnailPath",
+          "recordSource",
+          "sessionRecordId",
+          "totalKg",
+          "dotsScore",
+          "whiteLightCount",
+          "redLightCount",
+          "derivedLightResult",
+          "visibility",
+          "status",
+          "lastModifiedAt",
+          "lastValidatedAt",
+          "createdAt",
+          "updatedAt"
+        ]);
+    }
+
+    function hasValidSingleLiftLeaderboardEntry(data) {
+      let post = getAfter(bestPointerPostPath(data)).data;
+      return hasAllowedLeaderboardEntryKeys(data)
+        && data.ownerUid == request.auth.uid
+        && post.ownerUid == request.auth.uid
+        && post.status == "active"
+        && post.rankEligible == true
+        && post.isLocked == true
+        && post.visibility == "public"
+        && data.visibility == "public"
+        && data.status == "active"
+        && data.rankEligible == true
+        && data.isLocked == true
+        && data.boardKey in ["squat_e1rm", "bench_e1rm", "deadlift_e1rm"]
+        && data.categoryKey == post.categoryKey
+        && data.boardKey == post.boardKey
+        && data.rankMetric == post.rankMetric
+        && data.bestPostId is string
+        && data.sourcePostId == data.bestPostId
+        && data.sourcePostIds == [data.sourcePostId]
+        && data.rankValue == post.rankValue
+        && data.exerciseType == post.exerciseType
+        && data.liftWeight == post.liftWeight
+        && data.unit == post.unit
+        && data.liftWeightKg == post.liftWeightKg
+        && data.bodyweightBucket == post.bodyweightBucket
+        && data.reps == post.reps
+        && data.proofType == post.proofType
+        && data.equipmentType == post.equipmentType
+        && data.recordSource == post.recordSource
+        && data.whiteLightCount == post.whiteLightCount
+        && data.redLightCount == post.redLightCount
+        && data.derivedLightResult == post.derivedLightResult
+        && !data.keys().hasAny(["totalKg", "dotsScore"])
+        && hasValidHeroBoardRankBounds(data);
+    }
+
+    function hasValidBestLiftersDotsLeaderboardEntry(data) {
+      return hasAllowedLeaderboardEntryKeys(data)
+        && data.keys().hasAll(["boardKey", "bodyweightKg", "gender", "sourcePostIds", "totalKg", "dotsScore"])
+        && data.ownerUid == request.auth.uid
+        && data.boardKey == "best_lifters_dots"
+        && data.rankMetric == "dots_score"
+        && data.bestPostId == "best_lifters_dots_" + request.auth.uid
+        && data.sourcePostId == data.bestPostId
+        && data.sourcePostIds is list
+        && data.sourcePostIds.size() == 3
+        && data.totalKg is number
+        && data.totalKg > 0
+        && data.totalKg <= 1800
+        && data.dotsScore is number
+        && data.dotsScore > 0
+        && data.dotsScore <= 600
+        && data.rankValue == data.dotsScore
+        && data.liftWeight == data.totalKg
+        && data.liftWeightKg == data.totalKg
+        && data.bodyweightKg is number
+        && data.bodyweightKg > 0
+        && data.bodyweightKg <= 500
+        && data.gender is string
+        && data.bodyweightBucket is string
+        && data.categoryKey is string
+        && data.exerciseType == "deadlift"
+        && data.unit == "kg"
+        && data.rankEligible == true
+        && data.isLocked == true
+        && data.proofType == "workout_set"
+        && data.equipmentType == "barbell"
+        && data.reps == 1
+        && data.recordSource == "derived"
+        && data.whiteLightCount == 0
+        && data.redLightCount == 0
+        && data.derivedLightResult == "pending"
+        && data.visibility == "public"
+        && data.status == "active";
+    }
+
+    function hasValidLeaderboardEntry(data) {
+      return hasValidSingleLiftLeaderboardEntry(data)
+        || hasValidBestLiftersDotsLeaderboardEntry(data);
+    }
+
+    function hasValidLegacyBestPointer(data) {
+      let post = getAfter(bestPointerPostPath(data)).data;
+      return hasAllowedLeaderboardEntryKeys(data)
+        && data.ownerUid == request.auth.uid
+        && post.ownerUid == request.auth.uid
+        && post.status == "active"
+        && post.rankEligible == true
+        && post.isLocked == true
+        && post.visibility == "public"
+        && data.visibility == "public"
+        && data.status == "active"
+        && data.rankEligible == true
+        && data.isLocked == true
+        && data.rankMetric in ["lift_weight_kg", "estimated_1rm", "total_kg"]
+        && data.categoryKey == post.categoryKey
+        && data.rankMetric == post.rankMetric
+        && data.bestPostId is string
+        && data.rankValue == post.rankValue
+        && data.exerciseType == post.exerciseType
+        && data.liftWeightKg == post.liftWeightKg
+        && data.bodyweightBucket == post.bodyweightBucket
+        && data.reps == post.reps
+        && data.proofType == post.proofType
+        && data.equipmentType == post.equipmentType
+        && data.recordSource == post.recordSource
+        && data.whiteLightCount == post.whiteLightCount
+        && data.redLightCount == post.redLightCount
+        && data.derivedLightResult == post.derivedLightResult
+        && !data.keys().hasAny(["totalKg", "dotsScore"])
+        && hasValidHeroBoardRankBounds(data);
+    }
+
+    function hasValidBestPointer(data) {
+      return hasValidLeaderboardEntry(data)
+        || hasValidLegacyBestPointer(data);
+    }
+
+    function hasValidLeaderboardInvalidation(data) {
+      return hasAllowedLeaderboardEntryKeys(data)
+        && data.ownerUid == request.auth.uid
+        && data.status == "invalid"
+        && resource.data.ownerUid == request.auth.uid
+        && data.boardKey == resource.data.boardKey
+        && data.bestPostId == resource.data.bestPostId
+        && data.rankValue == resource.data.rankValue;
+    }
+
+    function isOwnLeaderboardEntryId(entryId) {
+      return signedIn()
+        && entryId in [
+          "squat_e1rm_" + request.auth.uid,
+          "bench_e1rm_" + request.auth.uid,
+          "deadlift_e1rm_" + request.auth.uid,
+          "best_lifters_dots_" + request.auth.uid
+        ];
+    }
+
+    match /users/{userId} {
+      allow read, write: if false;
+
+      // Website account profile. Existing app subcollections remain below.
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && hasValidUserProfileBase(request.resource.data, userId)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isOwner(userId)
+        && hasValidUserProfileBase(request.resource.data, userId)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
+
+      match /benchmarkSnapshots/{snapshotId} {
+        allow read, delete: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && hasValidBenchmarkSnapshot(request.resource.data, userId);
+        allow update: if false;
+      }
+
+      match /settings/profile {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /usage/ai_trainer {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && hasValidAITrainerUsageCreate(request.resource.data);
+        allow update: if isOwner(userId) && hasValidAITrainerUsageUpdate(request.resource.data);
+      }
+
+      match /usage/ai_trainer_guest_trial {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && hasValidAITrainerGuestTrialCreate(request.resource.data);
+        allow update: if isOwner(userId) && hasValidAITrainerGuestTrialUpdate(request.resource.data);
+      }
+
+      match /usage/ai_trainer_monthly/months/{monthKey} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && hasValidAITrainerMonthlyTrialCreate(request.resource.data, monthKey);
+        allow update: if isOwner(userId) && hasValidAITrainerMonthlyTrialUpdate(request.resource.data, monthKey);
+      }
+
+      match /workoutLogs/{recordId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /timerRecords/{recordId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /heartRateRecords/{recordId} {
+        allow read, write: if isOwner(userId);
+      }
+
+      match /challengeAttempts/{attemptId} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    match /ai_trainer_guest_trial_registry/{guestInstallId} {
+      allow read, write: if false;
+    }
+
+    match /supportRequests/{requestId} {
+      allow create: if signedIn()
+        && hasValidSupportRequest(request.resource.data);
+      allow read, update, delete: if false;
+    }
+
+    match /benchmarkVersions/{versionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /heroboard_posts/{postId} {
+      allow read: if isPublicActiveHeroBoardPost(resource.data)
+        || isOwner(resource.data.ownerUid);
+
+      allow create: if signedIn()
+        && hasValidClientHeroBoardPostCreate(request.resource.data);
+
+      allow update: if isOwner(resource.data.ownerUid)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && (
+          hasValidClientHeroBoardPostUpdate(request.resource.data, resource.data)
+          || hasValidClientHeroBoardPostRemoval(resource.data, request.resource.data)
+        );
+
+      allow delete: if false;
+    }
+
+    match /heroboard_votes/{voteId} {
+      allow read: if signedIn();
+
+      allow create: if signedIn()
+        && voteId == request.resource.data.postId + "_" + request.auth.uid
+        && hasValidHeroBoardVote(request.resource.data);
+
+      allow update: if signedIn()
+        && voteId == resource.data.postId + "_" + request.auth.uid
+        && voteId == request.resource.data.postId + "_" + request.auth.uid
+        && hasValidHeroBoardVote(request.resource.data);
+
+      allow delete: if signedIn()
+        && voteId == resource.data.postId + "_" + request.auth.uid;
+    }
+
+    match /heroboard_reports/{reportId} {
+      allow read: if isOwner(resource.data.reporterUid);
+
+      allow create: if signedIn()
+        && reportId == request.resource.data.postId + "_" + request.auth.uid
+        && hasValidHeroBoardReport(request.resource.data);
+
+      allow update, delete: if false;
+    }
+
+    match /heroboard_blocks/{blockId} {
+      allow read: if isOwner(resource.data.blockerUid);
+
+      allow create, update: if signedIn()
+        && blockId == request.auth.uid + "_" + request.resource.data.blockedUid
+        && hasValidHeroBoardBlock(request.resource.data);
+
+      allow delete: if signedIn()
+        && blockId == request.auth.uid + "_" + resource.data.blockedUid
+        && isOwner(resource.data.blockerUid);
+    }
+
+    match /user_feedback/{feedbackId} {
+      allow create: if signedIn()
+        && hasValidUserFeedback(request.resource.data);
+
+      allow read, update, delete: if false;
+    }
+
+    match /heroboard_best/{pointerId} {
+      allow read: if isOwner(resource.data.ownerUid);
+
+      allow create: if signedIn()
+        && hasValidBestPointer(request.resource.data);
+
+      allow update: if isOwner(resource.data.ownerUid)
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && (
+          hasValidBestPointer(request.resource.data)
+          || hasValidLeaderboardInvalidation(request.resource.data)
+        );
+
+      allow delete: if false;
+    }
+
+    match /leaderboard_entries/{entryId} {
+      allow get: if isOwnLeaderboardEntryId(entryId);
+
+      allow read: if isPublicActiveHeroBoardPost(resource.data)
+        || isOwner(resource.data.ownerUid);
+
+      allow create: if signedIn()
+        && entryId == request.resource.data.boardKey + "_" + request.auth.uid
+        && hasValidLeaderboardEntry(request.resource.data);
+
+      allow update: if isOwner(resource.data.ownerUid)
+        && entryId == request.resource.data.boardKey + "_" + request.auth.uid
+        && request.resource.data.ownerUid == resource.data.ownerUid
+        && (
+          (
+            request.resource.data.rankValue > resource.data.rankValue
+            && hasValidLeaderboardEntry(request.resource.data)
+          )
+          || hasValidLeaderboardInvalidation(request.resource.data)
+        );
+
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

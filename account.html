@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="View saved Liftally class snapshots and competition context history." />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta property="og:title" content="Account - Liftally" />
+  <meta property="og:description" content="View saved class snapshots and training context history." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Account - Liftally</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
+  <script src="firebase/firebase-config.staging.js?v=20260803b"></script>
+  <script type="module" src="firebase/liftally-staging-backend.js?v=20260803b"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H20Z94NQHJ');
+  </script>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    .account-hero {
+      padding: clamp(72px, 12vw, 132px) 0 34px;
+    }
+
+    .account-hero h1 {
+      max-width: 850px;
+      margin: 0 0 18px;
+      font-family: var(--site-font-display);
+      font-size: clamp(4rem, 9vw, 8.5rem);
+      letter-spacing: 0.04em;
+      line-height: 0.92;
+    }
+
+    .account-hero p {
+      max-width: 680px;
+      color: var(--site-muted);
+      font-size: 1.12rem;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--site-accent);
+      font: 800 0.82rem var(--site-font-cond);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.45fr);
+      gap: 22px;
+      align-items: start;
+      padding-bottom: 96px;
+    }
+
+    .account-card {
+      padding: 22px;
+      border: 1px solid var(--site-border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: var(--site-shadow);
+    }
+
+    .account-card h2,
+    .account-card h3 {
+      margin: 0 0 10px;
+      font-family: var(--site-font-cond);
+      letter-spacing: 0.03em;
+      line-height: 1;
+    }
+
+    .account-card p {
+      color: var(--site-muted);
+      margin: 0;
+    }
+
+    .status-line {
+      margin: 14px 0 0;
+      color: var(--site-muted);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .status-line.is-error {
+      color: #b42318;
+    }
+
+    .account-form {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .account-form label {
+      display: grid;
+      gap: 7px;
+    }
+
+    .account-form span {
+      color: var(--site-muted);
+      font: 800 0.78rem var(--site-font-cond);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .account-form input {
+      min-height: 46px;
+      width: 100%;
+      border: 1px solid var(--site-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--site-text);
+      font: 700 1rem var(--site-font-body);
+      padding: 0 12px;
+    }
+
+    .account-form input:focus {
+      border-color: rgba(251, 77, 61, 0.72);
+      box-shadow: 0 0 0 3px rgba(251, 77, 61, 0.16);
+      outline: none;
+    }
+
+    .account-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .summary-grid,
+    .chart-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .summary-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .metric-card {
+      padding: 16px;
+      border: 1px solid var(--site-border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .metric-card span {
+      color: var(--site-muted);
+      font: 800 0.74rem var(--site-font-cond);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .metric-card strong {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--site-font-cond);
+      font-size: clamp(1.6rem, 3vw, 2.25rem);
+      line-height: 1;
+    }
+
+    .chart-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      margin-bottom: 20px;
+    }
+
+    .chart-card {
+      padding: 18px;
+      border: 1px solid var(--site-border);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .chart-card h3 {
+      margin-bottom: 4px;
+    }
+
+    .chart-card svg {
+      display: block;
+      width: 100%;
+      height: 220px;
+      margin-top: 12px;
+      overflow: visible;
+    }
+
+    .chart-axis {
+      stroke: rgba(38, 38, 38, 0.13);
+      stroke-width: 1;
+    }
+
+    .chart-line {
+      fill: none;
+      stroke: var(--site-accent);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chart-point {
+      fill: var(--site-accent);
+      stroke: #fff;
+      stroke-width: 3;
+    }
+
+    .snapshot-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .snapshot-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid var(--site-border);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .snapshot-row strong {
+      font-size: 1.02rem;
+    }
+
+    .snapshot-meta,
+    .snapshot-score {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      color: var(--site-muted);
+      font-weight: 700;
+    }
+
+    .snapshot-score {
+      justify-content: flex-end;
+      text-align: right;
+    }
+
+    .empty-state {
+      padding: 22px;
+      border: 1px dashed rgba(38, 38, 38, 0.22);
+      border-radius: 12px;
+      color: var(--site-muted);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .locked-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 20px;
+    }
+
+    .locked-card {
+      min-height: 132px;
+      padding: 18px;
+      border: 1px solid rgba(251, 77, 61, 0.2);
+      border-radius: 12px;
+      background: rgba(251, 77, 61, 0.07);
+    }
+
+    .locked-card h3 {
+      color: var(--site-text);
+    }
+
+    @media (max-width: 940px) {
+      .account-grid,
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid,
+      .locked-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .summary-grid,
+      .locked-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .snapshot-row {
+        grid-template-columns: 1fr;
+      }
+
+      .snapshot-score {
+        justify-content: flex-start;
+        text-align: left;
+      }
+
+      .account-actions .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body class="site-shell account-page">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Liftally home">
+        <img src="images/logo.png" alt="Liftally logo" class="logo" />
+        <span class="brand-name">Liftally</span>
+      </a>
+      <nav class="nav site-nav" aria-label="Main navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a class="nav-link" href="index.html">Home</a></li>
+          <li><a class="nav-link" href="heroboard.html">HeroBoard</a></li>
+          <li><a class="nav-link" href="weight-class-explorer.html">Weight Class Explorer</a></li>
+          <li><a class="nav-link is-active" href="account.html" aria-current="page">Account</a></li>
+          <li><a class="nav-link" href="request-access.html">Contact</a></li>
+        </ul>
+        <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_account&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="account-hero">
+      <div class="container">
+        <p class="eyebrow">Competition Context History</p>
+        <h1>Track your saved class snapshots</h1>
+        <p>Review saved bodyweight, class, SBD total, DOTS, IPF GL, and historical benchmark percentile context from the Weight Class Explorer.</p>
+      </div>
+    </section>
+
+    <section class="container account-grid" aria-label="Account and saved snapshots">
+      <aside class="account-card">
+        <p class="eyebrow">Liftally Account</p>
+        <h2>Save with an account</h2>
+        <p>Continue as a guest for quick testing, or sign in to keep snapshots under the same profile.</p>
+        <p class="status-line" id="accountStatus" aria-live="polite">Loading account service...</p>
+
+        <form class="account-form" id="accountForm">
+          <label>
+            <span>Email</span>
+            <input id="accountEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+          <label>
+            <span>Password</span>
+            <input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="6+ characters" />
+          </label>
+        </form>
+
+        <div class="account-actions">
+          <button class="btn btn-primary" type="button" id="guestButton">Continue as Guest</button>
+          <button class="btn btn-secondary" type="button" id="createAccountButton">Create Account</button>
+          <button class="btn btn-secondary" type="button" id="signInButton">Sign In</button>
+          <button class="btn btn-secondary" type="button" id="signOutButton">Sign Out</button>
+        </div>
+      </aside>
+
+      <section>
+        <div class="summary-grid" aria-label="Snapshot summary">
+          <article class="metric-card">
+            <span>Snapshots</span>
+            <strong id="snapshotCount">-</strong>
+          </article>
+          <article class="metric-card">
+            <span>Latest Total</span>
+            <strong id="latestTotal">-</strong>
+          </article>
+          <article class="metric-card">
+            <span>Latest DOTS</span>
+            <strong id="latestDots">-</strong>
+          </article>
+          <article class="metric-card">
+            <span>Latest Class</span>
+            <strong id="latestClass">-</strong>
+          </article>
+        </div>
+
+        <div class="chart-grid" aria-label="Snapshot trend charts">
+          <article class="chart-card">
+            <h3>Total trend</h3>
+            <p>SBD Total across saved snapshots.</p>
+            <svg id="totalChart" role="img" aria-label="Total trend chart"></svg>
+          </article>
+          <article class="chart-card">
+            <h3>DOTS trend</h3>
+            <p>DOTS score across saved snapshots.</p>
+            <svg id="dotsChart" role="img" aria-label="DOTS trend chart"></svg>
+          </article>
+          <article class="chart-card">
+            <h3>IPF GL trend</h3>
+            <p>IPF GL score across saved snapshots.</p>
+            <svg id="glChart" role="img" aria-label="IPF GL trend chart"></svg>
+          </article>
+          <article class="chart-card">
+            <h3>Bodyweight trend</h3>
+            <p>Entered bodyweight across saved snapshots.</p>
+            <svg id="bodyweightChart" role="img" aria-label="Bodyweight trend chart"></svg>
+          </article>
+        </div>
+
+        <article class="account-card">
+          <p class="eyebrow">Snapshot History</p>
+          <h2>Recent saved snapshots</h2>
+          <p class="status-line" id="snapshotStatus" aria-live="polite">Sign in or continue as a guest to load snapshots.</p>
+          <ul class="snapshot-list" id="snapshotList"></ul>
+        </article>
+
+        <div class="locked-grid" aria-label="Premium planner preview">
+          <article class="locked-card">
+            <p class="eyebrow">Premium Preview</p>
+            <h3>Nearby class benchmark comparison</h3>
+            <p>Compare the same saved total across adjacent class-level benchmark bands.</p>
+          </article>
+          <article class="locked-card">
+            <p class="eyebrow">Premium Preview</p>
+            <h3>Benchmark gap chart</h3>
+            <p>Show the next historical benchmark threshold and total gap over time.</p>
+          </article>
+          <article class="locked-card">
+            <p class="eyebrow">Premium Preview</p>
+            <h3>Shareable reports</h3>
+            <p>Generate a coach-ready snapshot report with class context and trends.</p>
+          </article>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Liftally</span>
+        <p>© 2026 YI SHAN FANG</p>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="account.html" aria-current="page">Account</a>
+        <a href="request-access.html">Contact</a>
+        <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_account&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const accountStatus = document.getElementById('accountStatus');
+    const snapshotStatus = document.getElementById('snapshotStatus');
+    const snapshotList = document.getElementById('snapshotList');
+    const snapshotCount = document.getElementById('snapshotCount');
+    const latestTotal = document.getElementById('latestTotal');
+    const latestDots = document.getElementById('latestDots');
+    const latestClass = document.getElementById('latestClass');
+    const emailInput = document.getElementById('accountEmail');
+    const passwordInput = document.getElementById('accountPassword');
+    const guestButton = document.getElementById('guestButton');
+    const createAccountButton = document.getElementById('createAccountButton');
+    const signInButton = document.getElementById('signInButton');
+    const signOutButton = document.getElementById('signOutButton');
+
+    const charts = {
+      totalKg: document.getElementById('totalChart'),
+      dots: document.getElementById('dotsChart'),
+      ipfGl: document.getElementById('glChart'),
+      bodyweightKg: document.getElementById('bodyweightChart')
+    };
+
+    function setStatus(element, message, isError = false) {
+      element.textContent = message;
+      element.classList.toggle('is-error', isError);
+    }
+
+    function userLabel(user) {
+      if (!user) return 'Not signed in';
+      if (user.isAnonymous) return 'Guest session';
+      return `Signed in as ${user.email || user.uid}`;
+    }
+
+    function setBusy(isBusy) {
+      [guestButton, createAccountButton, signInButton, signOutButton].forEach((button) => {
+        button.disabled = isBusy;
+      });
+    }
+
+    function updateControls(user) {
+      signOutButton.disabled = !user;
+      createAccountButton.textContent = user && user.isAnonymous ? 'Save With Account' : 'Create Account';
+    }
+
+    function credentials() {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value;
+      if (!email || !password) throw new Error('Email and password are required.');
+      if (password.length < 6) throw new Error('Password must be at least 6 characters.');
+      return { email, password };
+    }
+
+    function formatNumber(value, digits = 1) {
+      const numeric = Number(value);
+      if (!Number.isFinite(numeric)) return '-';
+      return numeric.toLocaleString(undefined, {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits
+      });
+    }
+
+    function dateFromTimestamp(value) {
+      if (!value) return null;
+      if (typeof value.toDate === 'function') return value.toDate();
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function formatSavedAt(value) {
+      const date = dateFromTimestamp(value);
+      if (!date) return 'Saved recently';
+      return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[character]);
+    }
+
+    function testedStatusLabel(value) {
+      if (value === 'tested') return 'Tested benchmark';
+      if (value === 'untested') return 'Untested benchmark';
+      return 'Testing status not reported';
+    }
+
+    function sortedSnapshots(items) {
+      return [...items].sort((a, b) => {
+        const aDate = dateFromTimestamp(a.createdAt);
+        const bDate = dateFromTimestamp(b.createdAt);
+        return (aDate ? aDate.getTime() : 0) - (bDate ? bDate.getTime() : 0);
+      });
+    }
+
+    function renderSummary(items) {
+      snapshotCount.textContent = items.length.toString();
+      const ordered = sortedSnapshots(items);
+      const latest = ordered[ordered.length - 1];
+      latestTotal.textContent = latest ? `${formatNumber(latest.totalKg, 1)}kg` : '-';
+      latestDots.textContent = latest ? formatNumber(latest.dots, 2) : '-';
+      latestClass.textContent = latest ? `${latest.weightClassKg}kg` : '-';
+    }
+
+    function chartPath(points) {
+      return points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
+    }
+
+    function renderChart(svg, items, field) {
+      const values = sortedSnapshots(items)
+        .map((item, index) => ({ index, value: Number(item[field]) }))
+        .filter((point) => Number.isFinite(point.value));
+      const width = 640;
+      const height = 220;
+      const pad = 28;
+      svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+
+      if (!values.length) {
+        svg.innerHTML = `<text x="32" y="112" fill="#6b7280" font-size="18" font-family="Barlow">No saved data yet.</text>`;
+        return;
+      }
+
+      const min = Math.min(...values.map((point) => point.value));
+      const max = Math.max(...values.map((point) => point.value));
+      const range = max - min || 1;
+      const points = values.map((point, order) => ({
+        x: values.length === 1 ? width / 2 : pad + (order / (values.length - 1)) * (width - pad * 2),
+        y: height - pad - ((point.value - min) / range) * (height - pad * 2),
+        value: point.value
+      }));
+
+      const grid = [0.25, 0.5, 0.75].map((ratio) => {
+        const y = pad + ratio * (height - pad * 2);
+        return `<line class="chart-axis" x1="${pad}" y1="${y}" x2="${width - pad}" y2="${y}" />`;
+      }).join('');
+      const circles = points.map((point) => `<circle class="chart-point" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="6"><title>${formatNumber(point.value, 2)}</title></circle>`).join('');
+      const path = points.length > 1 ? `<path class="chart-line" d="${chartPath(points)}" />` : '';
+      svg.innerHTML = `${grid}${path}${circles}`;
+    }
+
+    function renderSnapshotList(items) {
+      if (!items.length) {
+        snapshotList.innerHTML = '<li class="empty-state">No saved snapshots yet. Use the Weight Class Explorer to calculate and save one.</li>';
+        return;
+      }
+
+      snapshotList.innerHTML = [...items].sort((a, b) => {
+        const aDate = dateFromTimestamp(a.createdAt);
+        const bDate = dateFromTimestamp(b.createdAt);
+        return (bDate ? bDate.getTime() : 0) - (aDate ? aDate.getTime() : 0);
+      }).map((item) => `
+        <li class="snapshot-row">
+          <div>
+            <strong>${escapeHtml(item.standardLabel || 'Standard')} · ${escapeHtml(item.weightClassKg || '-')}kg class</strong>
+            <div class="snapshot-meta">
+              <span>${escapeHtml(formatSavedAt(item.createdAt))}</span>
+              <span>${escapeHtml(formatNumber(item.bodyweightKg, 1))}kg bodyweight</span>
+              <span>${escapeHtml(testedStatusLabel(item.testedStatus))}</span>
+              <span>${escapeHtml(item.totalPercentileBand || 'Total unavailable')}</span>
+            </div>
+          </div>
+          <div class="snapshot-score">
+            <span>${escapeHtml(formatNumber(item.totalKg, 1))}kg Total</span>
+            <span>DOTS ${escapeHtml(formatNumber(item.dots, 2))}</span>
+            <span>IPF GL ${escapeHtml(formatNumber(item.ipfGl, 2))}</span>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderSnapshots(items) {
+      renderSummary(items);
+      renderSnapshotList(items);
+      renderChart(charts.totalKg, items, 'totalKg');
+      renderChart(charts.dots, items, 'dots');
+      renderChart(charts.ipfGl, items, 'ipfGl');
+      renderChart(charts.bodyweightKg, items, 'bodyweightKg');
+    }
+
+    async function loadSnapshots() {
+      if (!window.liftallyBackend || typeof window.liftallyBackend.listBenchmarkSnapshots !== 'function') {
+        setStatus(snapshotStatus, 'Snapshot service is still loading.');
+        return;
+      }
+
+      setStatus(snapshotStatus, 'Loading saved snapshots...');
+      try {
+        const items = await window.liftallyBackend.listBenchmarkSnapshots(50);
+        renderSnapshots(items);
+        setStatus(snapshotStatus, items.length ? 'Saved snapshots loaded.' : 'No saved snapshots yet.');
+      } catch (error) {
+        setStatus(snapshotStatus, `Snapshots could not be loaded: ${error.code || error.message}`, true);
+      }
+    }
+
+    async function continueAsGuest() {
+      if (!window.liftallyBackend || typeof window.liftallyBackend.ensureAnonymousUser !== 'function') return;
+      setBusy(true);
+      setStatus(accountStatus, 'Starting guest session...');
+      try {
+        const user = await window.liftallyBackend.ensureAnonymousUser();
+        setStatus(accountStatus, userLabel(user));
+        updateControls(user);
+        await loadSnapshots();
+      } catch (error) {
+        setStatus(accountStatus, `Guest session failed: ${error.code || error.message}`, true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function createAccount() {
+      if (!window.liftallyBackend || typeof window.liftallyBackend.createAccountWithEmail !== 'function') return;
+      setBusy(true);
+      setStatus(accountStatus, 'Creating account...');
+      try {
+        const { email, password } = credentials();
+        const user = await window.liftallyBackend.createAccountWithEmail(email, password);
+        passwordInput.value = '';
+        setStatus(accountStatus, userLabel(user));
+        updateControls(user);
+        await loadSnapshots();
+      } catch (error) {
+        setStatus(accountStatus, `Account could not be created: ${error.code || error.message}`, true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function signIn() {
+      if (!window.liftallyBackend || typeof window.liftallyBackend.signInWithEmail !== 'function') return;
+      setBusy(true);
+      setStatus(accountStatus, 'Signing in...');
+      try {
+        const { email, password } = credentials();
+        const user = await window.liftallyBackend.signInWithEmail(email, password);
+        passwordInput.value = '';
+        setStatus(accountStatus, userLabel(user));
+        updateControls(user);
+        await loadSnapshots();
+      } catch (error) {
+        setStatus(accountStatus, `Sign in failed: ${error.code || error.message}`, true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function signOut() {
+      if (!window.liftallyBackend || typeof window.liftallyBackend.signOut !== 'function') return;
+      setBusy(true);
+      setStatus(accountStatus, 'Signing out...');
+      try {
+        await window.liftallyBackend.signOut();
+        renderSnapshots([]);
+        setStatus(accountStatus, 'Signed out.');
+        setStatus(snapshotStatus, 'Sign in or continue as a guest to load snapshots.');
+        updateControls(null);
+      } catch (error) {
+        setStatus(accountStatus, `Sign out failed: ${error.code || error.message}`, true);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    document.getElementById('accountForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      signIn();
+    });
+    guestButton.addEventListener('click', continueAsGuest);
+    createAccountButton.addEventListener('click', createAccount);
+    signInButton.addEventListener('click', signIn);
+    signOutButton.addEventListener('click', signOut);
+
+    window.addEventListener('liftally-backend-ready', () => {
+      const user = window.liftallyBackend.getCurrentUser();
+      setStatus(accountStatus, userLabel(user));
+      updateControls(user);
+      if (user) {
+        loadSnapshots();
+      } else {
+        renderSnapshots([]);
+        setStatus(snapshotStatus, 'Sign in or continue as a guest to load snapshots.');
+      }
+    });
+
+    window.addEventListener('liftally-auth-change', (event) => {
+      setStatus(accountStatus, userLabel(event.detail.user));
+      updateControls(event.detail.user);
+      if (!event.detail.user) renderSnapshots([]);
+    });
+
+    window.addEventListener('liftally-backend-error', () => {
+      setStatus(accountStatus, 'Account service is unavailable.', true);
+      setStatus(snapshotStatus, 'Snapshot service is unavailable.', true);
+    });
+
+    renderSnapshots([]);
+    updateControls(null);
+  </script>
+  <script src="site.js"></script>
+</body>
+</html>

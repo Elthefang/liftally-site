@@ -1,0 +1,175 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function isPositiveNumber(value, maxValue) {
+      return value is number && value > 0 && value <= maxValue;
+    }
+
+    function isOptionalShortString(data, field, maxLength) {
+      return !data.keys().hasAny([field])
+        || (data[field] is string && data[field].size() <= maxLength);
+    }
+
+    function isPercentileBand(value) {
+      return value is string
+        && value.size() <= 20
+        && (
+          value == "Below P1"
+          || value == "Unavailable"
+          || value.matches("^P([1-9]|[1-9][0-9])\\+?$")
+        );
+    }
+
+    function hasValidBenchmarkSnapshot(data, userId) {
+      return data.keys().hasOnly([
+          "schemaVersion",
+          "ownerUid",
+          "source",
+          "standardKey",
+          "standardLabel",
+          "sex",
+          "unit",
+          "bodyweight",
+          "bodyweightKg",
+          "squat",
+          "bench",
+          "deadlift",
+          "totalKg",
+          "dots",
+          "ipfGl",
+          "weightClassKg",
+          "classRange",
+          "testedStatus",
+          "benchmarkStandard",
+          "totalPercentileBand",
+          "dotsPercentileBand",
+          "benchmarkSampleSize",
+          "sourceDataAsOf",
+          "methodologyVersion",
+          "createdAt",
+          "updatedAt"
+        ])
+        && data.schemaVersion == 1
+        && data.ownerUid == userId
+        && data.ownerUid == request.auth.uid
+        && data.source == "web_weight_class_explorer"
+        && data.standardKey in ["ipf", "usapl", "uspa", "wrpf"]
+        && data.standardLabel is string
+        && data.standardLabel.size() > 0
+        && data.standardLabel.size() <= 40
+        && data.sex in ["men", "women"]
+        && data.unit in ["kg", "lb"]
+        && isPositiveNumber(data.bodyweight, 1500)
+        && isPositiveNumber(data.bodyweightKg, 700)
+        && isPositiveNumber(data.squat, 1500)
+        && isPositiveNumber(data.bench, 1500)
+        && isPositiveNumber(data.deadlift, 1500)
+        && isPositiveNumber(data.totalKg, 2000)
+        && isPositiveNumber(data.dots, 1000)
+        && isPositiveNumber(data.ipfGl, 2000)
+        && data.weightClassKg is string
+        && data.weightClassKg.size() > 0
+        && data.weightClassKg.size() <= 16
+        && data.classRange is string
+        && data.classRange.size() > 0
+        && data.classRange.size() <= 80
+        && data.testedStatus in ["tested", "untested", "unknown"]
+        && data.benchmarkStandard is string
+        && data.benchmarkStandard.size() > 0
+        && data.benchmarkStandard.size() <= 24
+        && isPercentileBand(data.totalPercentileBand)
+        && isPercentileBand(data.dotsPercentileBand)
+        && data.benchmarkSampleSize is int
+        && data.benchmarkSampleSize >= 0
+        && isOptionalShortString(data, "sourceDataAsOf", 24)
+        && isOptionalShortString(data, "methodologyVersion", 16)
+        && data.createdAt == request.time
+        && data.updatedAt == request.time;
+    }
+
+    function hasValidSupportRequest(data) {
+      return data.keys().hasOnly([
+          "schemaVersion",
+          "requesterUid",
+          "source",
+          "type",
+          "message",
+          "email",
+          "createdAt",
+          "status"
+        ])
+        && data.schemaVersion == 1
+        && data.requesterUid == request.auth.uid
+        && data.source in ["website", "weight_class_explorer"]
+        && data.type in ["feedback", "competition_planner_access", "support"]
+        && data.message is string
+        && data.message.size() >= 8
+        && data.message.size() <= 5000
+        && data.email is string
+        && data.email.size() <= 254
+        && (
+          data.email.size() == 0
+          || data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+        )
+        && data.createdAt == request.time
+        && data.status == "open";
+    }
+
+    function hasValidUserProfileBase(data, userId) {
+      return data.keys().hasOnly([
+          "schemaVersion",
+          "uid",
+          "email",
+          "displayName",
+          "createdAt",
+          "updatedAt"
+        ])
+        && data.schemaVersion == 1
+        && data.uid == userId
+        && isOptionalShortString(data, "email", 254)
+        && isOptionalShortString(data, "displayName", 80);
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && hasValidUserProfileBase(request.resource.data, userId)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isOwner(userId)
+        && hasValidUserProfileBase(request.resource.data, userId)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time;
+
+      match /benchmarkSnapshots/{snapshotId} {
+        allow read, delete: if isOwner(userId);
+        allow create: if isOwner(userId)
+          && hasValidBenchmarkSnapshot(request.resource.data, userId);
+        allow update: if false;
+      }
+    }
+
+    match /supportRequests/{requestId} {
+      allow create: if signedIn()
+        && hasValidSupportRequest(request.resource.data);
+      allow read, update, delete: if false;
+    }
+
+    match /benchmarkVersions/{versionId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

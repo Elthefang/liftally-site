@@ -1,0 +1,45 @@
+{
+  "firestore": {
+    "rules": "firestore.production.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "hosting": {
+    "site": "myappproject-f71fd",
+    "public": "dist/production",
+    "ignore": [
+      ".git/**",
+      ".github/**",
+      ".DS_Store",
+      ".firebaserc",
+      "firebase.json",
+      "firebase.production.json",
+      "firebase*.json",
+      "firebase-staging-test.html",
+      "firebase/staging-smoke-test.js",
+      "firebase/staging-backend-plan.md",
+      "firebase/firebase-config.staging.js",
+      "firebase/liftally-staging-backend.js",
+      "images/app-store-logo.png",
+      "Videos/**",
+      "*.md"
+    ],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      },
+      {
+        "source": "**/*.{css,js,json,png,jpg,jpeg,gif,ico}",
+        "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }]
+      },
+      {
+        "source": "/firebase/**",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+      }
+    ]
+  }
+}

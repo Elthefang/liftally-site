@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="HeroBoard by Liftally - community SBD lifts from similar lifters." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="HeroBoard - Liftally" />
+  <meta property="og:description" content="Browse Squat, Bench Press, and Deadlift lifts from the Liftally community." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://elthefang.github.io/liftally-site/heroboard.html" />
+  <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="HeroBoard - Liftally" />
+  <meta name="twitter:description" content="Browse Squat, Bench Press, and Deadlift lifts from the Liftally community." />
+  <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <title>HeroBoard - Liftally</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H20Z94NQHJ');
+  </script>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050505;
+      --bg-soft: #0d0d10;
+      --surface: rgba(12, 12, 14, 0.78);
+      --surface-strong: rgba(20, 20, 24, 0.92);
+      --surface-glass: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.12);
+      --text: #f5f1ec;
+      --muted: rgba(245, 241, 236, 0.72);
+      --accent: #ff5a45;
+      --accent-2: #ff866f;
+      --chalk: rgba(244, 233, 224, 0.3);
+      --chalk-strong: rgba(255, 244, 233, 0.65);
+      --success: #7dffb3;
+      --shadow: rgba(0, 0, 0, 0.45);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-cond: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+      --page-width: 1200px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(255, 90, 69, 0.18), transparent 20%),
+        radial-gradient(circle at 82% 22%, rgba(255, 255, 255, 0.08), transparent 16%),
+        radial-gradient(circle at 78% 76%, rgba(255, 136, 110, 0.14), transparent 18%),
+        linear-gradient(180deg, #030303 0%, #09090b 55%, #040404 100%);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -2;
+    }
+
+    body::before {
+      background-image:
+        radial-gradient(circle at 15% 25%, rgba(255,255,255,0.9) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 62% 15%, rgba(255,255,255,0.6) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 72% 70%, rgba(255,255,255,0.75) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 25% 75%, rgba(255,255,255,0.55) 0 1px, transparent 1.5px),
+        radial-gradient(circle at 85% 40%, rgba(255,255,255,0.4) 0 1px, transparent 1.5px);
+      background-size: 240px 240px, 320px 320px, 280px 280px, 260px 260px, 360px 360px;
+      opacity: 0.45;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08), transparent 32%),
+        radial-gradient(circle at 60% 32%, rgba(255, 255, 255, 0.12), transparent 18%);
+      filter: blur(90px);
+      z-index: -3;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .chalk-dust {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .chalk-dust span {
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0.06) 28%, transparent 70%);
+      filter: blur(14px);
+      mix-blend-mode: screen;
+      animation: drift 18s ease-in-out infinite;
+    }
+
+    .chalk-dust span:nth-child(1) { top: 6%; left: 48%; animation-delay: -2s; }
+    .chalk-dust span:nth-child(2) { top: 52%; left: 68%; width: 310px; height: 310px; animation-delay: -7s; }
+    .chalk-dust span:nth-child(3) { top: 68%; left: 12%; width: 260px; height: 260px; animation-delay: -12s; }
+
+    @keyframes drift {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.36; }
+      50% { transform: translate3d(18px, -22px, 0) scale(1.08); opacity: 0.58; }
+    }
+
+    .container {
+      width: min(var(--page-width), calc(100vw - 40px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(5, 5, 5, 0.68);
+      backdrop-filter: blur(20px);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: inherit;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(255, 90, 69, 0.32));
+    }
+
+    .brand-name,
+    .eyebrow,
+    .pill,
+    .lift-type,
+    .meta-label,
+    .nav-link,
+    .stat-label {
+      font-family: var(--font-cond);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-link {
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .nav-link:hover { color: var(--text); }
+
+    .btn,
+    .filter-button,
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 48px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-family: var(--font-body);
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .btn {
+      padding: 0 22px;
+    }
+
+    .btn-primary,
+    .action-button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      box-shadow: 0 14px 34px rgba(255, 90, 69, 0.3);
+    }
+
+    .btn-secondary,
+    .action-button.secondary,
+    .filter-button {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .btn:hover,
+    .action-button:hover,
+    .filter-button:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero {
+      position: relative;
+      padding: 88px 0 56px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+      gap: 44px;
+      align-items: center;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      margin-bottom: 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--chalk-strong);
+      font-size: 0.82rem;
+    }
+
+    .pill::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 6px rgba(125,255,179,0.12);
+    }
+
+    h1, h2, h3 {
+      font-weight: 400;
+      line-height: 0.96;
+      letter-spacing: 0.03em;
+      text-wrap: balance;
+    }
+
+    h1, h2 {
+      font-family: var(--font-display);
+    }
+
+    h1 {
+      font-size: clamp(4rem, 10vw, 7.2rem);
+      margin-bottom: 18px;
+    }
+
+    .hero-copy p {
+      max-width: 620px;
+      color: var(--muted);
+    }
+
+    .hero-copy .lede {
+      font-size: 1.16rem;
+      margin-bottom: 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      max-width: 640px;
+    }
+
+    .stat-card {
+      padding: 16px 18px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .stat-value {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.76rem;
+      color: var(--muted);
+    }
+
+    .board-panel {
+      position: relative;
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      box-shadow: 0 24px 50px var(--shadow);
+      backdrop-filter: blur(20px);
+      padding: 26px;
+    }
+
+    .board-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 34%);
+      pointer-events: none;
+    }
+
+    .board-inner {
+      position: relative;
+      display: grid;
+      gap: 20px;
+    }
+
+    .video-frame {
+      position: relative;
+      min-height: 250px;
+      border-radius: 26px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,90,69,0.28), rgba(255,255,255,0.06)),
+        url("images/homepage-view-1-removed.png") center / cover no-repeat;
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.14);
+    }
+
+    .video-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(0,0,0,0.68));
+    }
+
+    .play-mark {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      z-index: 1;
+      width: 72px;
+      height: 72px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: rgba(5, 5, 5, 0.7);
+      border: 1px solid rgba(255,255,255,0.18);
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      font-size: 2rem;
+      backdrop-filter: blur(12px);
+    }
+
+    .lift-meta {
+      position: absolute;
+      z-index: 1;
+      left: 22px;
+      right: 22px;
+      bottom: 20px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .lift-type {
+      color: var(--chalk-strong);
+      font-size: 0.82rem;
+      margin-bottom: 4px;
+    }
+
+    .lift-weight {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 3.2rem;
+      line-height: 0.9;
+    }
+
+    .vote-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 116px;
+      min-height: 48px;
+      gap: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .light-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 999px;
+      display: inline-block;
+      box-shadow: 0 0 18px rgba(255,255,255,0.26);
+    }
+
+    .light-dot.white {
+      background: #f8f4e8;
+      border: 1px solid rgba(255,255,255,0.86);
+    }
+
+    .light-dot.red {
+      background: #e24a4a;
+      border: 1px solid rgba(255,126,126,0.86);
+      box-shadow: 0 0 18px rgba(226,74,74,0.34);
+    }
+
+    .filters {
+      display: grid;
+      gap: 18px;
+    }
+
+    .filter-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .eyebrow {
+      color: var(--accent-2);
+      font-size: 0.82rem;
+      margin-bottom: 2px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .filter-button {
+      min-height: 42px;
+      padding: 0 15px;
+      color: var(--muted);
+    }
+
+    .filter-button[aria-pressed="true"] {
+      color: #fff;
+      border-color: rgba(255,90,69,0.72);
+      background: linear-gradient(135deg, rgba(255,90,69,0.36), rgba(255,134,111,0.18));
+      box-shadow: 0 12px 26px rgba(255,90,69,0.18);
+    }
+
+    .notice {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--muted);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .action-button {
+      padding: 0 18px;
+    }
+
+    .entry-meta {
+      color: var(--chalk-strong);
+      font-size: 0.88rem;
+      margin-top: 8px;
+    }
+
+    .section {
+      padding: 56px 0 72px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .section-header p {
+      max-width: 580px;
+      color: var(--muted);
+    }
+
+    h2 {
+      font-size: clamp(2.8rem, 7vw, 5rem);
+      margin-bottom: 10px;
+    }
+
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .roadmap-card {
+      position: relative;
+      overflow: hidden;
+      padding: 24px;
+      min-height: 190px;
+      border-radius: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: 0 24px 50px var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+
+    .roadmap-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), transparent 34%);
+      pointer-events: none;
+    }
+
+    .roadmap-card h3,
+    .roadmap-card p,
+    .roadmap-card .meta-label {
+      position: relative;
+    }
+
+    .roadmap-card h3 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+    }
+
+    .roadmap-card p {
+      color: var(--muted);
+    }
+
+    .meta-label {
+      display: block;
+      color: var(--accent-2);
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .roadmap-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .container {
+        width: min(var(--page-width), calc(100vw - 28px));
+      }
+
+      .header-inner {
+        min-height: 68px;
+      }
+
+      .header-actions {
+        gap: 10px;
+      }
+
+      .btn {
+        min-height: 42px;
+        padding: 0 14px;
+      }
+
+      .hero {
+        padding: 58px 0 36px;
+      }
+
+      h1 {
+        font-size: clamp(3.2rem, 20vw, 5.4rem);
+      }
+
+      .board-panel {
+        padding: 18px;
+        border-radius: 22px;
+      }
+
+      .video-frame {
+        min-height: 220px;
+        border-radius: 20px;
+      }
+
+      .lift-meta {
+        align-items: start;
+        flex-direction: column;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="site.css" />
+</head>
+<body class="site-shell feature-page heroboard-page">
+  <div class="chalk-dust" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Liftally home">
+        <img class="logo" src="images/logo.png" alt="" />
+        <span class="brand-name">Liftally</span>
+      </a>
+      <nav class="header-actions site-nav" aria-label="Main navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a class="nav-link" href="index.html">Home</a></li>
+          <li><a class="nav-link is-active" href="heroboard.html" aria-current="page">HeroBoard</a></li>
+          <li><a class="nav-link" href="weight-class-explorer.html">Weight Class Explorer</a></li>
+          <li><a class="nav-link" href="account.html">Account</a></li>
+          <li><a class="nav-link" href="request-access.html">Contact</a></li>
+        </ul>
+        <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="pill">Web MVP destination</span>
+          <h1 id="hero-title">HeroBoard is where clean lifts get replayed</h1>
+          <p class="lede">Browse Squat, Bench Press, and Deadlift attempts by movement and bodyweight bucket. Viewers cast white or red lights after watching each lift.</p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#preview">Browse the board</a>
+            <a class="btn btn-secondary" href="#mvp">MVP status</a>
+          </div>
+
+          <div class="stats-row" aria-label="HeroBoard scope">
+            <div class="stat-card">
+              <span class="stat-value">SBD</span>
+              <span class="stat-label">Squat / Bench / Deadlift</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">4</span>
+              <span class="stat-label">Bodyweight buckets</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-value">1</span>
+              <span class="stat-label">Light vote per user</span>
+            </div>
+          </div>
+        </div>
+
+        <aside class="board-panel" id="preview" aria-label="HeroBoard preview">
+          <div class="board-inner">
+            <div class="video-frame">
+              <div class="play-mark" aria-hidden="true">▶</div>
+              <div class="lift-meta">
+                <div>
+                  <span class="lift-type">Bench Press / 70-80 kg</span>
+                  <span class="lift-weight">120 kg</span>
+                </div>
+                <span class="vote-chip" aria-label="Community lights: 24 white, 5 red">
+                  <span class="light-dot white" aria-hidden="true"></span>
+                  24
+                  <span class="light-dot red" aria-hidden="true"></span>
+                  5
+                </span>
+              </div>
+            </div>
+
+            <div class="filters" aria-label="HeroBoard filters">
+              <div class="filter-row">
+                <p class="eyebrow">Exercise</p>
+                <div class="filter-group" data-filter-group="exercise">
+                  <button class="filter-button" type="button" data-value="squat" aria-pressed="false">Squat</button>
+                  <button class="filter-button" type="button" data-value="bench" aria-pressed="true">Bench</button>
+                  <button class="filter-button" type="button" data-value="deadlift" aria-pressed="false">Deadlift</button>
+                </div>
+              </div>
+
+              <div class="filter-row">
+                <p class="eyebrow">Bodyweight</p>
+                <div class="filter-group" data-filter-group="bodyweight">
+                  <button class="filter-button" type="button" data-value="<60 kg" aria-pressed="false">&lt;60 kg</button>
+                  <button class="filter-button" type="button" data-value="60-70 kg" aria-pressed="false">60-70 kg</button>
+                  <button class="filter-button" type="button" data-value="70-80 kg" aria-pressed="true">70-80 kg</button>
+                  <button class="filter-button" type="button" data-value="80+ kg" aria-pressed="false">80+ kg</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="notice">Live feed, upload, and white/red light voting will be enabled after Firebase Auth, Firestore rules, and Storage rules are configured.</div>
+
+            <div class="cta-row">
+              <button class="action-button primary" type="button" id="uploadButton">Upload lift</button>
+              <button class="action-button secondary" type="button" id="refreshButton">Refresh feed</button>
+            </div>
+
+            <p class="entry-meta" id="entryMeta"></p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="mvp" aria-labelledby="mvp-title">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="pill">MVP plan</span>
+            <h2 id="mvp-title">What comes online next</h2>
+          </div>
+          <p>HeroBoard validates whether lifters browse, upload, replay, and judge lifts with accumulated community white/red lights.</p>
+        </div>
+
+        <div class="roadmap-grid">
+          <article class="roadmap-card">
+            <span class="meta-label">Phase 1</span>
+            <h3>Firebase setup</h3>
+            <p>Firebase Auth, Firestore collections, Storage paths, and rules for public active posts, user-owned uploads, and one white/red light vote per user.</p>
+          </article>
+          <article class="roadmap-card">
+            <span class="meta-label">Phase 2</span>
+            <h3>Live feed</h3>
+            <p>Newest-first posts, exercise and bodyweight filters, video playback, upload validation, and delete-own-post behavior.</p>
+          </article>
+          <article class="roadmap-card">
+            <span class="meta-label">Phase 3</span>
+            <h3>Seed and QA</h3>
+            <p>Seed lifts, verify mobile web, signed-out browsing, signed-in upload and voting, duplicate vote prevention, and invalid file rejection.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Liftally</span>
+        <p>© 2026 YI SHAN FANG</p>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="account.html">Account</a>
+        <a href="request-access.html">Contact</a>
+        <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener">Download</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const attribution = {
+      source: params.get('source') || 'direct',
+      entry: params.get('entry') || 'web',
+      platform: params.get('platform') || 'web'
+    };
+
+    window.liftallyHeroBoardAttribution = attribution;
+
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'heroboard_visit', {
+        source: attribution.source,
+        entry: attribution.entry,
+        platform: attribution.platform
+      });
+    }
+
+    const entryMeta = document.getElementById('entryMeta');
+    if (entryMeta) {
+      entryMeta.textContent = `Entry: ${attribution.source} / ${attribution.entry} / ${attribution.platform}`;
+    }
+
+    document.querySelectorAll('[data-filter-group]').forEach((group) => {
+      group.addEventListener('click', (event) => {
+        const button = event.target.closest('.filter-button');
+        if (!button) return;
+
+        group.querySelectorAll('.filter-button').forEach((candidate) => {
+          candidate.setAttribute('aria-pressed', candidate === button ? 'true' : 'false');
+        });
+
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'heroboard_filter_change', {
+            filter: group.dataset.filterGroup,
+            value: button.dataset.value,
+            source: attribution.source,
+            entry: attribution.entry,
+            platform: attribution.platform
+          });
+        }
+      });
+    });
+
+    document.getElementById('uploadButton')?.addEventListener('click', () => {
+      alert('Upload will be enabled after Firebase setup is complete.');
+    });
+
+    document.getElementById('refreshButton')?.addEventListener('click', () => {
+      alert('Live feed refresh will be enabled with the Firebase-backed feed.');
+    });
+  </script>
+  <script src="site.js"></script>
+</body>
+</html>

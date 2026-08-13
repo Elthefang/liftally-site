@@ -1,0 +1,85 @@
+{
+  "hosting": {
+    "site": "liftally-staging",
+    "public": ".",
+    "ignore": [
+      ".git/**",
+      ".github/**",
+      ".DS_Store",
+      ".firebaserc",
+      "firebase.json",
+      "firestore.rules",
+      "firestore.indexes.json",
+      "firebase-staging-test.html",
+      "firebase/staging-smoke-test.js",
+      "firebase/staging-backend-plan.md",
+      "images/app-store-logo.png",
+      "Videos/**",
+      "*.md"
+    ],
+    "headers": [
+      {
+        "source": "/",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "**/*.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      },
+      {
+        "source": "**/*.{css,js,json,png,jpg,jpeg,gif,ico}",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=3600"
+          }
+        ]
+      },
+      {
+        "source": "/firebase/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "emulators": {
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9099
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8080
+    },
+    "ui": {
+      "host": "127.0.0.1",
+      "port": 4000
+    },
+    "hub": {
+      "host": "127.0.0.1",
+      "port": 4400
+    },
+    "logging": {
+      "host": "127.0.0.1",
+      "port": 4500
+    }
+  }
+}

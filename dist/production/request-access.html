@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Request Liftally Competition Planner access or send feedback to help shape what comes next." />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content="Request Access - Liftally" />
+  <meta property="og:description" content="Tell us what you want to see next in Liftally." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://elthefang.github.io/liftally-site/request-access.html" />
+  <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Request Access - Liftally" />
+  <meta name="twitter:description" content="Tell us what you want to see next in Liftally." />
+  <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <title>Request Access - Liftally</title>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
+  <script src="firebase/firebase-config.production.js?v=20260803a"></script>
+  <script type="module" src="firebase/liftally-production-backend.js?v=20260803a"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H20Z94NQHJ');
+  </script>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="site.css" />
+  <style>
+    .request-hero {
+      padding: 96px 0 36px;
+    }
+
+    .request-hero h1 {
+      font-family: var(--site-font-display);
+      font-size: clamp(4.4rem, 9vw, 8rem);
+      line-height: 0.92;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+
+    .request-hero p {
+      max-width: 660px;
+      color: var(--site-muted);
+      font-size: 1.15rem;
+    }
+
+    .request-card {
+      margin: 0 auto 96px;
+      overflow: hidden;
+    }
+
+    .staging-request-form {
+      display: grid;
+      gap: 16px;
+      padding: 24px;
+      border-bottom: 1px solid var(--site-border);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .staging-request-form h2 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.1rem);
+    }
+
+    .staging-request-form p {
+      margin: 0;
+      color: var(--site-muted);
+    }
+
+    .request-form-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .request-field {
+      display: grid;
+      gap: 7px;
+    }
+
+    .request-field.full {
+      grid-column: 1 / -1;
+    }
+
+    .request-field span {
+      color: var(--site-muted);
+      font-weight: 800;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .request-field input,
+    .request-field select,
+    .request-field textarea {
+      width: 100%;
+      border: 1px solid var(--site-border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--site-text);
+      font: 600 1rem var(--site-font-body);
+    }
+
+    .request-field input,
+    .request-field select {
+      min-height: 46px;
+      padding: 0 12px;
+    }
+
+    .request-field textarea {
+      min-height: 130px;
+      padding: 12px;
+      resize: vertical;
+    }
+
+    .request-form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .request-form-status {
+      color: var(--site-muted);
+      font-weight: 700;
+    }
+
+    .request-form-status.is-error {
+      color: #b42318;
+    }
+
+    .form-frame-wrap {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      min-height: 720px;
+    }
+
+    .request-frame {
+      display: block;
+      width: 100%;
+      min-height: 720px;
+      border: 0;
+      background: #fff;
+    }
+
+    .fallback-copy {
+      padding: 18px 22px;
+      border-top: 1px solid var(--site-border);
+      color: var(--site-muted);
+      font-size: 0.96rem;
+    }
+
+    .fallback-copy a {
+      color: var(--site-accent);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .fallback-copy a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 720px) {
+      .request-hero {
+        padding-top: 72px;
+      }
+
+      .request-card {
+        margin-bottom: 64px;
+      }
+
+      .request-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .request-form-actions .btn {
+        width: 100%;
+      }
+
+      .form-frame-wrap,
+      .request-frame {
+        min-height: 820px;
+      }
+    }
+  </style>
+</head>
+<body class="site-shell request-page">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="Liftally home">
+        <img src="images/logo.png" alt="Liftally logo" class="logo" />
+        <span class="brand-name">Liftally</span>
+      </a>
+      <nav class="nav site-nav" aria-label="Main navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a class="nav-link" href="index.html">Home</a></li>
+          <li><a class="nav-link" href="heroboard.html">HeroBoard</a></li>
+          <li><a class="nav-link" href="weight-class-explorer.html">Weight Class Explorer</a></li>
+          <li><a class="nav-link" href="account.html">Account</a></li>
+          <li><a class="nav-link is-active" href="request-access.html" aria-current="page">Contact</a></li>
+        </ul>
+        <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_request_access&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="request-hero">
+      <div class="container">
+        <p class="eyebrow">Liftally Feedback</p>
+        <h1>Request Access</h1>
+        <p>Tell us what you want to see next in Liftally.</p>
+        <p>Your feedback helps shape Competition Planner, class snapshots, and training insights.</p>
+      </div>
+    </section>
+
+    <section class="container request-card site-card" aria-label="Request access form">
+      <form class="staging-request-form" id="stagingRequestForm">
+        <div>
+          <h2>Send feedback on the site</h2>
+          <p>This staging form stores your request in Liftally Firebase. The embedded Jotform remains available below.</p>
+        </div>
+        <div class="request-form-grid">
+          <label class="request-field">
+            <span>Request type</span>
+            <select id="requestType" required>
+              <option value="competition_planner_access">Competition Planner access</option>
+              <option value="feedback">General feedback</option>
+              <option value="support">Support</option>
+            </select>
+          </label>
+          <label class="request-field">
+            <span>Email optional</span>
+            <input id="requestEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+          </label>
+          <label class="request-field full">
+            <span>Message</span>
+            <textarea id="requestMessage" minlength="8" maxlength="5000" required placeholder="Tell us what you want to see next in Liftally."></textarea>
+          </label>
+        </div>
+        <div class="request-form-actions">
+          <button class="btn btn-primary" id="submitStagingRequest" type="submit">Submit Request</button>
+          <span class="request-form-status" id="stagingRequestStatus" aria-live="polite">Staging Firebase submission is available for testing.</span>
+        </div>
+      </form>
+      <div class="form-frame-wrap">
+        <iframe
+          class="request-frame"
+          id="requestAccessFrame"
+          title="Liftally request access and feedback form"
+          src="https://form.jotform.com/260592564773467"
+          loading="lazy"
+          allow="geolocation; microphone; camera; fullscreen"
+        ></iframe>
+      </div>
+      <p class="fallback-copy">
+        Having trouble loading the form?
+        <a id="requestAccessFallback" href="https://form.jotform.com/260592564773467" target="_blank" rel="noopener" data-propagate-utm="true">Open it directly</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Liftally</span>
+        <p>© 2026 YI SHAN FANG</p>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="account.html">Account</a>
+        <a href="request-access.html" aria-current="page">Contact</a>
+        <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_request_access&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const jotformUrl = 'https://form.jotform.com/260592564773467';
+    const currentSearch = new URLSearchParams(window.location.search);
+    const preserveKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'source', 'entry', 'platform', 'ref'];
+
+    function withPreservedParams(href) {
+      const url = new URL(href, window.location.href);
+      preserveKeys.forEach((key) => {
+        const value = currentSearch.get(key);
+        if (value && !url.searchParams.has(key)) {
+          url.searchParams.set(key, value);
+        }
+      });
+      return url.toString();
+    }
+
+    const frame = document.getElementById('requestAccessFrame');
+    const fallback = document.getElementById('requestAccessFallback');
+    if (frame) frame.src = withPreservedParams(jotformUrl);
+    if (fallback) fallback.href = withPreservedParams(jotformUrl);
+
+    document.querySelectorAll('[data-propagate-utm="true"]').forEach((link) => {
+      try {
+        link.href = withPreservedParams(link.getAttribute('href'));
+      } catch (_) {
+        // Ignore malformed href values.
+      }
+    });
+
+    document.querySelectorAll('[data-gtag]').forEach((link) => {
+      link.addEventListener('click', () => {
+        if (typeof gtag !== 'function') return;
+        gtag('event', `${link.dataset.gtag}_click`, {
+          event_category: 'cta',
+          event_label: link.dataset.gtag
+        });
+      });
+    });
+
+    const stagingForm = document.getElementById('stagingRequestForm');
+    const stagingStatus = document.getElementById('stagingRequestStatus');
+    const stagingSubmit = document.getElementById('submitStagingRequest');
+
+    function setStagingStatus(message, isError = false) {
+      if (!stagingStatus) return;
+      stagingStatus.textContent = message;
+      stagingStatus.classList.toggle('is-error', isError);
+    }
+
+    if (stagingForm) {
+      stagingForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!window.liftallyBackend || typeof window.liftallyBackend.createSupportRequest !== 'function') {
+          setStagingStatus('Staging Firebase submission is still loading. Try again in a moment.', true);
+          return;
+        }
+
+        const type = document.getElementById('requestType').value;
+        const email = document.getElementById('requestEmail').value.trim();
+        const message = document.getElementById('requestMessage').value.trim();
+
+        if (message.length < 8) {
+          setStagingStatus('Please enter a longer message.', true);
+          return;
+        }
+
+        stagingSubmit.disabled = true;
+        setStagingStatus('Submitting to staging...');
+        try {
+          await window.liftallyBackend.createSupportRequest({
+            type,
+            email,
+            message,
+            source: type === 'competition_planner_access' ? 'weight_class_explorer' : 'website'
+          });
+          stagingForm.reset();
+          setStagingStatus('Request saved to staging.');
+        } catch (error) {
+          setStagingStatus(`Request could not be saved: ${error.code || error.message}`, true);
+        } finally {
+          stagingSubmit.disabled = false;
+        }
+      });
+    }
+
+    window.addEventListener('liftally-backend-error', () => {
+      setStagingStatus('Staging Firebase submission is unavailable. Use the embedded Jotform below.', true);
+    });
+  </script>
+  <script src="site.js"></script>
+</body>
+</html>
