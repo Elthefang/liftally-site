@@ -322,6 +322,15 @@ body.site-shell.tool-page .section-head p {
     flex: 0 0 auto;
   }
 
+  /* The compact header keeps Download inside the menu to prevent CTA clipping. */
+  .site-shell .site-download {
+    display: none;
+  }
+
+  .site-shell .nav-download-link {
+    display: inline-flex;
+  }
+
   .site-shell .nav-links {
     position: absolute;
     top: 100%;

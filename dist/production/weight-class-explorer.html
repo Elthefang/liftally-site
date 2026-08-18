@@ -3062,6 +3062,11 @@
       color: var(--text-on-dark);
     }
 
+    /* Keep dark-surface benchmark labels from inheriting the light result-card token. */
+    body.site-shell.tool-page #benchmarkSection .benchmark-card .result-label {
+      color: var(--text-secondary-on-dark);
+    }
+
     body.site-shell.tool-page .benchmark-copy,
     body.site-shell.tool-page .benchmark-meta,
     body.site-shell.tool-page .benchmark-cell-note,
@@ -4056,6 +4061,198 @@
       .class-card:hover,
       .class-card:focus-visible {
         transform: none;
+      }
+    }
+
+    /* Mobile readability: keep the shared header inside the viewport and turn the
+       historical comparison into a deliberate vertical layout rather than a
+       compressed desktop grid. */
+    @media (max-width: 720px) {
+      body.site-shell.tool-page {
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
+      }
+
+      body.site-shell.tool-page .site-download {
+        display: none;
+      }
+
+      body.site-shell.tool-page .header-inner,
+      body.site-shell.tool-page .site-nav {
+        min-width: 0;
+      }
+
+      body.site-shell.tool-page .site-auth .btn {
+        min-width: 0;
+        padding-inline: 10px;
+      }
+
+      body.site-shell.tool-page #classes .section-head h2,
+      body.site-shell.tool-page #compare .section-head h2,
+      body.site-shell.tool-page #benchmarkSection .section-head h2 {
+        max-width: 100%;
+        font-size: clamp(1.6rem, 8.2vw, 2.2rem);
+        line-height: 1.04;
+        letter-spacing: 0;
+        overflow-wrap: normal;
+        word-break: normal;
+      }
+
+      /* The desktop section header is a two-column grid. On a phone that
+         leaves the heading only a narrow first column and splits words. */
+      body.site-shell.tool-page .section-head {
+        display: block;
+      }
+
+      body.site-shell.tool-page .section-head > p {
+        margin-top: 8px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-chart {
+        padding: 16px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-chart-legend {
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        font-size: 0.86rem;
+      }
+
+      body.site-shell.tool-page #classes .scenario-scale {
+        display: none;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 18px 0;
+        border-left: 4px solid transparent;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row.is-current {
+        border-left-color: #3b82f6;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-header {
+        display: flex;
+        align-items: center;
+        gap: 8px 10px;
+        padding: 0;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-class {
+        font-size: 1.45rem;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-role {
+        font-size: 0.9rem;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bars {
+        grid-column: auto;
+        /* Reserve enough room for valid labels such as "Below P1". */
+        grid-template-columns: minmax(0, 1fr) minmax(72px, 76px) minmax(96px, 118px);
+        gap: 10px;
+        width: 100%;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bar-line {
+        grid-template-columns: 48px minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bar-label,
+      body.site-shell.tool-page #classes .scenario-percentile,
+      body.site-shell.tool-page #classes .scenario-row-delta {
+        font-size: 1rem;
+      }
+
+      body.site-shell.tool-page #classes .scenario-percentile,
+      body.site-shell.tool-page #classes .scenario-row-delta {
+        white-space: nowrap;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-delta {
+        text-align: left;
+        padding-left: 4px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-meta {
+        grid-column: auto;
+        display: block;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      body.site-shell.tool-page #classes .scenario-meta > * {
+        display: inline;
+      }
+
+      body.site-shell.tool-page #classes .scenario-meta > * + *::before {
+        content: ' · ';
+      }
+
+      body.site-shell.tool-page #classes .scenario-meta strong,
+      body.site-shell.tool-page #classes .scenario-break-even,
+      body.site-shell.tool-page #classes .scenario-unavailable {
+        color: var(--text-primary);
+      }
+
+      body.site-shell.tool-page #classes .scenario-chart .scenario-note {
+        display: none;
+      }
+
+      body.site-shell.tool-page .result-subtext,
+      body.site-shell.tool-page #classes .class-range,
+      body.site-shell.tool-page #classes .scenario-note,
+      body.site-shell.tool-page #classes .scenario-sample,
+      body.site-shell.tool-page .benchmark-source-note {
+        color: var(--text-secondary);
+        opacity: 1;
+      }
+
+      body.site-shell.tool-page #benchmarkSection .benchmark-card .result-label {
+        color: var(--text-secondary-on-dark);
+      }
+    }
+
+    @media (max-width: 420px) {
+      body.site-shell.tool-page .brand-name {
+        font-size: 20px;
+        letter-spacing: 1px;
+      }
+
+      body.site-shell.tool-page .nav-toggle {
+        width: 40px;
+        height: 40px;
+      }
+
+      body.site-shell.tool-page .site-auth .btn {
+        min-height: 40px;
+        padding-inline: 8px;
+        font-size: 0.7rem;
+        letter-spacing: 0.8px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-chart {
+        padding: 14px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bars {
+        grid-template-columns: minmax(0, 1fr) minmax(68px, 72px) minmax(84px, 102px);
+        gap: 7px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bar-line {
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-bar-label,
+      body.site-shell.tool-page #classes .scenario-percentile,
+      body.site-shell.tool-page #classes .scenario-row-delta {
+        font-size: 0.9rem;
       }
     }
   </style>

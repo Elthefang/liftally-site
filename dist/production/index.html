@@ -766,8 +766,37 @@
       .feature-grid { grid-auto-columns: calc((100% - 20px) / 2.5); }
       .feedback-inner { flex-direction: column; text-align: center; }
       .features::after { display: none; }
-      .shot-row.primary { grid-template-columns: 1fr; }
+      /* Do not rely on an intersection observer before product media becomes
+         visible on mobile. Safari can otherwise leave this section blank. */
+      .screenshots { padding: 72px 0; }
+      .screenshots .section-header.reveal,
+      .screenshots .shot {
+        opacity: 1;
+        transform: none;
+      }
+      .screenshots .section-header { margin-bottom: 32px; }
+      .screenshots .section-header h2 {
+        font-size: clamp(42px, 13vw, 62px);
+        line-height: 0.98;
+      }
+      .shot-row.primary {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding-inline: 16px;
+      }
       .shot-row.secondary { grid-template-columns: 1fr; }
+      .shot-row.primary .shot { display: none; }
+      .shot-row.primary .shot.main { display: flex; }
+      .shot.main video {
+        width: min(100%, 320px);
+        height: auto;
+        max-height: 520px;
+        aspect-ratio: 9 / 16;
+        background: #eef3f2;
+        transform: none;
+      }
+      .shot-nav.left { left: 0; }
+      .shot-nav.right { right: 0; }
       .shot.small img, .shot.main img { height: 520px; transform: none; }
     }
 
@@ -920,17 +949,17 @@
         <div class="shot-grid">
           <div class="shot-row primary">
             <figure class="shot small left">
-              <video id="leftShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="leftShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/1-ai session card-removed.png">
                 <source src="Videos/tap%20session%20card.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot main swap">
-              <video id="mainShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="mainShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/homepage-view-1-removed.png">
                 <source src="Videos/compare.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot small right">
-              <video id="rightShot" class="demo-video" muted playsinline loop preload="metadata">
+              <video id="rightShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/2-progress tab-removed.png">
                 <source src="Videos/session%20card%20applyied.mp4" type="video/mp4" />
               </video>
             </figure>
