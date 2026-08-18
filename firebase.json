@@ -2,6 +2,8 @@
   "hosting": {
     "site": "liftally-staging",
     "public": ".",
+    "cleanUrls": true,
+    "trailingSlash": false,
     "ignore": [
       ".git/**",
       ".github/**",

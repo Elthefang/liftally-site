@@ -362,7 +362,11 @@ body.site-shell.tool-page .section-head p {
   }
 
   .site-shell .site-download {
-    padding-inline: 14px;
+    display: none;
+  }
+
+  .site-shell .nav-download-link {
+    display: inline-flex;
   }
 
   .site-shell .footer-inner {
@@ -376,10 +380,36 @@ body.site-shell.tool-page .section-head p {
     width: min(100vw - 28px, 1160px);
   }
 
+  .site-shell .header-inner,
+  .site-shell .site-nav {
+    gap: 8px;
+  }
+
+  .site-shell .brand {
+    gap: 7px;
+  }
+
+  .site-shell .brand .logo,
+  .site-shell .logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-shell .brand-name {
+    font-size: 22px;
+    letter-spacing: 1.5px;
+  }
+
+  .site-shell .site-auth .btn {
+    padding-inline: 8px;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+  }
+
   .site-shell .site-download {
     min-height: 38px;
-    padding-inline: 12px;
+    padding-inline: 10px;
     font-size: 12px;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
   }
 }

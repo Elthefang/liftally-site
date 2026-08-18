@@ -8,12 +8,13 @@
   <meta property="og:title" content="Powerlifting Weight Class Explorer - Liftally" />
   <meta property="og:description" content="Turn bodyweight and SBD numbers into powerlifting class context, total, DOTS, and IPF GL." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://elthefang.github.io/liftally-site/weight-class-explorer.html" />
+  <meta property="og:url" content="https://liftally.app/weight-class-explorer" />
   <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Powerlifting Weight Class Explorer - Liftally" />
   <meta name="twitter:description" content="Compare major powerlifting class standards, SBD total, DOTS, and IPF GL score snapshots." />
   <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <link rel="canonical" href="https://liftally.app/weight-class-explorer" />
   <title>Powerlifting Weight Class Explorer - Liftally</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
   <script src="benchmark-provider.js"></script>
@@ -1068,6 +1069,41 @@
       color: var(--text-secondary-on-dark);
       font-size: 0.84rem;
       line-height: 1.45;
+    }
+
+    .benchmark-source-note {
+      flex-basis: 100%;
+      color: var(--text-secondary-on-dark);
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .data-note {
+      display: grid;
+      gap: 4px;
+      max-width: 900px;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .data-note strong {
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .data-note a {
+      color: var(--accent-text);
+      font-weight: 700;
+      text-underline-offset: 0.16em;
     }
 
     .benchmark-meta {
@@ -2901,20 +2937,21 @@
     }
 
     body.site-shell.tool-page .btn {
-      font-family: var(--font-body);
-      font-weight: 800;
+      font: 700 13px var(--font-cond);
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
     }
 
     body.site-shell.tool-page .btn-primary {
-      background: var(--accent-text);
+      background: var(--site-accent, #fb4d3d);
       color: #ffffff;
-      border-color: var(--accent-text);
-      box-shadow: 0 14px 34px rgba(169, 54, 43, 0.2);
+      border-color: var(--site-accent, #fb4d3d);
+      box-shadow: 0 12px 28px var(--site-accent-glow, rgba(251, 77, 61, 0.25));
     }
 
     body.site-shell.tool-page .btn-primary:hover {
-      background: #8f2e25;
-      border-color: #8f2e25;
+      background: var(--site-accent-hover, #ff6b6b);
+      border-color: var(--site-accent-hover, #ff6b6b);
     }
 
     body.site-shell.tool-page .btn-secondary,
@@ -2953,6 +2990,10 @@
     body.site-shell.tool-page .result-value {
       color: var(--text-primary);
       font-size: clamp(2rem, 4vw, 3rem);
+    }
+
+    body.site-shell.tool-page .result-subtext {
+      color: var(--text-secondary);
     }
 
     body.site-shell.tool-page .range-value {
@@ -3557,7 +3598,7 @@
 
       .scenario-comparison-table tr {
         display: grid;
-        grid-template-columns: minmax(88px, 1.15fr) repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         align-items: center;
         border-bottom: 1px solid rgba(32, 35, 33, 0.1);
       }
@@ -3577,7 +3618,10 @@
       }
 
       .scenario-comparison-table tbody th {
+        grid-column: 1 / -1;
         font-size: 0.75rem;
+        padding-bottom: 3px;
+        text-align: left;
       }
 
       .scenario-comparison-table td:nth-child(2)::before,
@@ -3599,7 +3643,7 @@
       .scenario-comparison-table td:nth-child(2),
       .scenario-comparison-table td:nth-child(3),
       .scenario-comparison-table td:nth-child(4) {
-        text-align: right;
+        text-align: left;
       }
 
       #benchmarkSection .section-head h2 {
@@ -3658,7 +3702,7 @@
       }
 
       .scenario-bars {
-        grid-template-columns: minmax(0, 1fr) minmax(52px, 64px) minmax(72px, 100px);
+        grid-template-columns: minmax(0, 1fr) minmax(48px, 58px) minmax(82px, 92px);
         gap: 10px;
       }
 
@@ -3708,18 +3752,35 @@
       }
 
       .stepper {
-        justify-content: flex-start;
-        overflow-x: auto;
-        padding-bottom: 6px;
-        scrollbar-width: none;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        justify-content: stretch;
+        width: 100%;
+        overflow: visible;
+        padding-bottom: 0;
+        scrollbar-width: auto;
       }
 
       .stepper::-webkit-scrollbar {
-        display: none;
+        display: initial;
       }
 
       .step {
-        flex: 0 0 auto;
+        min-width: 0;
+        width: 100%;
+        flex: 1 1 0;
+        justify-content: center;
+        gap: 5px;
+        padding-inline: 8px;
+      }
+
+      .step-title {
+        font-size: 0.88rem;
+      }
+
+      .auth-dialog {
+        overflow-y: auto;
+        overscroll-behavior: contain;
       }
 
       .wizard-actions {
@@ -3951,11 +4012,22 @@
       }
 
       .step {
-        padding: 0 10px;
+        gap: 4px;
+        padding-inline: 6px;
       }
 
       .step-index {
         font-size: 0.68rem;
+      }
+
+      .step-title {
+        font-size: 0.8rem;
+      }
+
+      .scenario-comparison-table th,
+      .scenario-comparison-table td {
+        padding-inline: 4px;
+        font-size: 0.75rem;
       }
 
       .comparison-table td {
@@ -3992,7 +4064,7 @@
 <body class="site-shell tool-page">
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="index.html" aria-label="Liftally home">
+      <a class="brand" href="/" aria-label="Liftally home">
         <img class="logo" src="images/logo.png" alt="" />
         <span class="brand-name">Liftally</span>
       </a>
@@ -4001,11 +4073,11 @@
           <span></span><span></span><span></span>
         </button>
         <ul class="nav-links">
-          <li><a class="nav-link" href="index.html">Home</a></li>
-          <li><a class="nav-link" href="heroboard.html">HeroBoard</a></li>
-          <li><a class="nav-link is-active" href="weight-class-explorer.html" aria-current="page">Weight Class Explorer</a></li>
-          <li><a class="nav-link" href="account.html">Account</a></li>
-          <li><a class="nav-link" href="request-access.html">Contact</a></li>
+          <li><a class="nav-link" href="/">Home</a></li>
+          <li><a class="nav-link" href="/heroboard">HeroBoard</a></li>
+          <li><a class="nav-link is-active" href="/weight-class-explorer" aria-current="page">Weight Class Explorer</a></li>
+          <li><a class="nav-link" href="/account">Account</a></li>
+          <li><a class="nav-link" href="/request-access">Contact</a></li>
           <li><a class="nav-link nav-download-link" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a></li>
         </ul>
         <div class="site-auth" aria-live="polite">
@@ -4208,6 +4280,7 @@
               </article>
             </div>
             <p class="benchmark-meta" id="benchmarkMeta">OpenPowerlifting benchmarks are historical dataset context, not official rankings.</p>
+            <p class="benchmark-source-note">Dataset source: OpenPowerlifting, May 2026.</p>
           </div>
         </section>
 
@@ -4276,6 +4349,10 @@
             </table>
           </div>
           <div class="benchmark-table-status" id="benchmarkTableStatus" hidden></div>
+          <aside class="data-note" aria-label="Historical benchmark data note">
+            <strong>Data note</strong>
+            <span>Liftally compares entered SBD totals and DOTS scores with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. These comparisons provide historical context only; they do not predict meet placing or recommend a bodyweight or weight-class change.</span>
+          </aside>
         </section>
 
         <div class="wizard-actions">
@@ -4447,7 +4524,7 @@
 
         <div class="wizard-actions">
           <button class="btn btn-secondary" type="button" data-back-to-results>Back to Results</button>
-          <a class="btn btn-secondary" href="request-access.html" data-gtag="competition_planner_request" data-propagate-utm="true">Request Access</a>
+          <a class="btn btn-secondary" href="/request-access" data-gtag="competition_planner_request" data-propagate-utm="true">Request Access</a>
         </div>
       </div>
     </section>
@@ -4461,10 +4538,10 @@
         <p class="disclaimer">Disclaimer: Weight classes vary by federation and meet. Confirm with the official meet page. This tool is for reference only and does not provide bodyweight advice, official rankings, or qualification results. WRPF classes are shown as common reference classes and may vary by meet.</p>
       </div>
       <div class="footer-links">
-        <a href="privacy.html">Privacy</a>
-        <a href="terms.html">Terms</a>
-        <a href="account.html">Account</a>
-        <a href="request-access.html" data-gtag="competition_planner_request" data-propagate-utm="true">Request Access</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+        <a href="/account">Account</a>
+        <a href="/request-access" data-gtag="competition_planner_request" data-propagate-utm="true">Request Access</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
       </div>
     </div>
@@ -4916,7 +4993,7 @@
       if (!output.snapshotActions) return;
       const signedIn = isNamedAccount(user);
       output.snapshotActions.innerHTML = signedIn
-        ? '<button class="btn btn-primary" type="button" id="saveSnapshotButton">SAVE SNAPSHOT</button><a class="btn btn-secondary" id="viewHistoryButton" href="account.html">VIEW HISTORY</a>'
+        ? '<button class="btn btn-primary" type="button" id="saveSnapshotButton">SAVE SNAPSHOT</button><a class="btn btn-secondary" id="viewHistoryButton" href="/account">VIEW HISTORY</a>'
         : '<button class="btn btn-primary" type="button" id="signInToSaveButton" data-auth-action="sign-in-to-save">SIGN IN TO SAVE</button>';
 
       output.saveSnapshotButton = document.getElementById('saveSnapshotButton');

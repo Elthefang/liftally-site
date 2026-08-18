@@ -1,5 +1,16 @@
 # Liftally Site
 
+## Public URLs
+
+Firebase Hosting's `cleanUrls` setting serves stable public pages without the `.html`
+suffix. For example, `/weight-class-explorer` is the canonical URL and
+`/weight-class-explorer.html` permanently redirects to it. The same pattern applies
+to `/account`, `/request-access`, `/privacy`, and `/terms`.
+
+This routing is implemented by Firebase Hosting's clean-URL handling. A simple local
+static server such as `python3 -m http.server` does not apply it, so local preview
+continues to use filenames such as `weight-class-explorer.html`.
+
 ## Purpose
 
 This folder contains the Liftally website and the web viewing surface for `HeroBoard`.

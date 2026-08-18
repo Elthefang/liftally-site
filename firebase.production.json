@@ -6,6 +6,8 @@
   "hosting": {
     "site": "myappproject-f71fd",
     "public": "dist/production",
+    "cleanUrls": true,
+    "trailingSlash": false,
     "ignore": [
       ".git/**",
       ".github/**",
