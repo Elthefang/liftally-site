@@ -54,6 +54,7 @@
       --text-on-dark: #f7f7f3;
       --text-secondary-on-dark: #d8ded9;
       --text-muted-on-dark: #b9c1bc;
+      --benchmark-label-on-dark: #c7d0c6;
       --surface-page: #f4f7f5;
       --surface-card: #ffffff;
       --surface-subtle: #edf1ee;
@@ -868,6 +869,13 @@
       line-height: 1.35;
     }
 
+    .result-class-context {
+      color: #5f6b64;
+      font-size: 0.84rem;
+      font-weight: 600;
+      line-height: 1.35;
+    }
+
     .range-value {
       font-size: clamp(1rem, 2vw, 1.18rem);
       line-height: 1.2;
@@ -881,6 +889,91 @@
     }
 
     .result-meta strong { color: var(--text-primary); }
+
+    .milestone-feedback {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid rgba(191, 57, 43, 0.44);
+      border-radius: 8px;
+      background: var(--accent-surface);
+      color: var(--text-primary);
+      box-shadow: 0 10px 24px rgba(191, 57, 43, 0.08);
+    }
+
+    .milestone-feedback[hidden] { display: none; }
+
+    .milestone-feedback__badge {
+      display: grid;
+      flex: 0 0 auto;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--accent-text);
+      color: #ffffff;
+      font-family: var(--font-cond);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .milestone-feedback__copy {
+      display: grid;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .milestone-feedback__eyebrow {
+      color: var(--accent-text);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .milestone-feedback__title {
+      color: var(--text-primary);
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .milestone-feedback__detail {
+      margin: 0;
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+
+    .milestone-feedback.is-visible {
+      animation: milestone-pop 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .milestone-feedback.is-visible .milestone-feedback__badge {
+      animation: milestone-glow 700ms ease-out both;
+    }
+
+    @keyframes milestone-pop {
+      from { opacity: 0; transform: translateY(8px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    @keyframes milestone-glow {
+      0% { transform: scale(0.84); box-shadow: 0 0 0 0 rgba(191, 57, 43, 0.28); }
+      60% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(191, 57, 43, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(191, 57, 43, 0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .milestone-feedback.is-visible,
+      .milestone-feedback.is-visible .milestone-feedback__badge {
+        animation: none;
+      }
+    }
 
     .section {
       padding: clamp(24px, 3.6vw, 36px) 0;
@@ -956,7 +1049,7 @@
     }
 
     .benchmark-card .result-label {
-      color: var(--text-secondary-on-dark);
+      color: var(--benchmark-label-on-dark);
       font-family: var(--font-body);
       font-size: 0.75rem;
       font-weight: 800;
@@ -2996,6 +3089,10 @@
       color: var(--text-secondary);
     }
 
+    body.site-shell.tool-page .result-class-context {
+      color: #5f6b64;
+    }
+
     body.site-shell.tool-page .range-value {
       font-size: clamp(1.08rem, 2vw, 1.35rem);
       line-height: 1.25;
@@ -3064,7 +3161,13 @@
 
     /* Keep dark-surface benchmark labels from inheriting the light result-card token. */
     body.site-shell.tool-page #benchmarkSection .benchmark-card .result-label {
-      color: var(--text-secondary-on-dark);
+      color: var(--benchmark-label-on-dark);
+    }
+
+    body.site-shell.tool-page #benchmarkSection .info-tip {
+      border-color: var(--benchmark-label-on-dark);
+      color: var(--text-on-dark);
+      background: rgba(247, 247, 243, 0.1);
     }
 
     body.site-shell.tool-page .benchmark-copy,
@@ -4213,7 +4316,7 @@
       }
 
       body.site-shell.tool-page #benchmarkSection .benchmark-card .result-label {
-        color: var(--text-secondary-on-dark);
+        color: var(--benchmark-label-on-dark);
       }
     }
 
@@ -4420,6 +4523,7 @@
               <span class="result-label">Current Class</span>
               <strong class="result-value" id="classResult">-</strong>
               <span class="result-subtext" id="rangeResult">-</span>
+              <span class="result-class-context" id="summaryText"></span>
             </article>
             <article class="result-card">
               <span class="result-label">SBD Total</span>
@@ -4434,9 +4538,14 @@
               <strong class="result-value" id="glResult">-</strong>
             </article>
           </div>
-          <p class="result-meta" id="summaryText">
-            Scores appear after a full squat, bench, and deadlift total is entered.
-          </p>
+          <aside class="milestone-feedback" id="milestoneFeedback" hidden aria-live="polite" role="status">
+            <span class="milestone-feedback__badge" aria-hidden="true">M</span>
+            <div class="milestone-feedback__copy">
+              <span class="milestone-feedback__eyebrow">Milestone</span>
+              <strong class="milestone-feedback__title" id="milestoneFeedbackTitle"></strong>
+              <p class="milestone-feedback__detail" id="milestoneFeedbackDetail"></p>
+            </div>
+          </aside>
         </div>
 
         <section class="section" id="benchmarkSection" hidden>
@@ -4486,8 +4595,6 @@
             <div class="snapshot-panel-header">
               <div>
                 <p class="eyebrow">Saved Snapshots</p>
-                <h3 id="snapshotTitle">Save snapshot</h3>
-                <p id="snapshotCopy">Sign in to save this result and view it later.</p>
               </div>
               <div class="snapshot-actions" id="snapshotActions"></div>
             </div>
@@ -4802,6 +4909,9 @@
       formMessage: document.getElementById('formMessage'),
       summaryText: document.getElementById('summaryText'),
       resultsPanel: document.getElementById('resultsPanel'),
+      milestoneFeedback: document.getElementById('milestoneFeedback'),
+      milestoneFeedbackTitle: document.getElementById('milestoneFeedbackTitle'),
+      milestoneFeedbackDetail: document.getElementById('milestoneFeedbackDetail'),
       wizardScreens: Array.from(document.querySelectorAll('.wizard-screen')),
       compareTitle: document.getElementById('compareTitle'),
       compareCopy: document.getElementById('compareCopy'),
@@ -4876,8 +4986,6 @@
       scenarioBenchmarkMeta: document.getElementById('scenarioBenchmarkMeta'),
       accountStatus: document.getElementById('accountStatus'),
       snapshotActions: document.getElementById('snapshotActions'),
-      snapshotTitle: document.getElementById('snapshotTitle'),
-      snapshotCopy: document.getElementById('snapshotCopy'),
       authDialog: document.getElementById('authDialog'),
       authModalStatus: document.getElementById('authModalStatus'),
       openAuthModalButton: document.getElementById('openAuthModalButton'),
@@ -5146,10 +5254,6 @@
 
     function renderSavedSnapshotsSection(user) {
       const signedIn = isNamedAccount(user);
-      if (output.snapshotTitle) output.snapshotTitle.textContent = signedIn ? 'Saved snapshots' : 'Save snapshot';
-      if (output.snapshotCopy) output.snapshotCopy.textContent = signedIn
-        ? 'Save this result to your Liftally history.'
-        : 'Sign in to save this result and view it later.';
       if (output.accountStatus) output.accountStatus.hidden = !signedIn;
       setAccountStatus(signedIn ? `Signed in as ${accountIdentity(user)}` : '');
       renderSnapshotActions(user);
@@ -5680,6 +5784,87 @@
       }
 
       window.requestAnimationFrame(tick);
+    }
+
+    const TOTAL_LB_CLUBS = [500, 750, 1000, 1250, 1500, 1750, 2000];
+    const BODYWEIGHT_MULTIPLES = [1, 2, 3, 4, 5];
+    const DOTS_TIERS = [200, 300, 400, 500, 600];
+    const IPF_GL_TIERS = [40, 60, 80, 100, 120];
+
+    function highestReachedTier(value, tiers) {
+      if (!Number.isFinite(value)) return null;
+      return [...tiers].reverse().find((tier) => value >= tier) || null;
+    }
+
+    function selectMilestoneFeedback({ totalKg, bodyweightKg, dots, gl }) {
+      const totalLb = fromKg(totalKg, 'lb');
+      // The 500 lb club is introductory context; reserve the primary club callout
+      // for 750 lb and above so a meaningful bodyweight multiple can surface first.
+      const strongClub = highestReachedTier(totalLb, TOTAL_LB_CLUBS.filter((tier) => tier >= 750));
+      if (strongClub) {
+        return {
+          title: `${strongClub} lb Club unlocked`,
+          detail: `${formatNumber(totalLb, 0)} lb SBD total`
+        };
+      }
+
+      const bodyweightMultiple = Number.isFinite(bodyweightKg) && bodyweightKg > 0
+        ? totalKg / bodyweightKg
+        : null;
+      const multipleTier = highestReachedTier(bodyweightMultiple, BODYWEIGHT_MULTIPLES);
+      if (multipleTier) {
+        return {
+          title: `${multipleTier}x bodyweight total unlocked`,
+          detail: `${formatNumber(bodyweightMultiple, 2)}x bodyweight total`
+        };
+      }
+
+      const nextClub = TOTAL_LB_CLUBS.find((tier) => totalLb < tier);
+      if (nextClub) {
+        return {
+          title: `Next milestone: ${nextClub} lb Club`,
+          detail: `Need +${formatNumber(nextClub - totalLb, 0)} lb total`
+        };
+      }
+
+      const dotsTier = highestReachedTier(dots, DOTS_TIERS);
+      if (dotsTier) {
+        return { title: `${dotsTier} DOTS tier unlocked`, detail: `DOTS ${formatNumber(dots, 2)}` };
+      }
+
+      const glTier = highestReachedTier(gl, IPF_GL_TIERS);
+      if (glTier) {
+        return { title: `${glTier} IPF GL tier unlocked`, detail: `IPF GL ${formatNumber(gl, 2)}` };
+      }
+
+      return null;
+    }
+
+    function hideMilestoneFeedback() {
+      if (!output.milestoneFeedback) return;
+      output.milestoneFeedback.hidden = true;
+      output.milestoneFeedback.classList.remove('is-visible');
+      output.milestoneFeedbackTitle.textContent = '';
+      output.milestoneFeedbackDetail.textContent = '';
+    }
+
+    function renderMilestoneFeedback(calculation) {
+      const milestone = calculation && calculation.isFullSbd
+        ? selectMilestoneFeedback(calculation)
+        : null;
+      if (!milestone) {
+        hideMilestoneFeedback();
+        return;
+      }
+
+      output.milestoneFeedbackTitle.textContent = milestone.title;
+      output.milestoneFeedbackDetail.textContent = milestone.detail;
+      output.milestoneFeedback.hidden = false;
+      output.milestoneFeedback.classList.remove('is-visible');
+
+      if (!prefersReducedMotion) {
+        window.requestAnimationFrame(() => output.milestoneFeedback.classList.add('is-visible'));
+      }
     }
 
     function resetBenchmarkSection() {
@@ -6766,6 +6951,7 @@
       output.glResult.textContent = '-';
       lastCalculation = null;
       lastSelectedBenchmarkContext = null;
+      hideMilestoneFeedback();
       updateSaveButtonState();
       resetBenchmarkSection();
       resetScenarioLab();
@@ -6850,6 +7036,7 @@
         animateNumber(output.totalResult, totalInput, 1, unit);
         animateNumber(output.dotsResult, dots, 2);
         animateNumber(output.glResult, gl, 2);
+        renderMilestoneFeedback(lastCalculation);
         renderStandardsComparison(sex, unit, bodyweightKg, totalKg, dots);
       setBenchmarkLoading();
       loadBenchmarkContext({
