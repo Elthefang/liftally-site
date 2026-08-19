@@ -8,6 +8,7 @@ const backend = {
   createSupportRequest: createSupportRequest,
   createAccountWithEmail: createAccountWithEmail,
   signInWithEmail: signInWithEmail,
+  signInWithGoogle: signInWithGoogle,
   signOut: signOut,
   getCurrentUser: getCurrentUser
 };
@@ -113,6 +114,43 @@ async function signInWithEmail(email, password) {
   return currentUser;
 }
 
+function useGoogleRedirect() {
+  const userAgent = navigator.userAgent || '';
+  return /iPad|iPhone|iPod/.test(userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+function isGooglePopupFallbackError(error) {
+  return error && ['auth/popup-blocked', 'auth/cancelled-popup-request'].includes(error.code);
+}
+
+async function completeGoogleSignIn(client, userCredential) {
+  currentUser = userCredential.user;
+  await upsertProfile(client, currentUser);
+  return currentUser;
+}
+
+async function signInWithGoogle() {
+  const client = await getClient();
+  assertStaging(client);
+  const { auth: authSdk } = client.sdk;
+  const provider = new authSdk.GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+
+  if (useGoogleRedirect()) {
+    await authSdk.signInWithRedirect(client.auth, provider);
+    return { redirecting: true };
+  }
+
+  try {
+    return await completeGoogleSignIn(client, await authSdk.signInWithPopup(client.auth, provider));
+  } catch (error) {
+    if (!isGooglePopupFallbackError(error)) throw error;
+    await authSdk.signInWithRedirect(client.auth, provider);
+    return { redirecting: true };
+  }
+}
+
 async function signOut() {
   const client = await getClient();
   assertStaging(client);
@@ -176,12 +214,18 @@ async function createSupportRequest({ type, message, email = '', source = 'websi
 }
 
 getClient()
-  .then((client) => {
+  .then(async (client) => {
     backend.environment = client.environment;
     client.sdk.auth.onAuthStateChanged(client.auth, (user) => {
       currentUser = user;
       window.dispatchEvent(new CustomEvent('liftally-auth-change', { detail: { user } }));
     });
+    try {
+      const redirectResult = await client.sdk.auth.getRedirectResult(client.auth);
+      if (redirectResult && redirectResult.user) await completeGoogleSignIn(client, redirectResult);
+    } catch (error) {
+      window.dispatchEvent(new CustomEvent('liftally-auth-error', { detail: error }));
+    }
     announceReady();
   })
   .catch((error) => {
