@@ -343,8 +343,8 @@
     <section class="container account-grid" aria-label="Account and saved snapshots">
       <aside class="account-card">
         <p class="eyebrow">Liftally Account</p>
-        <h2>Save with an account</h2>
-        <p>Continue as a guest for quick testing, or sign in to keep snapshots under the same profile.</p>
+        <h2 id="accountPanelTitle">Save with an account</h2>
+        <p id="accountPanelCopy">Continue as a guest for quick testing, or sign in to keep snapshots under the same profile.</p>
         <p class="status-line" id="accountStatus" aria-live="polite">Loading account service...</p>
 
         <form class="account-form" id="accountForm">
@@ -362,7 +362,7 @@
           <button class="btn btn-primary" type="button" id="guestButton">Continue as Guest</button>
           <button class="btn btn-secondary" type="button" id="createAccountButton">Create Account</button>
           <button class="btn btn-secondary" type="button" id="signInButton">Sign In</button>
-          <button class="btn btn-secondary" type="button" id="signOutButton">Sign Out</button>
+          <button class="btn btn-secondary" type="button" id="signOutButton" hidden>Log Out</button>
         </div>
       </aside>
 
@@ -467,6 +467,9 @@
     const createAccountButton = document.getElementById('createAccountButton');
     const signInButton = document.getElementById('signInButton');
     const signOutButton = document.getElementById('signOutButton');
+    const accountPanelTitle = document.getElementById('accountPanelTitle');
+    const accountPanelCopy = document.getElementById('accountPanelCopy');
+    const accountForm = document.getElementById('accountForm');
 
     const charts = {
       totalKg: document.getElementById('totalChart'),
@@ -493,7 +496,24 @@
     }
 
     function updateControls(user) {
-      signOutButton.disabled = !user;
+      const signedIn = Boolean(user && !user.isAnonymous);
+      accountForm.hidden = signedIn;
+      guestButton.hidden = signedIn;
+      createAccountButton.hidden = signedIn;
+      signInButton.hidden = signedIn;
+      signOutButton.hidden = !signedIn;
+      signOutButton.disabled = !signedIn;
+
+      if (signedIn) {
+        accountPanelTitle.textContent = 'Your Liftally account';
+        accountPanelCopy.textContent = 'Your saved snapshots are available across devices.';
+        return;
+      }
+
+      accountPanelTitle.textContent = user && user.isAnonymous ? 'Guest session' : 'Save with an account';
+      accountPanelCopy.textContent = user && user.isAnonymous
+        ? 'Create an account or sign in to keep future snapshots under the same profile.'
+        : 'Continue as a guest for quick testing, or sign in to keep snapshots under the same profile.';
       createAccountButton.textContent = user && user.isAnonymous ? 'Save With Account' : 'Create Account';
     }
 
@@ -742,9 +762,15 @@
     });
 
     window.addEventListener('liftally-auth-change', (event) => {
-      setStatus(accountStatus, userLabel(event.detail.user));
-      updateControls(event.detail.user);
-      if (!event.detail.user) renderSnapshots([]);
+      const user = event.detail.user;
+      setStatus(accountStatus, userLabel(user));
+      updateControls(user);
+      if (user) {
+        loadSnapshots();
+      } else {
+        renderSnapshots([]);
+        setStatus(snapshotStatus, 'Sign in or continue as a guest to load snapshots.');
+      }
     });
 
     window.addEventListener('liftally-backend-error', () => {
