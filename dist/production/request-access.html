@@ -3,19 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Request Liftally Competition Planner access or send feedback to help shape what comes next." />
+  <meta name="description" content="Send feedback to help improve Liftally." />
   <meta name="robots" content="index, follow" />
-  <meta property="og:title" content="Request Access - Liftally" />
-  <meta property="og:description" content="Tell us what you want to see next in Liftally." />
+  <meta property="og:title" content="Send Feedback - Liftally" />
+  <meta property="og:description" content="Tell us what would make Liftally more useful." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://liftally.app/request-access" />
   <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Request Access - Liftally" />
-  <meta name="twitter:description" content="Tell us what you want to see next in Liftally." />
+  <meta name="twitter:title" content="Send Feedback - Liftally" />
+  <meta name="twitter:description" content="Tell us what would make Liftally more useful." />
   <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
   <link rel="canonical" href="https://liftally.app/request-access" />
-  <title>Request Access - Liftally</title>
+  <title>Send Feedback - Liftally</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
   <script src="firebase/firebase-config.production.js?v=20260803a"></script>
   <script type="module" src="firebase/liftally-production-backend.js?v=20260803a"></script>
@@ -54,20 +54,19 @@
       overflow: hidden;
     }
 
-    .staging-request-form {
+    .feedback-request-form {
       display: grid;
       gap: 16px;
       padding: 24px;
-      border-bottom: 1px solid var(--site-border);
       background: rgba(255, 255, 255, 0.72);
     }
 
-    .staging-request-form h2 {
+    .feedback-request-form h2 {
       margin: 0;
       font-size: clamp(1.5rem, 4vw, 2.1rem);
     }
 
-    .staging-request-form p {
+    .feedback-request-form p {
       margin: 0;
       color: var(--site-muted);
     }
@@ -134,36 +133,24 @@
       color: #b42318;
     }
 
-    .form-frame-wrap {
-      background: #fff;
-      border-radius: 12px;
-      overflow: hidden;
-      min-height: 720px;
-    }
-
-    .request-frame {
-      display: block;
-      width: 100%;
-      min-height: 720px;
-      border: 0;
-      background: #fff;
-    }
-
-    .fallback-copy {
-      padding: 18px 22px;
-      border-top: 1px solid var(--site-border);
+    .request-account-status {
+      margin: 0;
       color: var(--site-muted);
-      font-size: 0.96rem;
+      font-size: 0.95rem;
     }
 
-    .fallback-copy a {
-      color: var(--site-accent);
-      font-weight: 700;
-      text-decoration: none;
+    .request-anonymous {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      color: var(--site-muted);
+      font-weight: 600;
     }
 
-    .fallback-copy a:hover {
-      text-decoration: underline;
+    .request-anonymous input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--site-accent);
     }
 
     @media (max-width: 720px) {
@@ -183,10 +170,6 @@
         width: 100%;
       }
 
-      .form-frame-wrap,
-      .request-frame {
-        min-height: 820px;
-      }
     }
   </style>
 </head>
@@ -217,29 +200,30 @@
     <section class="request-hero">
       <div class="container">
         <p class="eyebrow">Liftally Feedback</p>
-        <h1>Request Access</h1>
-        <p>Tell us what you want to see next in Liftally.</p>
-        <p>Your feedback helps shape Competition Planner, class snapshots, and training insights.</p>
+        <h1>Send Feedback</h1>
+        <p>Tell us what would make Liftally more useful.</p>
       </div>
     </section>
 
-    <section class="container request-card site-card" aria-label="Request access form">
-      <form class="staging-request-form" id="stagingRequestForm">
+    <section class="container request-card site-card" aria-label="Feedback form">
+      <form class="feedback-request-form" id="feedbackRequestForm">
         <div>
-          <h2>Send feedback on the site</h2>
-          <p>This staging form stores your request in Liftally Firebase. The embedded Jotform remains available below.</p>
+          <h2>How can we improve?</h2>
+          <p>Send a short note about the site, benchmark results, or Competition Planner.</p>
+          <p class="request-account-status" id="requestAccountStatus" hidden></p>
         </div>
         <div class="request-form-grid">
           <label class="request-field">
-            <span>Request type</span>
+            <span>Feedback type</span>
             <select id="requestType" required>
-              <option value="competition_planner_access">Competition Planner access</option>
               <option value="feedback">General feedback</option>
-              <option value="support">Support</option>
+              <option value="bug">Bug</option>
+              <option value="feature_request">Feature request</option>
+              <option value="access_request">Competition Planner access</option>
             </select>
           </label>
-          <label class="request-field">
-            <span>Email optional</span>
+          <label class="request-field" id="requestEmailField">
+            <span>Email</span>
             <input id="requestEmail" type="email" autocomplete="email" placeholder="you@example.com" />
           </label>
           <label class="request-field full">
@@ -247,25 +231,12 @@
             <textarea id="requestMessage" minlength="8" maxlength="5000" required placeholder="Tell us what you want to see next in Liftally."></textarea>
           </label>
         </div>
+        <label class="request-anonymous"><input id="requestAnonymous" type="checkbox" />Submit anonymously</label>
         <div class="request-form-actions">
-          <button class="btn btn-primary" id="submitStagingRequest" type="submit">Submit Request</button>
-          <span class="request-form-status" id="stagingRequestStatus" aria-live="polite">Staging Firebase submission is available for testing.</span>
+          <button class="btn btn-primary" id="submitFeedbackRequest" type="submit">Submit Feedback</button>
+          <span class="request-form-status" id="feedbackRequestStatus" aria-live="polite"></span>
         </div>
       </form>
-      <div class="form-frame-wrap">
-        <iframe
-          class="request-frame"
-          id="requestAccessFrame"
-          title="Liftally request access and feedback form"
-          src="https://form.jotform.com/260592564773467"
-          loading="lazy"
-          allow="geolocation; microphone; camera; fullscreen"
-        ></iframe>
-      </div>
-      <p class="fallback-copy">
-        Having trouble loading the form?
-        <a id="requestAccessFallback" href="https://form.jotform.com/260592564773467" target="_blank" rel="noopener" data-propagate-utm="true">Open it directly</a>.
-      </p>
     </section>
   </main>
 
@@ -286,34 +257,16 @@
   </footer>
 
   <script>
-    const jotformUrl = 'https://form.jotform.com/260592564773467';
     const currentSearch = new URLSearchParams(window.location.search);
     const preserveKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'source', 'entry', 'platform', 'ref'];
-
-    function withPreservedParams(href) {
-      const url = new URL(href, window.location.href);
+    document.querySelectorAll('[data-propagate-utm="true"]').forEach((link) => {
+      const url = new URL(link.href, window.location.href);
       preserveKeys.forEach((key) => {
         const value = currentSearch.get(key);
-        if (value && !url.searchParams.has(key)) {
-          url.searchParams.set(key, value);
-        }
+        if (value && !url.searchParams.has(key)) url.searchParams.set(key, value);
       });
-      return url.toString();
-    }
-
-    const frame = document.getElementById('requestAccessFrame');
-    const fallback = document.getElementById('requestAccessFallback');
-    if (frame) frame.src = withPreservedParams(jotformUrl);
-    if (fallback) fallback.href = withPreservedParams(jotformUrl);
-
-    document.querySelectorAll('[data-propagate-utm="true"]').forEach((link) => {
-      try {
-        link.href = withPreservedParams(link.getAttribute('href'));
-      } catch (_) {
-        // Ignore malformed href values.
-      }
+      link.href = url.toString();
     });
-
     document.querySelectorAll('[data-gtag]').forEach((link) => {
       link.addEventListener('click', () => {
         if (typeof gtag !== 'function') return;
@@ -323,56 +276,80 @@
         });
       });
     });
+    const feedbackForm = document.getElementById('feedbackRequestForm');
+    const feedbackStatus = document.getElementById('feedbackRequestStatus');
+    const feedbackSubmit = document.getElementById('submitFeedbackRequest');
+    const feedbackEmail = document.getElementById('requestEmail');
+    const feedbackAnonymous = document.getElementById('requestAnonymous');
+    const feedbackAccountStatus = document.getElementById('requestAccountStatus');
 
-    const stagingForm = document.getElementById('stagingRequestForm');
-    const stagingStatus = document.getElementById('stagingRequestStatus');
-    const stagingSubmit = document.getElementById('submitStagingRequest');
-
-    function setStagingStatus(message, isError = false) {
-      if (!stagingStatus) return;
-      stagingStatus.textContent = message;
-      stagingStatus.classList.toggle('is-error', isError);
+    function setFeedbackStatus(message = '', isError = false) {
+      feedbackStatus.textContent = message;
+      feedbackStatus.classList.toggle('is-error', isError);
     }
 
-    if (stagingForm) {
-      stagingForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        if (!window.liftallyBackend || typeof window.liftallyBackend.createSupportRequest !== 'function') {
-          setStagingStatus('Staging Firebase submission is still loading. Try again in a moment.', true);
-          return;
-        }
-
-        const type = document.getElementById('requestType').value;
-        const email = document.getElementById('requestEmail').value.trim();
-        const message = document.getElementById('requestMessage').value.trim();
-
-        if (message.length < 8) {
-          setStagingStatus('Please enter a longer message.', true);
-          return;
-        }
-
-        stagingSubmit.disabled = true;
-        setStagingStatus('Submitting to staging...');
-        try {
-          await window.liftallyBackend.createSupportRequest({
-            type,
-            email,
-            message,
-            source: type === 'competition_planner_access' ? 'weight_class_explorer' : 'website'
-          });
-          stagingForm.reset();
-          setStagingStatus('Request saved to staging.');
-        } catch (error) {
-          setStagingStatus(`Request could not be saved: ${error.code || error.message}`, true);
-        } finally {
-          stagingSubmit.disabled = false;
-        }
-      });
+    function isNamedAccount(user) {
+      return Boolean(user && !user.isAnonymous);
     }
 
-    window.addEventListener('liftally-backend-error', () => {
-      setStagingStatus('Staging Firebase submission is unavailable. Use the embedded Jotform below.', true);
+    function mappedSupportType(type) {
+      return {
+        feedback: 'feedback',
+        bug: 'support',
+        feature_request: 'feedback',
+        access_request: 'competition_planner_access'
+      }[type] || 'feedback';
+    }
+
+    function updateFeedbackIdentity(user) {
+      const signedIn = isNamedAccount(user);
+      const anonymous = Boolean(feedbackAnonymous.checked);
+      feedbackAccountStatus.hidden = !signedIn;
+      feedbackAccountStatus.textContent = signedIn ? `Signed in as ${user.email || 'Liftally account'}` : '';
+      feedbackEmail.disabled = anonymous || signedIn;
+      if (signedIn && !anonymous) feedbackEmail.value = user.email || '';
+      if (anonymous) feedbackEmail.value = '';
+    }
+
+    feedbackAnonymous.addEventListener('change', () => {
+      updateFeedbackIdentity(window.liftallyBackend?.getCurrentUser?.() || null);
     });
+
+    feedbackForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!window.liftallyBackend || typeof window.liftallyBackend.createSupportRequest !== 'function') {
+        setFeedbackStatus('Feedback service is still loading. Try again in a moment.', true);
+        return;
+      }
+      const selectedType = document.getElementById('requestType').value;
+      const message = document.getElementById('requestMessage').value.trim();
+      if (message.length < 8) {
+        setFeedbackStatus('Please enter a longer message.', true);
+        return;
+      }
+      const anonymous = feedbackAnonymous.checked;
+      feedbackSubmit.disabled = true;
+      setFeedbackStatus('Submitting feedback...');
+      try {
+        await window.liftallyBackend.createSupportRequest({
+          type: mappedSupportType(selectedType),
+          email: anonymous ? '' : feedbackEmail.value.trim(),
+          source: selectedType === 'access_request' ? 'weight_class_explorer' : 'website',
+          message: [`Feedback type: ${selectedType}`, `Page: ${window.location.pathname}`, `Anonymous: ${anonymous ? 'yes' : 'no'}`, `Message: ${message}`].join('\n')
+        });
+        feedbackForm.reset();
+        updateFeedbackIdentity(window.liftallyBackend.getCurrentUser?.() || null);
+        setFeedbackStatus('Thanks — your feedback was submitted.');
+      } catch (error) {
+        setFeedbackStatus(`Feedback could not be submitted: ${error.code || error.message}`, true);
+      } finally {
+        feedbackSubmit.disabled = false;
+      }
+    });
+
+    window.addEventListener('liftally-backend-ready', () => updateFeedbackIdentity(window.liftallyBackend.getCurrentUser?.() || null));
+    window.addEventListener('liftally-auth-change', (event) => updateFeedbackIdentity(event.detail.user));
+    window.addEventListener('liftally-backend-error', () => setFeedbackStatus('Feedback service is unavailable. Try again later.', true));
   </script>
   <script src="site.js"></script>
 </body>
