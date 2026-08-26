@@ -872,7 +872,7 @@
     }
 
     .result-card--class .result-value {
-      font-size: clamp(1.45rem, 2.9vw, 1.9rem);
+      font-size: clamp(2rem, 4vw, 3rem);
     }
 
     .result-subtext {
@@ -1183,22 +1183,40 @@
       line-height: 1.45;
     }
 
-    .benchmark-feedback-trigger {
-      width: fit-content;
-      min-height: 40px;
-      margin-top: 2px;
-      padding: 8px 12px;
-      border: 1px solid rgba(247, 247, 243, 0.38);
+    .benchmark-quick-feedback {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 14px 0 0;
+      color: var(--text-secondary-on-dark);
+      font: 700 0.84rem/1.3 var(--font-body);
+    }
+    .benchmark-quick-feedback__question { color: var(--text-on-dark); }
+    .benchmark-quick-feedback__choices { display: flex; gap: 7px; }
+    .benchmark-quick-feedback__chip {
+      min-height: 32px;
+      padding: 5px 11px;
+      border: 1px solid rgba(247, 247, 243, 0.48);
       border-radius: 999px;
       background: transparent;
       color: var(--text-secondary-on-dark);
-      font: 700 0.84rem/1.2 var(--font-body);
+      font: inherit;
       cursor: pointer;
     }
-
-    .benchmark-feedback-trigger:hover {
-      border-color: rgba(247, 247, 243, 0.72);
+    .benchmark-quick-feedback__chip:hover,
+    .benchmark-quick-feedback__chip:focus-visible { border-color: var(--text-on-dark); color: var(--text-on-dark); }
+    .benchmark-quick-feedback__chip.is-selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .benchmark-quick-feedback__chip:disabled { cursor: default; opacity: 0.7; }
+    .benchmark-quick-feedback__status { margin: 0; color: var(--text-secondary-on-dark); font: inherit; }
+    .benchmark-quick-feedback__follow-up {
+      padding: 0;
+      border: 0;
+      border-bottom: 1px solid currentColor;
+      background: transparent;
       color: var(--text-on-dark);
+      font: inherit;
+      cursor: pointer;
     }
 
     .feedback-dialog {
@@ -1337,6 +1355,18 @@
       padding: 28px 8px 10px;
       text-align: center;
     }
+    /* The page's component display rules must not override the semantic hidden state. */
+    .feedback-dialog [hidden] { display: none !important; }
+    .feedback-dialog.is-success {
+      height: min(760px, calc(100vh - 32px));
+      overflow: hidden;
+    }
+    .feedback-dialog.is-success .feedback-dialog__header { display: none; }
+    .feedback-dialog.is-success .feedback-dialog__inner {
+      height: 100%;
+      box-sizing: border-box;
+      align-content: center;
+    }
     .feedback-success__icon {
       display: grid;
       width: 52px;
@@ -1352,7 +1382,7 @@
     .feedback-success__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 
     .feedback-dialog button:focus-visible,
-    .benchmark-feedback-trigger:focus-visible {
+    .benchmark-quick-feedback__follow-up:focus-visible {
       outline: 3px solid var(--focus-ring);
       outline-offset: 3px;
     }
@@ -2288,6 +2318,121 @@
       margin-right: 12px;
     }
 
+    /* Step 2 prioritises the exact percentile and its difference from the current class. */
+    #classes .scenario-chart {
+      gap: 10px;
+    }
+
+    #classes .scenario-row {
+      display: grid;
+      grid-template-columns: minmax(170px, 0.72fr) minmax(0, 1.28fr);
+      gap: 14px 20px;
+      padding: 16px;
+      border: 1px solid var(--border-default);
+      border-left: 4px solid transparent;
+      border-radius: 10px;
+      background: var(--surface-card);
+    }
+
+    #classes .scenario-row:last-child {
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    #classes .scenario-row.is-current {
+      border-color: #9bbde9;
+      border-left-color: #3b82f6;
+      background: rgba(59, 130, 246, 0.055);
+    }
+
+    #classes .scenario-row-header {
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      padding: 0;
+    }
+
+    #classes .scenario-row-class {
+      font-size: 1.5rem;
+    }
+
+    #classes .scenario-row-role {
+      width: fit-content;
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    #classes .scenario-row-role.is-current {
+      padding: 4px 8px;
+      background: rgba(59, 130, 246, 0.1);
+      color: #1f6fd6;
+    }
+
+    .scenario-row-details,
+    .scenario-row-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 10px;
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
+
+    .scenario-percentile-metrics {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .scenario-percentile-metric {
+      display: grid;
+      grid-template-columns: 50px minmax(64px, auto) minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .scenario-percentile-metric__label {
+      color: var(--text-secondary);
+      font-size: 0.84rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .scenario-percentile-metric__value {
+      color: var(--text-primary);
+      font-size: 1.15rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .scenario-delta-pill {
+      justify-self: start;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #eef0ef;
+      color: #64706a;
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .scenario-delta-pill.is-positive { background: #e8f4eb; color: #28733d; }
+    .scenario-delta-pill.is-negative { background: #f8e9e7; color: #a9362b; }
+
+    #classes .scenario-row-meta {
+      grid-column: 1 / -1;
+      padding-top: 2px;
+    }
+
+    #classes .scenario-row-meta .scenario-distance-note {
+      font-weight: 800;
+    }
+
     .class-insight {
       display: grid;
       gap: 8px;
@@ -2381,8 +2526,7 @@
     }
 
     .scenario-current-class-card,
-    .scenario-result-preview,
-    .scenario-sbd-selector {
+    .scenario-result-preview {
       display: grid;
       align-content: start;
       gap: 9px;
@@ -2390,6 +2534,10 @@
       border: 1px solid var(--border-default);
       border-radius: 10px;
       background: var(--surface-card);
+    }
+
+    .scenario-result-preview {
+      padding: 14px;
     }
 
     .scenario-current-class-card > span:first-child,
@@ -2413,97 +2561,108 @@
     }
 
     .scenario-current-class-card__range,
-    .scenario-current-class-card__meta,
-    .scenario-result-preview__detail {
+    .scenario-result-preview__detail,
+    .scenario-result-preview__context {
       color: var(--text-secondary);
       line-height: 1.35;
     }
 
-    .scenario-bodyweight-toggle {
+    .scenario-result-preview__context { font-size: 0.84rem; }
+
+    .scenario-current-class-card,
+    .scenario-sbd-toggle,
+    .scenario-lift-card {
       position: relative;
       display: grid;
-      gap: 4px;
-      margin-top: 4px;
+      gap: 5px;
       min-width: 0;
-      padding: 12px;
+      min-height: 102px;
+      padding: 14px;
       border: 1px solid var(--border-default);
       border-radius: 8px;
       background: #ffffff;
       color: var(--text-primary);
       cursor: pointer;
       text-align: left;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
     }
 
-    .scenario-bodyweight-toggle strong {
+    .scenario-current-class-card {
+      align-content: start;
+      font: inherit;
+    }
+
+    .scenario-current-class-card strong,
+    .scenario-sbd-toggle strong,
+    .scenario-lift-card strong {
       color: var(--text-primary);
       font-size: 1.08rem;
       line-height: 1.2;
     }
 
-    .scenario-bodyweight-toggle small {
-      color: var(--text-secondary);
-      font-size: 0.84rem;
-      line-height: 1.2;
+    .scenario-current-class-card strong,
+    .scenario-sbd-toggle strong {
+      font-family: var(--font-cond);
+      font-size: clamp(2rem, 3vw, 2.75rem);
+      line-height: 1;
     }
 
-    .scenario-bodyweight-toggle.is-selected {
+    .scenario-current-class-card.is-selected,
+    .scenario-lift-card.is-selected {
       border-color: var(--accent-text);
       background: var(--accent-surface);
       box-shadow: inset 0 0 0 1px var(--accent-border);
     }
 
-    .scenario-bodyweight-toggle:disabled {
+    .scenario-current-class-card:disabled {
       cursor: not-allowed;
       opacity: 0.58;
     }
 
-    .scenario-bodyweight-toggle:focus-visible {
+    .scenario-current-class-card:focus-visible {
       outline: 3px solid var(--focus-ring);
       outline-offset: 2px;
     }
 
-    .scenario-bodyweight-toggle.is-selected .scenario-lift-card__check {
-      display: grid;
-    }
-
     .scenario-sbd-selector {
+      position: relative;
+      display: grid;
+      grid-template-rows: auto auto;
       gap: 12px;
-      border: 3px solid transparent;
-      transition: border-color 160ms ease, background-color 160ms ease;
+      padding: 14px;
+      border: 1px solid var(--border-default);
+      border-radius: 10px;
+      background: #ffffff;
+      transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
     }
 
-    .scenario-sbd-selector.is-active,
-    .scenario-sbd-selector.is-partial {
-      border-color: var(--text-primary);
+    .scenario-sbd-selector.is-selected {
+      border-color: var(--accent-text);
+      background: var(--accent-surface);
+      box-shadow: inset 0 0 0 1px var(--accent-border);
     }
 
     .scenario-sbd-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      width: 100%;
+      position: relative;
+      display: grid;
+      align-content: start;
+      gap: 5px;
+      min-height: 0;
       padding: 0;
       border: 0;
+      border-radius: 0;
       background: transparent;
+      box-shadow: none;
+      width: 100%;
       color: var(--text-primary);
       cursor: pointer;
       text-align: left;
     }
 
-    .scenario-sbd-toggle strong {
-      display: block;
-      margin-top: 2px;
-      font-family: var(--font-cond);
-      font-size: 1.55rem;
-      line-height: 1;
-      text-transform: uppercase;
-    }
-
-    .scenario-sbd-toggle__state {
-      color: var(--text-secondary);
-      font-size: 0.86rem;
-      font-weight: 800;
+    .scenario-sbd-toggle.is-selected {
+      border: 0;
+      background: transparent;
+      box-shadow: none;
     }
 
     .scenario-lift-grid {
@@ -2518,67 +2677,51 @@
       min-width: 0;
     }
 
-    .scenario-lift-card {
-      position: relative;
-      display: grid;
-      gap: 5px;
-      min-height: 102px;
-      padding: 14px;
-      border: 1px solid var(--border-default);
-      border-radius: 8px;
-      background: #ffffff;
-      color: var(--text-primary);
-      cursor: pointer;
-      text-align: left;
-      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
-    }
-
-    .scenario-lift-card strong {
-      font-size: 1.08rem;
-      line-height: 1.2;
-    }
-
     .scenario-lift-card small {
       color: var(--text-secondary);
       font-size: 0.84rem;
       line-height: 1.2;
     }
 
-    .scenario-lift-card__check {
+    .scenario-lift-card {
+      background: #ffffff;
+    }
+
+    .scenario-card-selection {
       position: absolute;
       top: 10px;
       right: 10px;
-      display: none;
+      pointer-events: none;
+      display: grid;
       width: 20px;
       height: 20px;
       place-items: center;
       border-radius: 999px;
-      background: var(--accent-text);
-      color: #ffffff;
+      border: 1px solid #d7dcda;
+      background: #e7ebe9;
+      color: transparent;
       font-size: 0.78rem;
       font-weight: 900;
     }
 
-    .scenario-lift-card.is-selected {
+    .scenario-current-class-card.is-selected .scenario-card-selection,
+    .scenario-sbd-selector.is-selected .scenario-card-selection,
+    .scenario-lift-card.is-selected .scenario-card-selection {
       border-color: var(--accent-text);
-      background: var(--accent-surface);
-      box-shadow: inset 0 0 0 1px var(--accent-border);
-    }
-
-    .scenario-lift-card.is-selected .scenario-lift-card__check {
-      display: grid;
+      background: var(--accent-text);
+      color: #ffffff;
     }
 
     .scenario-sbd-toggle:disabled,
     .scenario-lift-card:disabled,
-    .scenario-bodyweight-toggle:disabled {
+    .scenario-current-class-card:disabled {
       cursor: not-allowed;
       opacity: 0.58;
     }
 
     .scenario-lift-card:focus-visible,
     .scenario-sbd-toggle:focus-visible,
-    .scenario-bodyweight-toggle:focus-visible {
+    .scenario-current-class-card:focus-visible {
       outline: 3px solid var(--focus-ring);
       outline-offset: 3px;
     }
@@ -2833,13 +2976,7 @@
     .scenario-impact-head {
       display: flex;
       align-items: baseline;
-      justify-content: space-between;
       gap: 12px;
-    }
-
-    .scenario-impact-head .eyebrow {
-      margin: 0;
-      color: var(--accent-text);
     }
 
     .scenario-impact-head h3 {
@@ -2989,26 +3126,6 @@
       color: var(--text-secondary);
     }
 
-    .scenario-no-change {
-      display: grid;
-      gap: 2px;
-      margin: 0;
-      padding: 10px 12px;
-      border: 1px solid rgba(32, 35, 33, 0.12);
-      border-radius: 8px;
-      background: var(--surface-subtle);
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .scenario-no-change strong {
-      color: var(--text-primary);
-    }
-
-    .scenario-no-change[hidden] {
-      display: none;
-    }
-
     .scenario-comparison-summary {
       margin: 0 0 12px;
       color: var(--text-secondary);
@@ -3019,34 +3136,6 @@
 
     .scenario-comparison-summary[hidden] {
       display: none;
-    }
-
-    .scenario-baseline {
-      display: grid;
-      gap: 5px;
-      padding: 12px 14px;
-      border: 1px solid rgba(32, 35, 33, 0.14);
-      border-radius: 8px;
-      background: #ffffff;
-    }
-
-    .scenario-baseline[hidden] {
-      display: none;
-    }
-
-    .scenario-baseline-label {
-      color: var(--accent-text);
-      font-size: 0.74rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      line-height: 1.2;
-      text-transform: uppercase;
-    }
-
-    .scenario-baseline strong {
-      color: var(--text-primary);
-      font-size: 0.96rem;
-      line-height: 1.45;
     }
 
     #scenarioComparisonWrap[hidden],
@@ -3583,6 +3672,11 @@
 
     body.site-shell.tool-page .result-subtext {
       color: var(--text-secondary);
+    }
+
+    body.site-shell.tool-page .result-card--class .result-subtext {
+      color: #4f5b55;
+      font-weight: 700;
     }
 
     body.site-shell.tool-page .result-class-context {
@@ -4345,7 +4439,10 @@
       }
 
       .scenario-current-class-card,
-      .scenario-result-preview,
+      .scenario-result-preview {
+        padding: 16px;
+      }
+
       .scenario-sbd-selector {
         padding: 16px;
       }
@@ -4840,6 +4937,8 @@
         border-radius: 16px 16px 0 0;
       }
 
+      .feedback-dialog.is-success { height: min(760px, calc(100vh - 12px)); }
+
       .feedback-dialog__inner { padding: 22px 20px; }
       .feedback-stars { justify-content: space-between; }
 
@@ -4878,6 +4977,37 @@
       body.site-shell.tool-page #classes .scenario-percentile,
       body.site-shell.tool-page #classes .scenario-row-delta {
         font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      body.site-shell.tool-page #classes .scenario-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid var(--border-default);
+        border-left: 4px solid transparent;
+        border-radius: 10px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row.is-current {
+        border-color: #9bbde9;
+        border-left-color: #3b82f6;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-header {
+        display: grid;
+        gap: 7px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-percentile-metric {
+        grid-template-columns: 48px minmax(60px, auto) minmax(0, 1fr);
+        gap: 8px;
+      }
+
+      body.site-shell.tool-page #classes .scenario-row-meta {
+        grid-column: auto;
+        font-size: 0.82rem;
       }
     }
   </style>
@@ -4990,7 +5120,6 @@
         <p>Thanks — your feedback helps us improve Liftally's benchmark results.</p>
         <div class="feedback-success__actions">
           <button class="btn btn-primary" type="button" id="closeFeedbackSuccessButton">Close</button>
-          <button class="btn btn-secondary" type="button" id="submitAnotherFeedbackButton">Submit another feedback</button>
         </div>
       </section>
     </div>
@@ -5104,7 +5233,7 @@
         <div class="results is-visible" id="resultsPanel" aria-live="polite">
           <div class="result-grid">
             <article class="result-card result-card--class">
-              <span class="result-label">Current Class</span>
+              <span class="result-label">Bodyweight</span>
               <strong class="result-value" id="classResult">-</strong>
               <span class="result-subtext" id="rangeResult">-</span>
               <span class="result-class-context" id="summaryText"></span>
@@ -5170,21 +5299,15 @@
             </div>
             <p class="benchmark-meta" id="benchmarkMeta">OpenPowerlifting benchmarks are historical dataset context, not official rankings.</p>
             <p class="benchmark-source-note">Dataset source: OpenPowerlifting, May 2026.</p>
-            <button class="benchmark-feedback-trigger" type="button" id="openFeedbackModalButton">Was this helpful?</button>
-          </div>
-        </section>
-
-        <section class="section" id="snapshotSection" aria-label="Saved snapshots">
-          <div class="snapshot-panel">
-            <div class="snapshot-panel-header">
-              <div>
-                <p class="eyebrow">Saved Snapshots</p>
-                <p class="snapshot-account-line" id="accountStatus" hidden></p>
+            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
+              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="no" aria-pressed="false">No</button>
               </div>
-              <div class="snapshot-actions" id="snapshotActions"></div>
+              <p class="benchmark-quick-feedback__status" id="benchmarkQuickFeedbackStatus" aria-live="polite"></p>
+              <button class="benchmark-quick-feedback__follow-up" type="button" id="benchmarkFeedbackFollowUp" hidden>Tell us what was confusing</button>
             </div>
-            <p class="snapshot-status" id="snapshotStatus" aria-live="polite"></p>
-            <ul class="snapshot-list" id="snapshotList" aria-label="Recent saved snapshots"></ul>
           </div>
         </section>
 
@@ -5247,6 +5370,20 @@
           </aside>
         </section>
 
+        <section class="section" id="snapshotSection" aria-label="Saved snapshots">
+          <div class="snapshot-panel">
+            <div class="snapshot-panel-header">
+              <div>
+                <p class="eyebrow">Saved Snapshots</p>
+                <p class="snapshot-account-line" id="accountStatus" hidden></p>
+              </div>
+              <div class="snapshot-actions" id="snapshotActions"></div>
+            </div>
+            <p class="snapshot-status" id="snapshotStatus" aria-live="polite"></p>
+            <ul class="snapshot-list" id="snapshotList" aria-label="Recent saved snapshots"></ul>
+          </div>
+        </section>
+
         <div class="wizard-actions">
           <button class="btn btn-secondary" type="button" data-back-to-input>Edit Inputs</button>
           <button class="btn btn-primary" type="button" data-next-to-planner>View Planner</button>
@@ -5259,7 +5396,7 @@
         <div class="screen-title screen-title--scenario">
           <p class="eyebrow">Liftally Competition Planner</p>
           <h1>Scenario Lab</h1>
-          <p>Test how bodyweight or lift changes affect DOTS and historical percentile.</p>
+          <p>Preview how bodyweight or lift changes affect DOTS and percentile.</p>
         </div>
 
         <section class="section" id="scenarioLabSection">
@@ -5282,81 +5419,62 @@
           <div class="scenario-lab" id="scenarioLab" aria-live="polite" hidden>
             <div class="scenario-lab-panel">
               <div class="scenario-selector-head">
-                <p class="eyebrow">Select changes</p>
-                <p>Choose what to analyze. Liftally will calculate the minimum change needed to affect percentile.</p>
+                <p class="eyebrow">SBD Total</p>
+                <p>Select a metric to see the smallest change that moves your percentile.</p>
               </div>
 
-              <article class="scenario-current-class-card" aria-label="Current class">
-                <span>Current class</span>
+              <button class="scenario-current-class-card" id="scenarioBodyweightToggle" type="button" aria-pressed="false" aria-label="Select current bodyweight">
+                <span>Current BW</span>
                 <strong id="scenarioCurrentClassValue">—</strong>
                 <span class="scenario-current-class-card__range" id="scenarioCurrentClassRange">—</span>
-                <span class="scenario-current-class-card__meta" id="scenarioCurrentClassMeta">—</span>
-                <button class="scenario-bodyweight-toggle" id="scenarioBodyweightToggle" type="button" aria-pressed="false">
-                  <span class="scenario-lift-card__label">Analyze</span>
-                  <strong>Bodyweight</strong>
-                  <small>Compare nearby class boundaries</small>
-                  <span class="scenario-lift-card__check" aria-hidden="true">✓</span>
-                </button>
-              </article>
+                <span class="scenario-card-selection" aria-hidden="true">✓</span>
+              </button>
 
               <section class="scenario-sbd-selector" id="scenarioSbdSelector" aria-labelledby="scenarioSbdTitle">
                 <button class="scenario-sbd-toggle" id="scenarioSbdToggle" type="button" aria-pressed="false">
-                  <span>
-                    <span class="scenario-sbd-toggle__title">Select changes</span>
-                    <strong id="scenarioSbdTitle">SBD total</strong>
-                  </span>
-                  <span class="scenario-sbd-toggle__state" id="scenarioSbdState">Select all lifts</span>
+                  <span class="scenario-sbd-toggle__title" id="scenarioSbdTitle">SBD Total</span>
+                  <strong id="scenarioSbdValue">—</strong>
                 </button>
+                <span class="scenario-card-selection" aria-hidden="true">✓</span>
                 <div class="scenario-lift-grid" aria-label="Lift changes">
                   <div class="scenario-lift-option">
                     <button class="scenario-lift-card" type="button" data-scenario-lift="squat" aria-pressed="false">
-                      <span class="scenario-lift-card__label">Lift</span>
                       <strong>Squat</strong>
                       <small id="scenarioSquatBase">—</small>
-                      <span class="scenario-lift-card__check" aria-hidden="true">✓</span>
+                      <span class="scenario-card-selection" aria-hidden="true">✓</span>
                     </button>
                   </div>
                   <div class="scenario-lift-option">
                     <button class="scenario-lift-card" type="button" data-scenario-lift="bench" aria-pressed="false">
-                      <span class="scenario-lift-card__label">Lift</span>
                       <strong>Bench press</strong>
                       <small id="scenarioBenchBase">—</small>
-                      <span class="scenario-lift-card__check" aria-hidden="true">✓</span>
+                      <span class="scenario-card-selection" aria-hidden="true">✓</span>
                     </button>
                   </div>
                   <div class="scenario-lift-option">
                     <button class="scenario-lift-card" type="button" data-scenario-lift="deadlift" aria-pressed="false">
-                      <span class="scenario-lift-card__label">Lift</span>
                       <strong>Deadlift</strong>
                       <small id="scenarioDeadliftBase">—</small>
-                      <span class="scenario-lift-card__check" aria-hidden="true">✓</span>
+                      <span class="scenario-card-selection" aria-hidden="true">✓</span>
                     </button>
                   </div>
                 </div>
               </section>
 
               <article class="scenario-result-preview" aria-live="polite">
-                <span class="scenario-lift-card__label">DOTS PR</span>
+                <span class="scenario-lift-card__label">Projected DOTS percentile</span>
                 <strong id="scenarioDotsPreview">—</strong>
                 <span class="scenario-result-preview__detail" id="scenarioDotsPreviewDetail">— DOTS</span>
+                <span class="scenario-result-preview__context" id="scenarioDotsPreviewContext">Select a metric</span>
               </article>
 
             </div>
 
             <div class="scenario-live-panel">
-              <div class="scenario-baseline" id="scenarioBaseline" hidden>
-                <span class="scenario-baseline-label">Current baseline</span>
-                <strong id="scenarioBaselineValues">-</strong>
-              </div>
-              <p class="scenario-no-change" id="scenarioNoChange" hidden>
-                <strong>Select at least one change to compare.</strong>
-                <span>Your original inputs stay unchanged.</span>
-              </p>
               <div class="scenario-comparison-table-wrap" id="scenarioComparisonWrap">
                 <section class="scenario-impact-results" aria-labelledby="scenarioImpactTitle">
                   <div class="scenario-impact-head">
-                    <p class="eyebrow">Impact results</p>
-                    <h3 id="scenarioImpactTitle">What changed</h3>
+                    <h3 id="scenarioImpactTitle">Impact results</h3>
                   </div>
                   <div class="scenario-impact-list" id="scenarioImpactList"></div>
                   <p class="scenario-impact-note" id="scenarioImpactNote" hidden></p>
@@ -5370,35 +5488,8 @@
           </div>
         </section>
 
-        <p class="planner-section-badge"><span aria-hidden="true">🔒</span> Available in the Liftally app</p>
-
-        <div class="planner-grid">
-          <article class="planner-card">
-            <h3>Save class snapshots</h3>
-            <p>Keep class and score results in your training history.</p>
-          </article>
-          <article class="planner-card">
-            <h3>Track strength trends</h3>
-            <p>Follow bodyweight, SBD total, and DOTS over time.</p>
-          </article>
-          <article class="planner-card">
-            <h3>Share progress reports</h3>
-            <p>Create clear summaries for personal or coach review.</p>
-          </article>
-          <article class="planner-card">
-            <h3>Get AI-assisted insights</h3>
-            <p>Identify training focus areas from your lift history.</p>
-          </article>
-          <article class="planner-card">
-            <h3>Add custom meet classes</h3>
-            <p>Use class structures from specific competitions.</p>
-          </article>
-        </div>
-
-        <p class="planner-carousel-hint" aria-hidden="true">Swipe · 1 of 5</p>
-
         <div class="planner-cta-row">
-          <a class="btn btn-primary" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download Liftally</a>
+          <a class="btn btn-primary" href="/request-access" data-gtag="send_feedback" data-propagate-utm="true">Help improve Liftally</a>
         </div>
 
         <div class="cta-panel">
@@ -5533,25 +5624,22 @@
       scenarioSetupStandard: document.getElementById('scenarioSetupStandard'),
       scenarioSetupSbd: document.getElementById('scenarioSetupSbd'),
       scenarioLab: document.getElementById('scenarioLab'),
-      scenarioNoChange: document.getElementById('scenarioNoChange'),
-      scenarioBaseline: document.getElementById('scenarioBaseline'),
-      scenarioBaselineValues: document.getElementById('scenarioBaselineValues'),
       scenarioComparisonWrap: document.getElementById('scenarioComparisonWrap'),
       scenarioImpactList: document.getElementById('scenarioImpactList'),
       scenarioImpactNote: document.getElementById('scenarioImpactNote'),
       scenarioBodyweightToggle: document.getElementById('scenarioBodyweightToggle'),
       scenarioSbdSelector: document.getElementById('scenarioSbdSelector'),
       scenarioSbdToggle: document.getElementById('scenarioSbdToggle'),
-      scenarioSbdState: document.getElementById('scenarioSbdState'),
+      scenarioSbdValue: document.getElementById('scenarioSbdValue'),
       scenarioLiftButtons: Array.from(document.querySelectorAll('[data-scenario-lift]')),
       scenarioCurrentClassValue: document.getElementById('scenarioCurrentClassValue'),
       scenarioCurrentClassRange: document.getElementById('scenarioCurrentClassRange'),
-      scenarioCurrentClassMeta: document.getElementById('scenarioCurrentClassMeta'),
       scenarioSquatBase: document.getElementById('scenarioSquatBase'),
       scenarioBenchBase: document.getElementById('scenarioBenchBase'),
       scenarioDeadliftBase: document.getElementById('scenarioDeadliftBase'),
       scenarioDotsPreview: document.getElementById('scenarioDotsPreview'),
       scenarioDotsPreviewDetail: document.getElementById('scenarioDotsPreviewDetail'),
+      scenarioDotsPreviewContext: document.getElementById('scenarioDotsPreviewContext'),
       scenarioCompareBars: document.getElementById('scenarioCompareBars'),
       scenarioBenchmarkMeta: document.getElementById('scenarioBenchmarkMeta'),
       accountStatus: document.getElementById('accountStatus'),
@@ -5562,7 +5650,9 @@
       closeAuthModalButton: document.getElementById('closeAuthModalButton'),
       headerSignOutButton: document.getElementById('headerSignOutButton'),
       feedbackDialog: document.getElementById('feedbackDialog'),
-      openFeedbackModalButton: document.getElementById('openFeedbackModalButton'),
+      benchmarkQuickFeedback: document.getElementById('benchmarkQuickFeedback'),
+      benchmarkQuickFeedbackStatus: document.getElementById('benchmarkQuickFeedbackStatus'),
+      benchmarkFeedbackFollowUp: document.getElementById('benchmarkFeedbackFollowUp'),
       closeFeedbackModalButton: document.getElementById('closeFeedbackModalButton'),
       cancelFeedbackButton: document.getElementById('cancelFeedbackButton'),
       benchmarkFeedbackForm: document.getElementById('benchmarkFeedbackForm'),
@@ -5572,7 +5662,6 @@
       submitBenchmarkFeedbackButton: document.getElementById('submitBenchmarkFeedbackButton'),
       benchmarkFeedbackSuccess: document.getElementById('benchmarkFeedbackSuccess'),
       closeFeedbackSuccessButton: document.getElementById('closeFeedbackSuccessButton'),
-      submitAnotherFeedbackButton: document.getElementById('submitAnotherFeedbackButton'),
       signInToSaveButton: null,
       viewHistoryButton: null,
       saveSnapshotButton: null,
@@ -5604,6 +5693,7 @@
     let activeAuthUser = null;
     let selectedFeedbackRating = 0;
     let selectedFeedbackType = 'helpful';
+    let feedbackSubmissionToken = 0;
 
     function setStep(activeStep) {
       document.querySelectorAll('.step').forEach((step) => {
@@ -5845,6 +5935,59 @@
       output.benchmarkFeedbackStatus.classList.toggle('is-error', isError);
     }
 
+    function quickBenchmarkFeedbackButtons() {
+      return output.benchmarkQuickFeedback
+        ? Array.from(output.benchmarkQuickFeedback.querySelectorAll('[data-benchmark-feedback]'))
+        : [];
+    }
+
+    function resetQuickBenchmarkFeedback() {
+      quickBenchmarkFeedbackButtons().forEach((button) => {
+        button.disabled = false;
+        button.classList.remove('is-selected');
+        button.setAttribute('aria-pressed', 'false');
+      });
+      if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = '';
+      if (output.benchmarkFeedbackFollowUp) output.benchmarkFeedbackFollowUp.hidden = true;
+    }
+
+    async function submitQuickBenchmarkFeedback(response) {
+      const buttons = quickBenchmarkFeedbackButtons();
+      if (!window.liftallyBackend || typeof window.liftallyBackend.createSupportRequest !== 'function') {
+        if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Feedback service is still loading. Try again in a moment.';
+        return;
+      }
+
+      buttons.forEach((button) => {
+        const isSelected = button.dataset.benchmarkFeedback === response;
+        button.disabled = true;
+        button.classList.toggle('is-selected', isSelected);
+        button.setAttribute('aria-pressed', String(isSelected));
+      });
+      if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Sending feedback...';
+      if (output.benchmarkFeedbackFollowUp) output.benchmarkFeedbackFollowUp.hidden = true;
+
+      const user = activeAuthUser || window.liftallyBackend.getCurrentUser?.();
+      try {
+        await window.liftallyBackend.createSupportRequest({
+          type: 'feedback',
+          source: 'weight_class_explorer',
+          email: isNamedAccount(user) ? (user.email || '') : '',
+          message: [
+            'Quick feedback',
+            'Section: step_2_historical_benchmark',
+            `Response: ${response}`,
+            `Context: ${feedbackContextText()}`
+          ].join('\n')
+        });
+        if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Thanks for the feedback.';
+        if (output.benchmarkFeedbackFollowUp) output.benchmarkFeedbackFollowUp.hidden = response !== 'no';
+      } catch (error) {
+        buttons.forEach((button) => { button.disabled = false; });
+        if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Feedback could not be submitted. Please try again.';
+      }
+    }
+
     function feedbackContextText() {
       if (!lastCalculation) return 'Weight Class Explorer';
       const context = lastSelectedBenchmarkContext || {};
@@ -5879,21 +6022,34 @@
     function showFeedbackForm() {
       if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.hidden = false;
       if (output.benchmarkFeedbackSuccess) output.benchmarkFeedbackSuccess.hidden = true;
+      output.feedbackDialog?.classList.remove('is-success');
     }
 
     function showFeedbackSuccess() {
       if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.hidden = true;
       if (output.benchmarkFeedbackSuccess) output.benchmarkFeedbackSuccess.hidden = false;
+      output.feedbackDialog?.classList.add('is-success');
       window.setTimeout(() => output.closeFeedbackSuccessButton?.focus(), 0);
+    }
+
+    function setFeedbackSubmitting(isSubmitting) {
+      if (!output.submitBenchmarkFeedbackButton) return;
+      output.submitBenchmarkFeedbackButton.disabled = isSubmitting;
+      output.submitBenchmarkFeedbackButton.textContent = isSubmitting ? 'Submitting...' : 'Submit feedback';
+    }
+
+    function resetFeedbackForm() {
+      if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.reset();
+      setFeedbackRating(0);
+      setFeedbackType('helpful');
+      setFeedbackStatus('');
+      setFeedbackSubmitting(false);
     }
 
     function openFeedbackModal() {
       if (!output.feedbackDialog) return;
-      setFeedbackRating(0);
-      setFeedbackType('helpful');
-      if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.reset();
+      resetFeedbackForm();
       showFeedbackForm();
-      setFeedbackStatus('');
       if (typeof output.feedbackDialog.showModal === 'function' && !output.feedbackDialog.open) output.feedbackDialog.showModal();
       window.setTimeout(() => document.querySelector('[data-feedback-rating="1"]')?.focus(), 0);
     }
@@ -5934,10 +6090,8 @@
         comment: output.benchmarkFeedbackComment?.value.trim() || '',
         anonymous
       });
-      if (output.submitBenchmarkFeedbackButton) {
-        output.submitBenchmarkFeedbackButton.disabled = true;
-        output.submitBenchmarkFeedbackButton.textContent = 'Submitting...';
-      }
+      const submissionToken = ++feedbackSubmissionToken;
+      setFeedbackSubmitting(true);
       setFeedbackStatus('Submitting feedback...');
       try {
         await window.liftallyBackend.createSupportRequest({
@@ -5946,17 +6100,14 @@
           email: !anonymous && isNamedAccount(user) ? (user.email || '') : '',
           message
         });
-        setFeedbackStatus('');
-        if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.reset();
-        setFeedbackRating(0);
+        if (submissionToken !== feedbackSubmissionToken) return;
+        resetFeedbackForm();
         showFeedbackSuccess();
       } catch (error) {
+        if (submissionToken !== feedbackSubmissionToken) return;
         setFeedbackStatus(`Feedback could not be submitted: ${error.code || error.message}`, true);
       } finally {
-        if (output.submitBenchmarkFeedbackButton) {
-          output.submitBenchmarkFeedbackButton.disabled = false;
-          output.submitBenchmarkFeedbackButton.textContent = 'Submit feedback';
-        }
+        if (submissionToken === feedbackSubmissionToken) setFeedbackSubmitting(false);
       }
     }
 
@@ -6484,9 +6635,9 @@
       renderStandardsComparison(context.sex, context.unit, context.bodyweightKg);
       output.previewClass.textContent = context.currentClass.name;
       output.previewCopy.textContent = `Based on ${formatNumber(context.bodyweight, 1)}${context.unit}, you currently fall into the ${context.currentClass.name} class under ${context.standard.label}.`;
-      output.classResult.textContent = context.currentClass.name;
-      output.rangeResult.textContent = rangeText(context.currentClass, context.unit);
-      output.summaryText.textContent = resultMetaText(context.bodyweightKg, context.unit, context.standard.label);
+      output.classResult.textContent = formatWeightForUnit(context.bodyweightKg, context.unit);
+      output.rangeResult.textContent = `${classNameWithSpace(context.currentClass)} class · ${rangeText(context.currentClass, context.unit)} · ${context.standard.label}`;
+      output.summaryText.textContent = '';
       renderClassContext(context.standardKey, context.sex, context.unit, context.currentIndex, null, null, null, context.bodyweightKg);
       setStep(1);
     }
@@ -6606,6 +6757,7 @@
 
     function resetBenchmarkSection() {
       lastSelectedBenchmarkContext = null;
+      resetQuickBenchmarkFeedback();
       output.benchmarkSection.hidden = true;
       output.benchmarkState.textContent = 'Historical benchmark percentiles appear after a full SBD result is calculated.';
       output.benchmarkTotalPercentile.textContent = '-';
@@ -6623,6 +6775,7 @@
 
     function setBenchmarkLoading() {
       output.benchmarkSection.hidden = false;
+      resetQuickBenchmarkFeedback();
       output.benchmarkState.textContent = 'Loading historical benchmark percentiles...';
       output.benchmarkTotalPercentile.textContent = '-';
       output.benchmarkDotsPercentile.textContent = '-';
@@ -6964,16 +7117,28 @@
       return lift === 'bench' ? 'Bench press' : lift.charAt(0).toUpperCase() + lift.slice(1);
     }
 
+    function scenarioPreviewContext(selectedLifts) {
+      if (scenarioBodyweightSelected && selectedLifts.length) return 'Combined scenario';
+      if (scenarioBodyweightSelected) return 'Bodyweight only';
+      if (selectedLifts.length === 3) return 'SBD total only';
+      if (selectedLifts.length === 1) return `${scenarioLiftLabel(selectedLifts[0])} only`;
+      return selectedLifts.length ? 'Combined lifts' : 'Select a metric';
+    }
+
+    function setScenarioPreviewEmpty() {
+      if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = 'No change';
+      if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = 'Select another metric or scenario.';
+      if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = 'No meaningful change';
+    }
+
     function renderScenarioSelector(calculation) {
       const base = scenarioBaseValues(calculation);
       const selectedLifts = selectedScenarioLifts();
       const allSelected = selectedLifts.length === 3;
-      const partial = selectedLifts.length > 0 && !allSelected;
       const currentClass = calculation.currentClass;
 
-      if (output.scenarioCurrentClassValue) output.scenarioCurrentClassValue.textContent = classNameWithSpace(currentClass);
-      if (output.scenarioCurrentClassRange) output.scenarioCurrentClassRange.textContent = rangeText(currentClass, calculation.unit);
-      if (output.scenarioCurrentClassMeta) output.scenarioCurrentClassMeta.textContent = `${formatWeightForUnit(calculation.bodyweightKg, calculation.unit)} bodyweight · ${calculation.standardLabel}`;
+      if (output.scenarioCurrentClassValue) output.scenarioCurrentClassValue.textContent = formatWeightForUnit(calculation.bodyweightKg, calculation.unit);
+      if (output.scenarioCurrentClassRange) output.scenarioCurrentClassRange.textContent = `${rangeText(currentClass, calculation.unit)} · ${calculation.standardLabel}`;
       if (output.scenarioBodyweightToggle) {
         output.scenarioBodyweightToggle.classList.toggle('is-selected', scenarioBodyweightSelected);
         output.scenarioBodyweightToggle.setAttribute('aria-pressed', String(scenarioBodyweightSelected));
@@ -6982,12 +7147,11 @@
       if (output.scenarioBenchBase) output.scenarioBenchBase.textContent = plannerNumber(base.bench, calculation.unit);
       if (output.scenarioDeadliftBase) output.scenarioDeadliftBase.textContent = plannerNumber(base.deadlift, calculation.unit);
 
-      if (output.scenarioSbdSelector) {
-        output.scenarioSbdSelector.classList.toggle('is-active', allSelected);
-        output.scenarioSbdSelector.classList.toggle('is-partial', partial);
+      if (output.scenarioSbdToggle) {
+        output.scenarioSbdToggle.setAttribute('aria-pressed', String(allSelected));
       }
-      if (output.scenarioSbdToggle) output.scenarioSbdToggle.setAttribute('aria-pressed', String(allSelected));
-      if (output.scenarioSbdState) output.scenarioSbdState.textContent = allSelected ? 'All lifts selected' : partial ? 'Partial selection' : 'Select all lifts';
+      if (output.scenarioSbdSelector) output.scenarioSbdSelector.classList.toggle('is-selected', allSelected);
+      if (output.scenarioSbdValue) output.scenarioSbdValue.textContent = plannerNumber(calculation.totalKg, calculation.unit);
 
       output.scenarioLiftButtons.forEach((button) => {
         const selected = Boolean(scenarioLiftSelection[button.dataset.scenarioLift]);
@@ -6996,6 +7160,7 @@
       });
       if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = '—';
       if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
+      if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = scenarioPreviewContext(selectedLifts);
     }
 
     function scenarioPercentileDisplay(context, scoreType) {
@@ -7048,7 +7213,6 @@
       const totalDelta = scenarioDeltaText(currentContext && currentContext.total, scenarioContext && scenarioContext.total);
       const dotsDelta = scenarioDeltaText(currentContext && currentContext.dots, scenarioContext && scenarioContext.dots);
       const noChange = totalDelta === 'No change' && dotsDelta === 'No change';
-      if (output.scenarioNoChange) output.scenarioNoChange.hidden = !noChange;
       if (noChange) {
         output.scenarioCompareBars.hidden = true;
         output.scenarioCompareBars.innerHTML = '';
@@ -7106,6 +7270,9 @@
       return {
         sortValue: largestImpact,
         dotsSortValue: Math.abs(dotsChange || 0),
+        totalDelta,
+        dotsDelta,
+        dotsChange,
         requiredChangeKg: Number.isFinite(requiredChangeKg) ? requiredChangeKg : Number.POSITIVE_INFINITY,
         forceVisible,
         previewDotsPercentile: scenarioDotsPct,
@@ -7117,8 +7284,8 @@
             <span class="scenario-impact-card__values">${currentValue} → ${scenarioValue}</span>
             <div class="scenario-impact-card__metrics">
               <span>DOTS <strong>${plannerDots(currentDots)} → ${plannerDots(scenarioDots)}</strong>${Number.isFinite(dotsChange) && dotsChange !== 0 ? ` (${formatSigned(dotsChange, 2)})` : ''}</span>
-              <span>Total percentile <strong>${currentTotalPct} → ${scenarioTotalPct}</strong>${Number.isFinite(totalDelta) && totalDelta !== 0 ? ` (${formatSigned(totalDelta)} pts)` : ''}</span>
-              <span>DOTS percentile <strong>${currentDotsPct} → ${scenarioDotsPct}</strong>${Number.isFinite(dotsDelta) && dotsDelta !== 0 ? ` (${formatSigned(dotsDelta)} pts)` : ''}</span>
+              <span>Total PR <strong>${currentTotalPct} → ${scenarioTotalPct}</strong>${Number.isFinite(totalDelta) && totalDelta !== 0 ? ` (${formatSigned(totalDelta)} pts)` : ''}</span>
+              <span>DOTS PR <strong>${currentDotsPct} → ${scenarioDotsPct}</strong>${Number.isFinite(dotsDelta) && dotsDelta !== 0 ? ` (${formatSigned(dotsDelta)} pts)` : ''}</span>
             </div>
           </article>`
       };
@@ -7171,7 +7338,7 @@
         ? `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`
         : `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} total needed`;
       return impactFromContexts({
-        name: lift ? scenarioLiftLabel(lift) : 'SBD total',
+        name: lift ? `${scenarioLiftLabel(lift)} impact` : 'SBD total impact',
         primary,
         currentValue,
         scenarioValue,
@@ -7186,15 +7353,13 @@
     async function calculateBodyweightImpacts({ calculation, currentContext }) {
       const list = getStandardClasses(calculation.standardKey, calculation.sex);
       const currentIndex = findClassIndex(calculation.standardKey, calculation.sex, calculation.bodyweightKg);
-      const targets = ['lower', 'higher'];
-      const impacts = await Promise.all(targets.map(async (target) => {
-        const targetIndex = target === 'lower' ? currentIndex - 1 : currentIndex + 1;
-        if (targetIndex < 0 || targetIndex >= list.length) return null;
-        const targetBodyweightKg = scenarioBoundaryBodyweightKg(target, calculation);
+      const impacts = await Promise.all(list.map(async (targetClass, targetIndex) => {
+        if (targetIndex === currentIndex) return null;
+        const targetBodyweightKg = targetIndex < currentIndex
+          ? targetClass.upper
+          : targetClass.lower + 0.1;
         if (!Number.isFinite(targetBodyweightKg)) return null;
-        const relativeChange = Math.abs(targetBodyweightKg - calculation.bodyweightKg) / calculation.bodyweightKg;
-        if (relativeChange > 0.1) return null;
-        const targetClass = list[targetIndex];
+        if (Math.abs(targetBodyweightKg - calculation.bodyweightKg) < 0.000001) return null;
         const scenarioDots = dotsScore(calculation.sex, targetBodyweightKg, calculation.totalKg);
         const scenarioContext = await loadBenchmarkContext({
           standardKey: calculation.standardKey,
@@ -7206,7 +7371,7 @@
         });
         const deltaKg = targetBodyweightKg - calculation.bodyweightKg;
         return impactFromContexts({
-          name: 'Bodyweight',
+          name: 'Bodyweight impact',
           primary: `${formatSigned(fromKg(deltaKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} to enter ${classNameWithSpace(targetClass)}`,
           currentValue: `${plannerNumber(calculation.bodyweightKg, calculation.unit)} · ${classNameWithSpace(calculation.currentClass)} class`,
           scenarioValue: `${plannerNumber(targetBodyweightKg, calculation.unit)} · ${classNameWithSpace(targetClass)} class`,
@@ -7214,11 +7379,69 @@
           scenarioDots,
           currentContext,
           scenarioContext,
-          requiredChangeKg: Math.abs(deltaKg),
+          requiredChangeKg: Math.abs(deltaKg)
+        });
+      }));
+      return impacts
+        .filter((impact) => impact && (
+          Math.abs(impact.totalDelta || 0) >= 1
+          || Math.abs(impact.dotsDelta || 0) >= 1
+          || Math.abs(impact.dotsChange || 0) > 0
+        ))
+        .sort((a, b) => a.requiredChangeKg - b.requiredChangeKg || b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue);
+    }
+
+    async function calculateCombinedImpact({ calculation, currentContext }) {
+      const list = getStandardClasses(calculation.standardKey, calculation.sex);
+      const currentIndex = findClassIndex(calculation.standardKey, calculation.sex, calculation.bodyweightKg);
+      const candidates = await Promise.all(['lower', 'higher'].map(async (target) => {
+        const targetIndex = target === 'lower' ? currentIndex - 1 : currentIndex + 1;
+        if (targetIndex < 0 || targetIndex >= list.length) return null;
+        const targetBodyweightKg = scenarioBoundaryBodyweightKg(target, calculation);
+        if (!Number.isFinite(targetBodyweightKg)) return null;
+        const relativeChange = Math.abs(targetBodyweightKg - calculation.bodyweightKg) / calculation.bodyweightKg;
+        if (relativeChange > 0.1) return null;
+
+        const targetClass = list[targetIndex];
+        const targetDots = dotsScore(calculation.sex, targetBodyweightKg, calculation.totalKg);
+        const targetCalculation = { ...calculation, bodyweightKg: targetBodyweightKg, currentClass: targetClass, dots: targetDots };
+        const targetContext = await loadBenchmarkContext({
+          standardKey: calculation.standardKey,
+          sex: calculation.sex,
+          weightClass: benchmarkClassValue(targetClass),
+          totalKg: calculation.totalKg,
+          dots: targetDots,
+          testedStatus: 'auto'
+        });
+        const incrementKg = minimumScenarioIncrementKg(targetCalculation, targetContext);
+        if (!Number.isFinite(incrementKg)) return null;
+
+        const scenarioTotalKg = calculation.totalKg + incrementKg;
+        const scenarioDots = dotsScore(calculation.sex, targetBodyweightKg, scenarioTotalKg);
+        const scenarioContext = await loadBenchmarkContext({
+          standardKey: calculation.standardKey,
+          sex: calculation.sex,
+          weightClass: benchmarkClassValue(targetClass),
+          totalKg: scenarioTotalKg,
+          dots: scenarioDots,
+          testedStatus: 'auto'
+        });
+        return impactFromContexts({
+          name: 'Combined impact',
+          primary: `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`,
+          currentValue: `BW ${plannerNumber(calculation.bodyweightKg, calculation.unit)} · Total ${plannerNumber(calculation.totalKg, calculation.unit)}`,
+          scenarioValue: `BW ${plannerNumber(targetBodyweightKg, calculation.unit)} · Total ${plannerNumber(scenarioTotalKg, calculation.unit)}`,
+          currentDots: calculation.dots,
+          scenarioDots,
+          currentContext,
+          scenarioContext,
+          requiredChangeKg: incrementKg,
           forceVisible: true
         });
       }));
-      return impacts.filter(Boolean);
+      return candidates
+        .filter(Boolean)
+        .sort((a, b) => b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue || a.requiredChangeKg - b.requiredChangeKg)[0] || null;
     }
 
     function ensureScenarioSetup() {
@@ -7241,8 +7464,6 @@
       ensureScenarioSetup();
       if (output.scenarioSetup) output.scenarioSetup.hidden = false;
       if (output.scenarioLab) output.scenarioLab.hidden = true;
-      if (output.scenarioBaseline) output.scenarioBaseline.hidden = true;
-      if (output.scenarioNoChange) output.scenarioNoChange.hidden = true;
       if (output.scenarioComparisonWrap) output.scenarioComparisonWrap.hidden = true;
       if (output.scenarioImpactList) output.scenarioImpactList.innerHTML = '';
       if (output.scenarioImpactNote) {
@@ -7255,7 +7476,6 @@
       if (output.scenarioSetupSbd) output.scenarioSetupSbd.classList.toggle('is-complete', hasFullSbd);
       if (output.scenarioCompareBars) output.scenarioCompareBars.innerHTML = '';
       if (output.scenarioBenchmarkMeta) output.scenarioBenchmarkMeta.textContent = '';
-      if (output.scenarioNoChange) output.scenarioNoChange.hidden = true;
       setScenarioUiDisabled(true);
     }
 
@@ -7284,8 +7504,6 @@
       renderScenarioSelector(calculation);
 
       const hasSelections = scenarioBodyweightSelected || selectedLifts.length > 0;
-      if (output.scenarioBaseline) output.scenarioBaseline.hidden = hasSelections;
-      if (output.scenarioNoChange) output.scenarioNoChange.hidden = hasSelections;
       if (output.scenarioComparisonWrap) output.scenarioComparisonWrap.hidden = !hasSelections;
       if (output.scenarioImpactList) {
         output.scenarioImpactList.innerHTML = hasSelections
@@ -7298,6 +7516,10 @@
       }
       if (output.scenarioCompareBars) output.scenarioCompareBars.hidden = true;
       if (output.scenarioBenchmarkMeta) output.scenarioBenchmarkMeta.hidden = !hasSelections;
+      if (hasSelections) {
+        if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = '…';
+        if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = 'Calculating scenario…';
+      }
 
       const currentContext = await loadBenchmarkContext({
         standardKey: calculation.standardKey,
@@ -7311,29 +7533,34 @@
       if (renderId !== scenarioRenderId) return;
       const currentTotalPct = percentileDisplay(currentContext && currentContext.total);
       const currentDotsPct = percentileDisplay(currentContext && currentContext.dots);
-      if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = currentDotsPct;
-      if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
-      if (!hasSelections && output.scenarioBaselineValues) {
-        output.scenarioBaselineValues.textContent = `${plannerNumber(calculation.bodyweightKg, calculation.unit)} bodyweight · ${classNameWithSpace(calculation.currentClass)} class · ${plannerNumber(calculation.totalKg, calculation.unit)} total · DOTS ${plannerDots(calculation.dots)} · Total ${currentTotalPct} · DOTS ${currentDotsPct}`;
+      if (!hasSelections) {
+        if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = currentDotsPct;
+        if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
+        return;
       }
-      if (!hasSelections) return;
 
       const work = [];
-      if (scenarioBodyweightSelected) work.push(calculateBodyweightImpacts({ calculation, currentContext }));
-      if (selectedLifts.length === 3) {
-        work.push(calculateLiftThresholdImpact({ calculation, currentContext, lift: null }));
+      if (scenarioBodyweightSelected && selectedLifts.length > 0) {
+        work.push(calculateCombinedImpact({ calculation, currentContext }));
+      } else if (scenarioBodyweightSelected) {
+        work.push(calculateBodyweightImpacts({ calculation, currentContext }));
       } else {
-        selectedLifts.forEach((lift) => work.push(calculateLiftThresholdImpact({ calculation, currentContext, lift })));
+        work.push(calculateLiftThresholdImpact({
+          calculation,
+          currentContext,
+          lift: selectedLifts.length === 1 ? selectedLifts[0] : null
+        }));
       }
       const results = await Promise.all(work);
       if (renderId !== scenarioRenderId) return;
 
       const impacts = results.flat().filter(Boolean).filter((impact) => impact.forceVisible || impact.sortValue > 0 || impact.dotsSortValue > 0);
-      impacts.sort((a, b) => b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue || a.requiredChangeKg - b.requiredChangeKg);
       const previewImpact = impacts[0];
       if (previewImpact) {
         if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = previewImpact.previewDotsPercentile;
         if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(previewImpact.previewDots)} DOTS`;
+      } else {
+        setScenarioPreviewEmpty();
       }
       if (output.scenarioImpactList) {
         output.scenarioImpactList.innerHTML = impacts.length
@@ -7359,7 +7586,7 @@
           <span class="benchmark-meta-chip">${currentMatch.benchmarkStandard || calculation.standardLabel}</span>
           <span class="benchmark-meta-chip">${classNameWithSpace(calculation.currentClass)}</span>
           ${sampleLabel ? `<span class="benchmark-meta-chip">${sampleLabel}</span>` : ''}
-          <span class="benchmark-meta-disclaimer">Historical dataset comparison only—not a placing prediction.</span>`;
+          `;
       }
     }
 
@@ -7418,31 +7645,30 @@
       `;
     }
 
-    function renderScenarioMetricRow(label, scoreContext, currentScoreContext, isCurrent, color) {
+    function classPercentileDeltaPill(delta, isCurrent) {
+      if (isCurrent) return '';
+      if (delta === null) return '<span class="scenario-delta-pill">Unavailable</span>';
+      if (delta === 0) return '<span class="scenario-delta-pill">Same</span>';
+      const direction = delta > 0 ? '▲' : '▼';
+      const className = delta > 0 ? 'is-positive' : 'is-negative';
+      return `<span class="scenario-delta-pill ${className}">${direction} ${delta > 0 ? '+' : '−'}${Math.abs(delta)} PR</span>`;
+    }
+
+    function renderClassPercentileMetric(label, scoreContext, currentScoreContext, isCurrent) {
       const delta = percentileDelta(scoreContext, currentScoreContext);
       const display = scoreContext && scoreContext.status === 'ready' ? percentileDisplay(scoreContext) : 'Unavailable';
-      const percent = percentileBarValue(scoreContext);
-      const fillClass = !scoreContext || scoreContext.status !== 'ready'
-        ? 'is-unavailable'
-        : isBelowP1(scoreContext)
-          ? 'is-below-p1'
-          : '';
-      const fillTitle = isBelowP1(scoreContext) ? 'Below dataset P1' : '';
       return `
-        <div class="scenario-bar-line" style="--scenario-color: ${color}">
-          <span class="scenario-bar-label">${label}</span>
-          <span class="scenario-track" aria-label="${label} ${display}">
-            <span class="scenario-fill ${fillClass}" style="--bar-pct: ${percent}%"${fillTitle ? ` title="${fillTitle}"` : ''}></span>
-          </span>
+        <div class="scenario-percentile-metric">
+          <span class="scenario-percentile-metric__label">${label}</span>
+          <strong class="scenario-percentile-metric__value">${display}</strong>
+          ${classPercentileDeltaPill(delta, isCurrent)}
         </div>
-        <span class="scenario-percentile">${display}</span>
-        <span class="scenario-row-delta ${deltaClass(delta)}">${compactDelta(delta, isCurrent)}</span>
       `;
     }
 
     function renderScenarioChartRow({ item, role, roleLabel: providedRoleLabel, comparisonNote, comparisonNoteClass, unit, benchmarkContext, currentBenchmarkContext, breakEvenThreshold }) {
       const isCurrent = role === 'current';
-      const roleLabel = providedRoleLabel || (isCurrent ? 'Current class' : role === 'lower' ? 'Nearby lower class' : 'Nearby higher class');
+      const roleLabel = isCurrent ? 'Baseline' : providedRoleLabel || (role === 'lower' ? 'Nearby lower class' : 'Nearby higher class');
       const total = benchmarkContext && benchmarkContext.total;
       const dots = benchmarkContext && benchmarkContext.dots;
       const currentTotal = currentBenchmarkContext && currentBenchmarkContext.total;
@@ -7470,15 +7696,17 @@
           <div class="scenario-row-header">
             <span class="scenario-row-class">${item.name}</span>
             <span class="scenario-row-role ${isCurrent ? 'is-current' : ''}">${roleLabel}</span>
+            <div class="scenario-row-details">
+              <span>${rangeText(item, unit)}</span>
+              <span>${statusLabel}</span>
+              ${sampleLine}
+            </div>
           </div>
-          <div class="scenario-bars">
-            ${renderScenarioMetricRow('Total', total, currentTotal, isCurrent, '#3b82f6')}
-            ${renderScenarioMetricRow('DOTS', dots, currentDots, isCurrent, '#4fb35e')}
+          <div class="scenario-percentile-metrics">
+            ${renderClassPercentileMetric('Total', total, currentTotal, isCurrent)}
+            ${renderClassPercentileMetric('DOTS', dots, currentDots, isCurrent)}
           </div>
-          <div class="scenario-meta">
-            <span>${rangeText(item, unit)}</span>
-            <span>${statusLabel}</span>
-            ${sampleLine}
+          <div class="scenario-row-meta">
             ${breakEven}
             ${comparisonNote ? `<span class="scenario-distance-note ${comparisonNoteClass || ''}">${comparisonNote}</span>` : ''}
             ${dataState}
@@ -7490,22 +7718,6 @@
     function renderScenarioChart(entries, unit, currentBenchmarkContext) {
       return `
         <div class="scenario-chart" role="group" aria-label="Historical percentile by weight class">
-          <div class="scenario-chart-legend">
-            <span class="scenario-legend-item"><span class="scenario-legend-swatch" style="--scenario-color: #3b82f6"></span>Total percentile</span>
-            <span class="scenario-legend-item"><span class="scenario-legend-swatch" style="--scenario-color: #4fb35e"></span>DOTS percentile</span>
-          </div>
-          <div class="scenario-scale" aria-hidden="true">
-            <span></span>
-            <div class="scenario-scale-axis">
-              <span>P0</span>
-              <span>P25</span>
-              <span>P50</span>
-              <span>P75</span>
-              <span>P100</span>
-            </div>
-            <span></span>
-            <span></span>
-          </div>
           ${entries.map((entry) => renderScenarioChartRow({
             ...entry,
             unit,
@@ -7850,8 +8062,9 @@
 
       const currentIndex = context.currentIndex;
       const currentClass = context.currentClass;
-      output.classResult.textContent = currentClass.name;
-      output.rangeResult.textContent = rangeText(currentClass, unit);
+      output.classResult.textContent = formatWeightForUnit(bodyweightKg, unit);
+      output.rangeResult.textContent = `${classNameWithSpace(currentClass)} class · ${rangeText(currentClass, unit)} · ${standard.label}`;
+      output.summaryText.textContent = '';
       unlockStep(3);
       showScreen(2);
       revealResults();
@@ -7886,7 +8099,7 @@
         };
         updateSaveButtonState();
         output.formMessage.textContent = 'Partial total only. Full SBD is required for score calculation.';
-      output.summaryText.textContent = resultMetaText(bodyweightKg, unit, standard.label);
+      output.summaryText.textContent = '';
       renderClassContext(standardKey, sex, unit, currentIndex, totalKg, dots, gl, bodyweightKg);
       resetScenarioLab(lastCalculation, 'Full SBD is required for Scenario Lab.');
       renderStandardsComparison(sex, unit, bodyweightKg);
@@ -7954,7 +8167,7 @@
         renderStandardsComparison(sex, unit, bodyweightKg);
       }
 
-      output.summaryText.textContent = resultMetaText(bodyweightKg, unit, standard.label);
+      output.summaryText.textContent = '';
       renderClassContext(standardKey, sex, unit, currentIndex, totalKg, dots, gl, bodyweightKg);
       if (lastCalculation && lastCalculation.isFullSbd) updateScenarioLab();
     }
@@ -8030,7 +8243,15 @@
     }
     if (output.openAuthModalButton) output.openAuthModalButton.addEventListener('click', openAuthModal);
     if (output.closeAuthModalButton) output.closeAuthModalButton.addEventListener('click', closeAuthModal);
-    if (output.openFeedbackModalButton) output.openFeedbackModalButton.addEventListener('click', openFeedbackModal);
+    quickBenchmarkFeedbackButtons().forEach((button) => {
+      button.addEventListener('click', () => submitQuickBenchmarkFeedback(button.dataset.benchmarkFeedback));
+    });
+    if (output.benchmarkFeedbackFollowUp) {
+      output.benchmarkFeedbackFollowUp.addEventListener('click', () => {
+        openFeedbackModal();
+        setFeedbackType('confusing');
+      });
+    }
     if (output.closeFeedbackModalButton) output.closeFeedbackModalButton.addEventListener('click', closeFeedbackModal);
     if (output.cancelFeedbackButton) output.cancelFeedbackButton.addEventListener('click', closeFeedbackModal);
     if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.addEventListener('submit', submitBenchmarkFeedback);
@@ -8041,16 +8262,6 @@
       button.addEventListener('click', () => setFeedbackType(button.dataset.feedbackType));
     });
     if (output.closeFeedbackSuccessButton) output.closeFeedbackSuccessButton.addEventListener('click', closeFeedbackModal);
-    if (output.submitAnotherFeedbackButton) {
-      output.submitAnotherFeedbackButton.addEventListener('click', () => {
-        if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.reset();
-        setFeedbackRating(0);
-        setFeedbackType('helpful');
-        setFeedbackStatus('');
-        showFeedbackForm();
-        window.setTimeout(() => document.querySelector('[data-feedback-rating="1"]')?.focus(), 0);
-      });
-    }
     if (output.authDialog) {
       output.authDialog.addEventListener('click', (event) => {
         if (event.target === output.authDialog) closeAuthModal();
@@ -8060,6 +8271,11 @@
     if (output.feedbackDialog) {
       output.feedbackDialog.addEventListener('click', (event) => {
         if (event.target === output.feedbackDialog) closeFeedbackModal();
+      });
+      output.feedbackDialog.addEventListener('close', () => {
+        feedbackSubmissionToken += 1;
+        resetFeedbackForm();
+        showFeedbackForm();
       });
       output.feedbackDialog.addEventListener('cancel', () => setFeedbackStatus(''));
     }

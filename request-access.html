@@ -32,15 +32,15 @@
   <link rel="stylesheet" href="site.css" />
   <style>
     .request-hero {
-      padding: 96px 0 36px;
+      padding: 72px 0 28px;
     }
 
     .request-hero h1 {
       font-family: var(--site-font-display);
-      font-size: clamp(4.4rem, 9vw, 8rem);
+      font-size: clamp(3.5rem, 7vw, 5.8rem);
       line-height: 0.92;
       letter-spacing: 0.04em;
-      margin-bottom: 18px;
+      margin-bottom: 12px;
     }
 
     .request-hero p {
@@ -50,20 +50,23 @@
     }
 
     .request-card {
-      margin: 0 auto 96px;
+      width: min(100%, 780px);
+      margin: 0 auto 72px;
       overflow: hidden;
     }
 
     .feedback-request-form {
       display: grid;
-      gap: 16px;
-      padding: 24px;
-      background: rgba(255, 255, 255, 0.72);
+      gap: 18px;
+      padding: clamp(24px, 4vw, 38px);
+      background: #fff;
     }
+
+    .feedback-request-form > div:first-child { text-align: center; }
 
     .feedback-request-form h2 {
       margin: 0;
-      font-size: clamp(1.5rem, 4vw, 2.1rem);
+      font-size: clamp(1.65rem, 4vw, 2.2rem);
     }
 
     .feedback-request-form p {
@@ -73,8 +76,8 @@
 
     .request-form-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 14px;
+      grid-template-columns: 1fr;
+      gap: 16px;
     }
 
     .request-field {
@@ -112,7 +115,7 @@
     }
 
     .request-field textarea {
-      min-height: 130px;
+      min-height: 112px;
       padding: 12px;
       resize: vertical;
     }
@@ -120,7 +123,8 @@
     .request-form-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      justify-content: center;
+      gap: 10px;
       align-items: center;
     }
 
