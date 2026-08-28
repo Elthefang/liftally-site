@@ -1392,26 +1392,27 @@
       gap: 4px;
       max-width: 900px;
       margin-top: 16px;
-      padding: 14px 16px;
-      border: 1px solid var(--border);
+      padding: 18px 22px;
+      border: 1px solid rgba(32, 35, 33, 0.1);
+      border-left: 3px solid rgba(191, 57, 43, 0.55);
       border-radius: 8px;
-      background: var(--surface-subtle);
+      background: rgba(232, 241, 237, 0.72);
       color: var(--text-secondary);
-      font-size: 0.9rem;
-      line-height: 1.5;
+      font-size: 1rem;
+      line-height: 1.55;
     }
 
     .data-note strong {
-      color: var(--text-primary);
-      font-size: 0.78rem;
-      font-weight: 800;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .data-note a {
-      color: var(--accent-text);
-      font-weight: 700;
+      color: #a94b42;
+      font-weight: 600;
       text-underline-offset: 0.16em;
     }
 
@@ -1812,6 +1813,10 @@
     }
 
     @media (max-width: 640px) {
+      .scenario-impact-head { align-items: flex-start; }
+      .scenario-impact-sort { width: 100%; justify-content: space-between; }
+      .scenario-impact-sort select { flex: 1; max-width: 240px; }
+
       .class-comparison-controls {
         display: grid;
         gap: 10px;
@@ -2976,7 +2981,9 @@
     .scenario-impact-head {
       display: flex;
       align-items: baseline;
+      justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
     }
 
     .scenario-impact-head h3 {
@@ -2986,6 +2993,24 @@
       font-size: 1.45rem;
       line-height: 1;
       text-transform: uppercase;
+    }
+
+    .scenario-impact-sort {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--text-secondary);
+      font: 700 0.8rem/1.2 var(--font-body);
+    }
+
+    .scenario-impact-sort select {
+      min-height: 34px;
+      padding: 5px 28px 5px 9px;
+      border: 1px solid var(--border-default);
+      border-radius: 7px;
+      background: var(--surface-card);
+      color: var(--text-primary);
+      font: inherit;
     }
 
     .scenario-impact-list {
@@ -3014,6 +3039,24 @@
       font-size: 0.94rem;
       line-height: 1.4;
     }
+
+    .scenario-impact-card__changes {
+      grid-column: 1 / -1;
+      display: grid;
+      gap: 7px;
+    }
+
+    .scenario-impact-card__changes > div {
+      display: grid;
+      grid-template-columns: minmax(100px, 0.5fr) minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: baseline;
+      color: var(--text-secondary);
+    }
+
+    .scenario-impact-card__changes strong { color: var(--text-primary); }
+    .scenario-impact-card__changes span { font-weight: 800; color: var(--text-primary); }
+    .scenario-impact-card__changes small { color: var(--text-secondary); font-weight: 700; }
 
     .scenario-impact-card__primary {
       align-self: start;
@@ -3045,6 +3088,8 @@
     }
 
     .scenario-impact-note {
+      display: grid;
+      gap: 3px;
       margin: 0;
       padding: 10px 12px;
       border-radius: 6px;
@@ -3125,6 +3170,9 @@
     .scenario-comparison-table td.is-neutral .scenario-change-main {
       color: var(--text-secondary);
     }
+
+    .scenario-impact-note strong { color: var(--accent-text); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+    .scenario-impact-note span { display: block; }
 
     .scenario-comparison-summary {
       margin: 0 0 12px;
@@ -4359,10 +4407,6 @@
         padding: 14px;
       }
 
-      .class-card.scenario-current {
-        order: -1;
-      }
-
       .scenario-chart {
         padding: 14px;
       }
@@ -4390,11 +4434,6 @@
         grid-template-columns: 1fr;
         gap: 12px;
         padding: 16px 0;
-      }
-
-      .scenario-row.is-current {
-        order: -1;
-        padding-left: 0;
       }
 
       .scenario-bars,
@@ -4817,6 +4856,11 @@
 
       body.site-shell.tool-page .section-head > p {
         margin-top: 8px;
+      }
+
+      body.site-shell.tool-page .data-note {
+        padding: 16px;
+        font-size: 0.95rem;
       }
 
       body.site-shell.tool-page #classes .scenario-chart {
@@ -5366,7 +5410,7 @@
           <div class="benchmark-table-status" id="benchmarkTableStatus" hidden></div>
           <aside class="data-note" aria-label="Historical benchmark data note">
             <strong>Data note</strong>
-            <span>Liftally compares entered SBD totals and DOTS scores with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. These comparisons provide historical context only; they do not predict meet placing or recommend a bodyweight or weight-class change.</span>
+            <span>Liftally compares your entered SBD total and DOTS score with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. These benchmarks are for context only and do not predict meet placing or recommend bodyweight or weight-class changes.</span>
           </aside>
         </section>
 
@@ -5474,7 +5518,17 @@
               <div class="scenario-comparison-table-wrap" id="scenarioComparisonWrap">
                 <section class="scenario-impact-results" aria-labelledby="scenarioImpactTitle">
                   <div class="scenario-impact-head">
-                    <h3 id="scenarioImpactTitle">Impact results</h3>
+                    <h3 id="scenarioImpactTitle">Scenario impacts</h3>
+                    <label class="scenario-impact-sort" for="scenarioImpactSort">
+                      <span>Sort by</span>
+                      <select id="scenarioImpactSort">
+                        <option value="best-gain">Best percentile gain</option>
+                        <option value="smallest-change">Smallest kg change</option>
+                        <option value="cut-first">Bodyweight cut first</option>
+                        <option value="gain-first">Bodyweight gain first</option>
+                        <option value="biggest-drop">Biggest ranking drop</option>
+                      </select>
+                    </label>
                   </div>
                   <div class="scenario-impact-list" id="scenarioImpactList"></div>
                   <p class="scenario-impact-note" id="scenarioImpactNote" hidden></p>
@@ -5626,6 +5680,7 @@
       scenarioLab: document.getElementById('scenarioLab'),
       scenarioComparisonWrap: document.getElementById('scenarioComparisonWrap'),
       scenarioImpactList: document.getElementById('scenarioImpactList'),
+      scenarioImpactSort: document.getElementById('scenarioImpactSort'),
       scenarioImpactNote: document.getElementById('scenarioImpactNote'),
       scenarioBodyweightToggle: document.getElementById('scenarioBodyweightToggle'),
       scenarioSbdSelector: document.getElementById('scenarioSbdSelector'),
@@ -5688,6 +5743,8 @@
     let classComparisonState = { advanced: false, lastArgs: null };
     let scenarioRenderId = 0;
     let scenarioBodyweightSelected = false;
+    let scenarioSortMode = 'best-gain';
+    let generatedImpacts = null;
     const scenarioLiftSelection = { squat: false, bench: false, deadlift: false };
     let authMode = 'sign-in';
     let activeAuthUser = null;
@@ -7024,6 +7081,11 @@
       return `${value > 0 ? '+' : '−'}${absolute}`;
     }
 
+    function formatPercentileDelta(value) {
+      if (!Number.isFinite(value)) return '';
+      return `${value > 0 ? '+' : value < 0 ? '−' : '+'}${Math.abs(value)} pts`;
+    }
+
     function comparisonCellData({ main, detail = '', tone = 'neutral' }) {
       return { main, detail, tone };
     }
@@ -7089,7 +7151,7 @@
       const item = list[targetIndex];
       if (target === 'current') return calculation.bodyweightKg;
       if (target === 'lower' && Number.isFinite(item.upper)) return item.upper;
-      if (target === 'higher' && Number.isFinite(item.lower)) return item.lower + 0.1;
+      if (target === 'higher' && Number.isFinite(item.lower)) return item.lower;
       return calculation.bodyweightKg;
     }
 
@@ -7129,6 +7191,50 @@
       if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = 'No change';
       if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = 'Select another metric or scenario.';
       if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = 'No meaningful change';
+    }
+
+    function scenarioBaseline(calculation, currentContext) {
+      const lifts = scenarioBaseValues(calculation);
+      return {
+        bodyweightKg: calculation.bodyweightKg,
+        currentClass: calculation.currentClass,
+        squatKg: lifts.squat,
+        benchKg: lifts.bench,
+        deadliftKg: lifts.deadlift,
+        totalKg: calculation.totalKg,
+        dots: calculation.dots,
+        context: currentContext,
+        totalPercentile: percentileDisplay(currentContext && currentContext.total),
+        dotsPercentile: percentileDisplay(currentContext && currentContext.dots)
+      };
+    }
+
+    function scenarioLiftProjection(calculation, baseline, incrementKg, selectedLifts) {
+      const lifts = {
+        squatKg: baseline.squatKg,
+        benchKg: baseline.benchKg,
+        deadliftKg: baseline.deadliftKg
+      };
+      const targets = selectedLifts.length ? selectedLifts : ['squat', 'bench', 'deadlift'];
+      const incrementPerLift = incrementKg / targets.length;
+      targets.forEach((lift) => {
+        lifts[`${lift}Kg`] += incrementPerLift;
+      });
+      return { ...lifts, totalKg: baseline.totalKg + incrementKg };
+    }
+
+    function scenarioChangedMetricsHtml(calculation, baseline, projected, projectedBodyweightKg = baseline.bodyweightKg, projectedClass = '') {
+      const rows = [];
+      const unit = calculation.unit;
+      const addRow = (label, current, next) => {
+        if (Math.abs(next - current) < 0.000001) return;
+        rows.push(`<div><strong>${label}</strong><span>${plannerNumber(current, unit)} → ${plannerNumber(next, unit)}</span><small>${formatSigned(fromKg(next - current, unit), 1)} ${appUnitLabels[unit]}</small></div>`);
+      };
+      addRow(`Bodyweight${projectedClass ? ` · ${projectedClass}` : ''}`, baseline.bodyweightKg, projectedBodyweightKg);
+      addRow('Squat', baseline.squatKg, projected.squatKg);
+      addRow('Bench press', baseline.benchKg, projected.benchKg);
+      addRow('Deadlift', baseline.deadliftKg, projected.deadliftKg);
+      return rows.join('');
     }
 
     function renderScenarioSelector(calculation) {
@@ -7227,10 +7333,16 @@
     }
 
     function scenarioPercentileDeltaValue(currentScore, scenarioScore) {
-      const current = scorePercentileNumber(currentScore);
-      const scenario = scorePercentileNumber(scenarioScore);
+      const displayedPercentileNumber = (score) => {
+        const display = percentileDisplay(score);
+        if (display === 'P99+') return 99;
+        const match = String(display).match(/P(\d+)/i);
+        return match ? Number(match[1]) : null;
+      };
+      const current = displayedPercentileNumber(currentScore);
+      const scenario = displayedPercentileNumber(scenarioScore);
       return Number.isFinite(current) && Number.isFinite(scenario)
-        ? Math.round(scenario - current)
+        ? scenario - current
         : null;
     }
 
@@ -7260,8 +7372,9 @@
       return Math.ceil((raw - 0.000001) / displayStepKg) * displayStepKg;
     }
 
-    function scenarioImpactCard({ name, primary, currentValue, scenarioValue, currentDots, scenarioDots, currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct, totalDelta, dotsDelta, dotsChange, requiredChangeKg, forceVisible = false }) {
+    function scenarioImpactCard({ name, primary, currentValue, scenarioValue, changesHtml = '', currentDots, scenarioDots, currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct, totalDelta, dotsDelta, dotsChange, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
       const largestImpact = Math.max(Math.abs(totalDelta || 0), Math.abs(dotsDelta || 0));
+      const benchmarkUnavailable = [currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct].some((value) => value === 'Unavailable');
       const tone = totalDelta > 0 || dotsDelta > 0 || dotsChange > 0
         ? 'is-positive'
         : totalDelta < 0 || dotsDelta < 0 || dotsChange < 0
@@ -7273,6 +7386,8 @@
         totalDelta,
         dotsDelta,
         dotsChange,
+        bodyweightChangeKg,
+        performanceChangeKg,
         requiredChangeKg: Number.isFinite(requiredChangeKg) ? requiredChangeKg : Number.POSITIVE_INFINITY,
         forceVisible,
         previewDotsPercentile: scenarioDotsPct,
@@ -7281,17 +7396,16 @@
           <article class="scenario-impact-card ${tone}">
             <strong class="scenario-impact-card__name">${name}</strong>
             <strong class="scenario-impact-card__primary">${primary}</strong>
-            <span class="scenario-impact-card__values">${currentValue} → ${scenarioValue}</span>
+            ${changesHtml ? `<div class="scenario-impact-card__changes">${changesHtml}</div>` : `<span class="scenario-impact-card__values">${currentValue} → ${scenarioValue}</span>`}
             <div class="scenario-impact-card__metrics">
               <span>DOTS <strong>${plannerDots(currentDots)} → ${plannerDots(scenarioDots)}</strong>${Number.isFinite(dotsChange) && dotsChange !== 0 ? ` (${formatSigned(dotsChange, 2)})` : ''}</span>
-              <span>Total PR <strong>${currentTotalPct} → ${scenarioTotalPct}</strong>${Number.isFinite(totalDelta) && totalDelta !== 0 ? ` (${formatSigned(totalDelta)} pts)` : ''}</span>
-              <span>DOTS PR <strong>${currentDotsPct} → ${scenarioDotsPct}</strong>${Number.isFinite(dotsDelta) && dotsDelta !== 0 ? ` (${formatSigned(dotsDelta)} pts)` : ''}</span>
+              ${benchmarkUnavailable ? '<span>No benchmark data for this selection. Try the nearest available benchmark.</span>' : `<span>TOTAL PERCENTILE <strong>${currentTotalPct} → ${scenarioTotalPct}</strong>${Number.isFinite(totalDelta) ? ` (${formatPercentileDelta(totalDelta)})` : ''}</span><span>DOTS PERCENTILE <strong>${currentDotsPct} → ${scenarioDotsPct}</strong>${Number.isFinite(dotsDelta) ? ` (${formatPercentileDelta(dotsDelta)})` : ''}</span>`}
             </div>
           </article>`
       };
     }
 
-    function impactFromContexts({ name, primary, currentValue, scenarioValue, currentDots, scenarioDots, currentContext, scenarioContext, requiredChangeKg, forceVisible = false }) {
+    function impactFromContexts({ name, primary, currentValue, scenarioValue, changesHtml, currentDots, scenarioDots, currentContext, scenarioContext, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
       const currentTotalPct = percentileDisplay(currentContext && currentContext.total);
       const scenarioTotalPct = percentileDisplay(scenarioContext && scenarioContext.total);
       const currentDotsPct = percentileDisplay(currentContext && currentContext.dots);
@@ -7301,6 +7415,7 @@
         primary,
         currentValue,
         scenarioValue,
+        changesHtml,
         currentDots,
         scenarioDots,
         currentTotalPct,
@@ -7311,11 +7426,14 @@
         dotsDelta: scenarioPercentileDeltaValue(currentContext && currentContext.dots, scenarioContext && scenarioContext.dots),
         dotsChange: numericDelta(currentDots, scenarioDots, 2),
         requiredChangeKg,
+        bodyweightChangeKg,
+        performanceChangeKg,
         forceVisible
       });
     }
 
-    async function calculateLiftThresholdImpact({ calculation, currentContext, lift }) {
+    async function calculateLiftThresholdImpact({ calculation, currentContext, selectedLifts }) {
+      const baseline = scenarioBaseline(calculation, currentContext);
       const incrementKg = minimumScenarioIncrementKg(calculation, currentContext);
       if (!Number.isFinite(incrementKg)) return null;
       const scenarioTotalKg = calculation.totalKg + incrementKg;
@@ -7328,36 +7446,32 @@
         dots: scenarioDots,
         testedStatus: 'auto'
       });
-      const currentValue = lift
-        ? plannerNumber(scenarioBaseValues(calculation)[lift], calculation.unit)
-        : plannerNumber(calculation.totalKg, calculation.unit);
-      const scenarioValue = lift
-        ? plannerNumber(scenarioBaseValues(calculation)[lift] + incrementKg, calculation.unit)
-        : plannerNumber(scenarioTotalKg, calculation.unit);
-      const primary = lift
-        ? `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`
-        : `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} total needed`;
+      const projected = scenarioLiftProjection(calculation, baseline, incrementKg, selectedLifts);
+      const primary = `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`;
       return impactFromContexts({
-        name: lift ? `${scenarioLiftLabel(lift)} impact` : 'SBD total impact',
+        name: selectedLifts.length === 3 ? 'SBD total impact' : selectedLifts.length === 1 ? `${scenarioLiftLabel(selectedLifts[0])} impact` : 'Combined lift impact',
         primary,
-        currentValue,
-        scenarioValue,
+        currentValue: plannerNumber(baseline.totalKg, calculation.unit),
+        scenarioValue: plannerNumber(projected.totalKg, calculation.unit),
+        changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected),
         currentDots: calculation.dots,
         scenarioDots,
         currentContext,
         scenarioContext,
-        requiredChangeKg: incrementKg
+        requiredChangeKg: incrementKg,
+        performanceChangeKg: incrementKg
       });
     }
 
     async function calculateBodyweightImpacts({ calculation, currentContext }) {
       const list = getStandardClasses(calculation.standardKey, calculation.sex);
       const currentIndex = findClassIndex(calculation.standardKey, calculation.sex, calculation.bodyweightKg);
+      const baseline = scenarioBaseline(calculation, currentContext);
       const impacts = await Promise.all(list.map(async (targetClass, targetIndex) => {
         if (targetIndex === currentIndex) return null;
         const targetBodyweightKg = targetIndex < currentIndex
           ? targetClass.upper
-          : targetClass.lower + 0.1;
+          : targetClass.lower;
         if (!Number.isFinite(targetBodyweightKg)) return null;
         if (Math.abs(targetBodyweightKg - calculation.bodyweightKg) < 0.000001) return null;
         const scenarioDots = dotsScore(calculation.sex, targetBodyweightKg, calculation.totalKg);
@@ -7370,16 +7484,25 @@
           testedStatus: 'auto'
         });
         const deltaKg = targetBodyweightKg - calculation.bodyweightKg;
+        const projected = {
+          squatKg: baseline.squatKg,
+          benchKg: baseline.benchKg,
+          deadliftKg: baseline.deadliftKg,
+          totalKg: baseline.totalKg
+        };
         return impactFromContexts({
           name: 'Bodyweight impact',
           primary: `${formatSigned(fromKg(deltaKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} to enter ${classNameWithSpace(targetClass)}`,
           currentValue: `${plannerNumber(calculation.bodyweightKg, calculation.unit)} · ${classNameWithSpace(calculation.currentClass)} class`,
           scenarioValue: `${plannerNumber(targetBodyweightKg, calculation.unit)} · ${classNameWithSpace(targetClass)} class`,
+          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass)),
           currentDots: calculation.dots,
           scenarioDots,
           currentContext,
           scenarioContext,
-          requiredChangeKg: Math.abs(deltaKg)
+          requiredChangeKg: Math.abs(deltaKg),
+          bodyweightChangeKg: deltaKg,
+          performanceChangeKg: 0
         });
       }));
       return impacts
@@ -7391,18 +7514,15 @@
         .sort((a, b) => a.requiredChangeKg - b.requiredChangeKg || b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue);
     }
 
-    async function calculateCombinedImpact({ calculation, currentContext }) {
+    async function calculateCombinedImpacts({ calculation, currentContext, selectedLifts }) {
       const list = getStandardClasses(calculation.standardKey, calculation.sex);
       const currentIndex = findClassIndex(calculation.standardKey, calculation.sex, calculation.bodyweightKg);
-      const candidates = await Promise.all(['lower', 'higher'].map(async (target) => {
-        const targetIndex = target === 'lower' ? currentIndex - 1 : currentIndex + 1;
-        if (targetIndex < 0 || targetIndex >= list.length) return null;
-        const targetBodyweightKg = scenarioBoundaryBodyweightKg(target, calculation);
+      const baseline = scenarioBaseline(calculation, currentContext);
+      const candidates = await Promise.all(list.map(async (targetClass, targetIndex) => {
+        if (targetIndex === currentIndex) return null;
+        const targetBodyweightKg = targetIndex < currentIndex ? targetClass.upper : targetClass.lower;
         if (!Number.isFinite(targetBodyweightKg)) return null;
-        const relativeChange = Math.abs(targetBodyweightKg - calculation.bodyweightKg) / calculation.bodyweightKg;
-        if (relativeChange > 0.1) return null;
-
-        const targetClass = list[targetIndex];
+        if (Math.abs(targetBodyweightKg - calculation.bodyweightKg) < 0.000001) return null;
         const targetDots = dotsScore(calculation.sex, targetBodyweightKg, calculation.totalKg);
         const targetCalculation = { ...calculation, bodyweightKg: targetBodyweightKg, currentClass: targetClass, dots: targetDots };
         const targetContext = await loadBenchmarkContext({
@@ -7418,6 +7538,7 @@
 
         const scenarioTotalKg = calculation.totalKg + incrementKg;
         const scenarioDots = dotsScore(calculation.sex, targetBodyweightKg, scenarioTotalKg);
+        const projected = scenarioLiftProjection(calculation, baseline, incrementKg, selectedLifts);
         const scenarioContext = await loadBenchmarkContext({
           standardKey: calculation.standardKey,
           sex: calculation.sex,
@@ -7431,17 +7552,68 @@
           primary: `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`,
           currentValue: `BW ${plannerNumber(calculation.bodyweightKg, calculation.unit)} · Total ${plannerNumber(calculation.totalKg, calculation.unit)}`,
           scenarioValue: `BW ${plannerNumber(targetBodyweightKg, calculation.unit)} · Total ${plannerNumber(scenarioTotalKg, calculation.unit)}`,
+          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass)),
           currentDots: calculation.dots,
           scenarioDots,
           currentContext,
           scenarioContext,
           requiredChangeKg: incrementKg,
+          bodyweightChangeKg: targetBodyweightKg - calculation.bodyweightKg,
+          performanceChangeKg: incrementKg,
           forceVisible: true
         });
       }));
       return candidates
         .filter(Boolean)
-        .sort((a, b) => b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue || a.requiredChangeKg - b.requiredChangeKg)[0] || null;
+        .filter((impact) => Math.abs(impact.totalDelta || 0) >= 1 || Math.abs(impact.dotsDelta || 0) >= 1 || Math.abs(impact.dotsChange || 0) > 0)
+        .sort((a, b) => a.requiredChangeKg - b.requiredChangeKg || b.sortValue - a.sortValue || b.dotsSortValue - a.dotsSortValue);
+    }
+
+    function impactBestGainComparator(a, b) {
+      return (b.dotsDelta || 0) - (a.dotsDelta || 0)
+        || (b.totalDelta || 0) - (a.totalDelta || 0)
+        || (a.performanceChangeKg ?? a.requiredChangeKg) - (b.performanceChangeKg ?? b.requiredChangeKg)
+        || (a.bodyweightChangeKg ?? 0) - (b.bodyweightChangeKg ?? 0);
+    }
+
+    function impactSmallestChangeComparator(a, b) {
+      return (a.performanceChangeKg ?? a.requiredChangeKg) - (b.performanceChangeKg ?? b.requiredChangeKg)
+        || Math.abs(a.bodyweightChangeKg || 0) - Math.abs(b.bodyweightChangeKg || 0)
+        || impactBestGainComparator(a, b);
+    }
+
+    function impactBodyweightDirection(impact) {
+      if ((impact.bodyweightChangeKg || 0) < 0) return 'cut';
+      if ((impact.bodyweightChangeKg || 0) > 0) return 'gain';
+      return 'neutral';
+    }
+
+    function sortScenarioImpacts(impacts, mode = scenarioSortMode) {
+      const source = impacts.slice();
+      if (mode === 'biggest-drop') {
+        if (!source.some((impact) => (impact.dotsDelta || 0) < 0 || (impact.totalDelta || 0) < 0)) return source.sort(impactBestGainComparator);
+        return source.sort((a, b) => ((a.dotsDelta || 0) < 0 ? a.dotsDelta : Number.POSITIVE_INFINITY) - ((b.dotsDelta || 0) < 0 ? b.dotsDelta : Number.POSITIVE_INFINITY)
+          || ((a.totalDelta || 0) < 0 ? a.totalDelta : Number.POSITIVE_INFINITY) - ((b.totalDelta || 0) < 0 ? b.totalDelta : Number.POSITIVE_INFINITY)
+          || impactSmallestChangeComparator(a, b));
+      }
+      if (mode === 'cut-first' || mode === 'gain-first') {
+        const direction = mode === 'cut-first' ? 'cut' : 'gain';
+        const rank = (impact) => impactBodyweightDirection(impact) === direction ? 0 : impactBodyweightDirection(impact) === 'neutral' ? 2 : 1;
+        return source.sort((a, b) => rank(a) - rank(b) || impactSmallestChangeComparator(a, b));
+      }
+      if (mode === 'smallest-change') return source.sort(impactSmallestChangeComparator);
+      return source.sort(impactBestGainComparator);
+    }
+
+    function renderScenarioImpactList(impacts) {
+      if (!output.scenarioImpactList) return;
+      if (impacts === null) {
+        output.scenarioImpactList.innerHTML = '<p class="scenario-status">Calculating minimum changes...</p>';
+        return;
+      }
+      output.scenarioImpactList.innerHTML = impacts.length
+        ? sortScenarioImpacts(impacts).map((impact) => impact.html).join('')
+        : '<p class="scenario-status">No meaningful percentile change found from the selected variables.</p>';
     }
 
     function ensureScenarioSetup() {
@@ -7458,6 +7630,7 @@
 
     function renderScenarioSetup(calculation, message) {
       scenarioRenderId += 1;
+      generatedImpacts = [];
       const hasStandard = !!calculation;
       const hasFullSbd = !!calculation && calculation.isFullSbd;
 
@@ -7504,6 +7677,7 @@
       renderScenarioSelector(calculation);
 
       const hasSelections = scenarioBodyweightSelected || selectedLifts.length > 0;
+      generatedImpacts = hasSelections ? null : [];
       if (output.scenarioComparisonWrap) output.scenarioComparisonWrap.hidden = !hasSelections;
       if (output.scenarioImpactList) {
         output.scenarioImpactList.innerHTML = hasSelections
@@ -7534,44 +7708,44 @@
       const currentTotalPct = percentileDisplay(currentContext && currentContext.total);
       const currentDotsPct = percentileDisplay(currentContext && currentContext.dots);
       if (!hasSelections) {
+        generatedImpacts = [];
         if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = currentDotsPct;
         if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
+        if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = 'Current DOTS percentile';
         return;
       }
 
       const work = [];
       if (scenarioBodyweightSelected && selectedLifts.length > 0) {
-        work.push(calculateCombinedImpact({ calculation, currentContext }));
+        work.push(calculateCombinedImpacts({ calculation, currentContext, selectedLifts }));
       } else if (scenarioBodyweightSelected) {
         work.push(calculateBodyweightImpacts({ calculation, currentContext }));
       } else {
         work.push(calculateLiftThresholdImpact({
           calculation,
           currentContext,
-          lift: selectedLifts.length === 1 ? selectedLifts[0] : null
+          selectedLifts
         }));
       }
       const results = await Promise.all(work);
       if (renderId !== scenarioRenderId) return;
 
       const impacts = results.flat().filter(Boolean).filter((impact) => impact.forceVisible || impact.sortValue > 0 || impact.dotsSortValue > 0);
-      const previewImpact = impacts[0];
+      generatedImpacts = impacts;
+      const previewImpact = impacts.slice().sort((a, b) => b.dotsDelta - a.dotsDelta || a.requiredChangeKg - b.requiredChangeKg)[0];
       if (previewImpact) {
         if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = previewImpact.previewDotsPercentile;
         if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(previewImpact.previewDots)} DOTS`;
       } else {
         setScenarioPreviewEmpty();
       }
-      if (output.scenarioImpactList) {
-        output.scenarioImpactList.innerHTML = impacts.length
-          ? impacts.map((impact) => impact.html).join('')
-          : '<p class="scenario-status">No meaningful percentile change found from the selected variables.</p>';
-      }
+      renderScenarioImpactList(generatedImpacts);
       if (output.scenarioImpactNote) {
         const next = nextThresholdValue(currentContext && currentContext.total);
-        output.scenarioImpactNote.hidden = !next;
-        output.scenarioImpactNote.textContent = next
-          ? `Add ${plannerNumber(next.threshold - calculation.totalKg, calculation.unit)} total to reach P${next.percentile}.`
+        const showAlternative = Boolean(next && scenarioBodyweightSelected);
+        output.scenarioImpactNote.hidden = !showAlternative;
+        output.scenarioImpactNote.innerHTML = showAlternative
+          ? `<strong>ALTERNATIVE SCENARIO</strong><span>IF BODYWEIGHT STAYS AT ${plannerNumber(calculation.bodyweightKg, calculation.unit)}</span><span>Add ${plannerNumber(next.threshold - calculation.totalKg, calculation.unit)} to your total to reach P${next.percentile}.</span>`
           : '';
       }
       if (output.scenarioBenchmarkMeta) {
@@ -8029,6 +8203,8 @@
     }
 
     function calculate() {
+      scenarioSortMode = 'best-gain';
+      if (output.scenarioImpactSort) output.scenarioImpactSort.value = scenarioSortMode;
       const context = getBodyweightContext();
       const { standardKey, standard, sex, unit, bodyweight, bodyweightKg } = context;
       const squat = parsePositive(inputs.squat);
@@ -8217,6 +8393,13 @@
         updateScenarioLab();
       });
     });
+
+    if (output.scenarioImpactSort) {
+      output.scenarioImpactSort.addEventListener('change', () => {
+        scenarioSortMode = output.scenarioImpactSort.value || 'best-gain';
+        renderScenarioImpactList(generatedImpacts);
+      });
+    }
 
     document.querySelector('[data-back-to-input]').addEventListener('click', () => showScreen(1));
     document.querySelector('[data-next-to-planner]').addEventListener('click', () => {

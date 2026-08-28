@@ -787,11 +787,16 @@
       .shot-row.secondary { grid-template-columns: 1fr; }
       .shot-row.primary .shot { display: none; }
       .shot-row.primary .shot.main { display: flex; }
+      .shot-row.primary .shot.main {
+        min-height: 520px;
+        background: url('images/homepage-view-1-removed.png') center / contain no-repeat;
+      }
       .shot.main video {
         width: min(100%, 320px);
-        height: auto;
-        max-height: 520px;
+        height: 520px;
+        min-height: 520px;
         aspect-ratio: 9 / 16;
+        object-fit: contain;
         background: #eef3f2;
         transform: none;
       }
@@ -833,7 +838,7 @@
           <li><a href="/heroboard">HeroBoard</a></li>
           <li><a href="/weight-class-explorer">Weight Class Explorer</a></li>
           <li><a href="/account">Account</a></li>
-          <li><a href="/request-access">Contact</a></li>
+          <li><a href="request-access.html">Contact</a></li>
         </ul>
         <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Download</a>
       </nav>
@@ -988,7 +993,7 @@
           <h2>Shape What's Next</h2>
           <p class="section-lede">Tell us what to improve, what you love, and what features you wish we’d build next. We read everything.</p>
         </div>
-        <a class="btn btn-primary btn-large" href="/request-access" data-gtag="feedback_click" data-propagate-utm="true">Send Feedback</a>
+        <a class="btn btn-primary btn-large" href="request-access.html" data-gtag="feedback_click" data-propagate-utm="true">Send Feedback</a>
       </div>
     </section>
   </main>
@@ -1004,7 +1009,7 @@
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
         <a href="/account">Account</a>
-        <a href="/request-access" data-gtag="feedback_click" data-propagate-utm="true">Contact</a>
+        <a href="request-access.html" data-gtag="feedback_click" data-propagate-utm="true">Contact</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Download</a>
       </div>
     </div>
