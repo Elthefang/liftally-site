@@ -1,0 +1,48 @@
+name: Deploy production site
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: liftally-production-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build production bundle
+        run: node scripts/build-production.mjs
+
+      - name: Authenticate to Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MYAPPPROJECT_F71FD }}
+        run: |
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$RUNNER_TEMP/firebase-service-account.json"
+          test -s "$RUNNER_TEMP/firebase-service-account.json"
+
+      - name: Deploy Firebase Hosting and Firestore configuration
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/firebase-service-account.json
+        run: >-
+          npx --yes firebase-tools@13.35.1 deploy
+          --only hosting,firestore
+          --config firebase.production.json
+          --project myappproject-f71fd
+          --non-interactive

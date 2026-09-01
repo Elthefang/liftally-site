@@ -6,10 +6,13 @@ const sourceDir = root;
 const outputDir = join(root, 'dist', 'production');
 const ignoredNames = new Set([
   '.git',
+  '.github',
+  '.gitignore',
   '.firebase',
   '.firebaserc',
   '.DS_Store',
   'dist',
+  'functions',
   'firebase-debug.log',
   'firebase.json',
   'firebase.production.json',

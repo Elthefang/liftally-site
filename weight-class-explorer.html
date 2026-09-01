@@ -1025,6 +1025,7 @@
     }
 
     .benchmark-panel {
+      position: relative;
       display: grid;
       gap: 12px;
       padding: 16px;
@@ -1192,6 +1193,14 @@
       color: var(--text-secondary-on-dark);
       font: 700 0.84rem/1.3 var(--font-body);
     }
+
+    .benchmark-panel > .benchmark-quick-feedback {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      margin: 0;
+      justify-content: flex-end;
+    }
     .benchmark-quick-feedback__question { color: var(--text-on-dark); }
     .benchmark-quick-feedback__choices { display: flex; gap: 7px; }
     .benchmark-quick-feedback__chip {
@@ -1217,6 +1226,14 @@
       color: var(--text-on-dark);
       font: inherit;
       cursor: pointer;
+    }
+
+    @media (max-width: 660px) {
+      .benchmark-panel > .benchmark-quick-feedback {
+        position: static;
+        justify-content: flex-start;
+        margin-top: 2px;
+      }
     }
 
     .feedback-dialog {
@@ -1390,7 +1407,9 @@
     .data-note {
       display: grid;
       gap: 4px;
-      max-width: 900px;
+      width: 100%;
+      max-width: none;
+      box-sizing: border-box;
       margin-top: 16px;
       padding: 18px 22px;
       border: 1px solid rgba(32, 35, 33, 0.1);
@@ -1435,8 +1454,65 @@
       border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 999px;
       color: rgba(255, 220, 181, 0.95);
+      padding: 0;
+      background: transparent;
+      appearance: none;
       font: 800 0.72rem var(--font-body);
       cursor: help;
+    }
+
+    .info-tip-wrap {
+      position: relative;
+      display: inline-flex;
+    }
+
+    .info-tip-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 30;
+      width: min(300px, calc(100vw - 48px));
+      padding: 10px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: #303633;
+      color: #f4f6f4;
+      font-size: 0.82rem;
+      font-weight: 500;
+      line-height: 1.45;
+      letter-spacing: 0;
+      text-transform: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+    }
+
+    .info-tip-popover[hidden] { display: none; }
+
+    .class-help-wrap {
+      position: relative;
+      display: inline-flex;
+      align-self: flex-start;
+    }
+
+    .class-help-button {
+      display: inline-flex;
+      width: 24px;
+      height: 24px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--text-secondary);
+      border-radius: 999px;
+      background: transparent;
+      color: var(--text-secondary);
+      font: 800 0.8rem var(--font-body);
+      cursor: pointer;
+    }
+
+    .class-help-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .class-help-wrap .info-tip-popover {
+      right: 0;
+      left: auto;
     }
 
     .benchmark-pill-list {
@@ -1529,6 +1605,18 @@
 
     .snapshot-actions [hidden] {
       display: none !important;
+    }
+
+    #resultsScreen .screen-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    #resultsScreen .screen-title .snapshot-actions {
+      margin-bottom: 16px;
+      justify-content: flex-end;
     }
 
     .snapshot-panel h3 {
@@ -2344,9 +2432,9 @@
     }
 
     #classes .scenario-row.is-current {
-      border-color: #9bbde9;
-      border-left-color: #3b82f6;
-      background: rgba(59, 130, 246, 0.055);
+      border-color: rgba(191, 57, 43, 0.34);
+      border-left-color: var(--accent-border);
+      background: rgba(255, 255, 255, 0.82);
     }
 
     #classes .scenario-row-header {
@@ -2371,8 +2459,20 @@
 
     #classes .scenario-row-role.is-current {
       padding: 4px 8px;
-      background: rgba(59, 130, 246, 0.1);
-      color: #1f6fd6;
+      background: rgba(191, 57, 43, 0.09);
+      color: var(--accent-text);
+    }
+
+    #classes .scenario-baseline-badge {
+      width: fit-content;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--surface-subtle);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .scenario-row-details,
@@ -2393,8 +2493,8 @@
 
     .scenario-percentile-metric {
       display: grid;
-      grid-template-columns: 50px minmax(64px, auto) minmax(0, 1fr);
-      gap: 10px;
+      grid-template-columns: minmax(145px, max-content) 72px minmax(0, 1fr);
+      column-gap: 16px;
       align-items: center;
       min-width: 0;
     }
@@ -2404,6 +2504,7 @@
       font-size: 0.84rem;
       font-weight: 800;
       letter-spacing: 0.04em;
+      line-height: 1.2;
       text-transform: uppercase;
     }
 
@@ -2443,9 +2544,9 @@
       gap: 8px;
       margin-top: 16px;
       padding: 16px;
-      border: 1px solid #b8c7d8;
+      border: 1px solid rgba(32, 35, 33, 0.14);
       border-radius: 8px;
-      background: #eef5fb;
+      background: rgba(240, 245, 242, 0.72);
       color: var(--text-primary);
     }
 
@@ -2454,14 +2555,16 @@
     }
 
     .class-insight-title {
-      color: #34546f;
-      font-size: 0.82rem;
+      color: var(--text-secondary);
+      font-size: 0.76rem;
       font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .class-insight-main {
+      display: grid;
+      gap: 3px;
       font-size: 1rem;
       line-height: 1.45;
     }
@@ -2470,12 +2573,13 @@
       display: inline-flex;
       width: fit-content;
       align-items: center;
-      min-height: 30px;
-      padding: 5px 10px;
-      border: 1px solid #9eb4cc;
+      min-height: 26px;
+      padding: 3px 9px;
+      border: 1px solid rgba(59, 130, 246, 0.35);
       border-radius: 999px;
       background: #ffffff;
-      color: #1f4f83;
+      color: #345f8f;
+      font-size: 0.9rem;
       font-weight: 800;
     }
 
@@ -2512,7 +2616,75 @@
       display: grid;
       gap: 4px;
       grid-column: 1 / -1;
+      grid-template-columns: 1fr auto;
+      align-items: center;
     }
+
+    .scenario-selector-head p { grid-column: 1; }
+
+    .scenario-pin-button {
+      grid-column: 2;
+      grid-row: 1;
+      border: 1px solid var(--border-default);
+      border-radius: 999px;
+      padding: 7px 11px;
+      background: var(--surface-card);
+      color: var(--text-secondary);
+      font: inherit;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .scenario-pin-button[aria-pressed="true"] {
+      border-color: var(--accent-border);
+      background: rgba(255, 90, 69, 0.1);
+      color: var(--accent-text);
+    }
+
+    .scenario-summary-grid {
+      display: grid;
+      grid-column: 1 / -1;
+      min-width: 0;
+    }
+
+    .scenario-summary-cards {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.78fr) minmax(340px, 1.6fr) minmax(180px, 0.78fr);
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .scenario-pinned-bar { display: none; }
+
+    .scenario-summary-grid.is-pinned .scenario-summary-cards {
+      position: sticky;
+      top: 88px;
+      z-index: 10;
+      padding: 4px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 18px rgba(21, 24, 22, 0.1);
+    }
+
+    .scenario-summary-grid.is-pinned .scenario-pinned-bar {
+      position: sticky;
+      top: 88px;
+      z-index: 10;
+      display: none;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 14px;
+      border: 1px solid var(--border-default);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 20px rgba(21, 24, 22, 0.12);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .scenario-pinned-bar strong { color: var(--text-primary); }
 
     .scenario-selector-head .eyebrow {
       margin: 0;
@@ -2526,16 +2698,18 @@
     }
 
     .scenario-lab-panel {
-      grid-template-columns: minmax(180px, 0.78fr) minmax(340px, 1.6fr) minmax(180px, 0.78fr);
+      grid-template-columns: 1fr;
       align-items: stretch;
     }
 
+    .scenario-summary-card,
     .scenario-current-class-card,
     .scenario-result-preview {
       display: grid;
+      grid-template-rows: 20px 52px 28px 1fr;
       align-content: start;
-      gap: 9px;
-      padding: 18px;
+      row-gap: 8px;
+      padding: 14px;
       border: 1px solid var(--border-default);
       border-radius: 10px;
       background: var(--surface-card);
@@ -2572,14 +2746,17 @@
       line-height: 1.35;
     }
 
-    .scenario-result-preview__context { font-size: 0.84rem; }
+    /* The summary card communicates state through its title; scenario labels
+       ("Squat only", "Combined scenario", etc.) are intentionally omitted. */
+    .scenario-result-preview__context {
+      display: none;
+    }
 
     .scenario-current-class-card,
     .scenario-sbd-toggle,
     .scenario-lift-card {
       position: relative;
       display: grid;
-      gap: 5px;
       min-width: 0;
       min-height: 102px;
       padding: 14px;
@@ -2986,6 +3163,11 @@
       flex-wrap: wrap;
     }
 
+    .scenario-share-button {
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
     .scenario-impact-head h3 {
       margin: 0;
       color: var(--text-primary);
@@ -3020,63 +3202,150 @@
 
     .scenario-impact-card {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 8px 16px;
-      padding: 13px 14px;
+      gap: 12px;
+      padding: 14px;
       border: 1px solid var(--border-default);
       border-radius: 8px;
       background: var(--surface-card);
     }
 
-    .scenario-impact-card__name {
+    .scenario-impact-card__header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .scenario-impact-card__name,
+    .scenario-impact-card__primary {
       color: var(--text-primary);
       font-weight: 800;
     }
 
-    .scenario-impact-card__values {
-      grid-column: 1 / -1;
+    .scenario-impact-card__primary {
+      text-align: right;
+    }
+
+    .scenario-impact-card__groups {
+      display: grid;
+      grid-template-columns: minmax(150px, 0.9fr) minmax(260px, 1.5fr) minmax(170px, 1fr);
+      gap: 10px;
+    }
+
+    .scenario-impact-card__group {
+      display: grid;
+      align-content: start;
+      gap: 7px;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid rgba(32, 35, 33, 0.1);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .scenario-impact-card__group.is-changed {
+      border-color: rgba(255, 90, 69, 0.58);
+      background: rgba(255, 90, 69, 0.08);
+    }
+
+    .scenario-impact-card__group-title {
       color: var(--text-secondary);
-      font-size: 0.94rem;
-      line-height: 1.4;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
     }
 
     .scenario-impact-card__changes {
-      grid-column: 1 / -1;
-      display: grid;
-      gap: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .scenario-impact-card__values {
+      color: var(--text-primary);
+      font-size: 1.05rem;
+      font-weight: 800;
     }
 
     .scenario-impact-card__changes > div {
       display: grid;
-      grid-template-columns: minmax(100px, 0.5fr) minmax(0, 1fr) auto;
-      gap: 8px;
-      align-items: baseline;
-      color: var(--text-secondary);
+      gap: 2px;
     }
 
-    .scenario-impact-card__changes strong { color: var(--text-primary); }
-    .scenario-impact-card__changes span { font-weight: 800; color: var(--text-primary); }
-    .scenario-impact-card__changes small { color: var(--text-secondary); font-weight: 700; }
+    .scenario-impact-card__changes strong {
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+    }
 
-    .scenario-impact-card__primary {
-      align-self: start;
+    .scenario-impact-card__changes span {
       color: var(--text-primary);
+      font-size: 1.05rem;
       font-weight: 800;
-      text-align: right;
     }
 
-    .scenario-impact-card__metrics {
-      grid-column: 1 / -1;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 12px;
+    .scenario-impact-card__changes small {
       color: var(--text-secondary);
-      font-size: 0.88rem;
-      line-height: 1.4;
+      font-weight: 700;
     }
 
-    .scenario-impact-card__metrics strong {
+    .scenario-impact-card__projected-total {
       color: var(--text-primary);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .scenario-impact-card__lifts {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .scenario-impact-card__lift {
+      display: grid;
+      gap: 3px;
+      min-width: 0;
+      padding: 7px;
+      border: 1px solid rgba(32, 35, 33, 0.1);
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    .scenario-impact-card__lift.is-changed {
+      border-color: rgba(255, 90, 69, 0.58);
+      background: rgba(255, 90, 69, 0.08);
+    }
+
+    .scenario-impact-card__lift small {
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+
+    .scenario-impact-card__lift strong {
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+
+    .scenario-impact-card__projected-percentile {
+      display: grid;
+      gap: 3px;
+    }
+
+    .scenario-impact-card__projected-percentile strong {
+      color: var(--text-primary);
+      font-size: 1.45rem;
+      line-height: 1.1;
+    }
+
+    .scenario-impact-card__projected-percentile span {
+      color: var(--text-secondary);
+      font-size: 0.86rem;
+      font-weight: 700;
     }
 
     .scenario-impact-card.is-positive .scenario-impact-card__primary {
@@ -3173,6 +3442,11 @@
 
     .scenario-impact-note strong { color: var(--accent-text); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
     .scenario-impact-note span { display: block; }
+    .scenario-impact-note:empty,
+    .scenario-impact-note[hidden],
+    #scenarioBenchmarkMeta:empty {
+      display: none;
+    }
 
     .scenario-comparison-summary {
       margin: 0 0 12px;
@@ -3766,6 +4040,18 @@
       box-shadow: 0 10px 24px rgba(21, 24, 22, 0.08);
     }
 
+    body.site-shell.tool-page #classes .class-explanation:not(.is-empty-state) {
+      margin-top: 12px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    body.site-shell.tool-page #classes .class-insight-main,
+    body.site-shell.tool-page #classes .class-insight-main span {
+      color: var(--text-primary);
+    }
+
     body.site-shell.tool-page .tool-panel h2,
     body.site-shell.tool-page .benchmark-panel h2,
     body.site-shell.tool-page .comparison-card h2,
@@ -3829,16 +4115,6 @@
 
     body.site-shell.tool-page .planner-card p {
       color: var(--text-secondary);
-    }
-
-    .planner-cta-row {
-      display: flex;
-      justify-content: center;
-      margin: 2px 0 18px;
-    }
-
-    .planner-cta-row .btn {
-      min-width: min(100%, 240px);
     }
 
     .planner-carousel-hint {
@@ -4043,6 +4319,10 @@
     .cta-panel p {
       max-width: 56ch;
       margin-bottom: 16px;
+    }
+
+    .cta-panel .cta-panel-download {
+      min-width: 220px;
     }
 
     .app-shot {
@@ -4289,6 +4569,32 @@
     }
 
     @media (max-width: 660px) {
+      .scenario-selector-head {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario-selector-head p,
+      .scenario-pin-button {
+        grid-column: 1;
+      }
+
+      .scenario-pin-button {
+        grid-row: auto;
+        justify-self: start;
+      }
+
+      .scenario-summary-grid.is-pinned .scenario-pinned-bar {
+        display: flex;
+        top: 84px;
+        gap: 8px;
+        padding: 10px 12px;
+        font-size: 0.78rem;
+      }
+
+      .scenario-summary-grid.is-pinned .scenario-summary-cards {
+        display: none;
+      }
+
       body.site-shell.tool-page .container {
         width: min(100vw - 40px, var(--page-width));
       }
@@ -4477,6 +4783,10 @@
         grid-template-columns: 1fr;
       }
 
+      .scenario-summary-cards {
+        grid-template-columns: 1fr;
+      }
+
       .scenario-current-class-card,
       .scenario-result-preview {
         padding: 16px;
@@ -4547,6 +4857,10 @@
         width: 100%;
       }
 
+      .cta-panel .cta-panel-download {
+        width: 100%;
+      }
+
       .snapshot-panel-header {
         flex-direction: column;
       }
@@ -4558,6 +4872,17 @@
       .snapshot-actions .btn,
       .snapshot-actions a {
         width: 100%;
+      }
+
+      #resultsScreen .screen-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      #resultsScreen .screen-title .snapshot-actions {
+        width: 100%;
+        margin-bottom: 0;
+        justify-content: flex-start;
       }
 
       .account-box-header {
@@ -4863,6 +5188,14 @@
         font-size: 0.95rem;
       }
 
+      body.site-shell.tool-page .scenario-impact-card__groups {
+        grid-template-columns: 1fr;
+      }
+
+      body.site-shell.tool-page .scenario-impact-card__primary {
+        text-align: left;
+      }
+
       body.site-shell.tool-page #classes .scenario-chart {
         padding: 16px;
       }
@@ -4886,7 +5219,7 @@
       }
 
       body.site-shell.tool-page #classes .scenario-row.is-current {
-        border-left-color: #3b82f6;
+        border-left-color: var(--accent-border);
       }
 
       body.site-shell.tool-page #classes .scenario-row-header {
@@ -5035,8 +5368,8 @@
       }
 
       body.site-shell.tool-page #classes .scenario-row.is-current {
-        border-color: #9bbde9;
-        border-left-color: #3b82f6;
+        border-color: rgba(191, 57, 43, 0.34);
+        border-left-color: var(--accent-border);
       }
 
       body.site-shell.tool-page #classes .scenario-row-header {
@@ -5045,8 +5378,8 @@
       }
 
       body.site-shell.tool-page #classes .scenario-percentile-metric {
-        grid-template-columns: 48px minmax(60px, auto) minmax(0, 1fr);
-        gap: 8px;
+        grid-template-columns: minmax(140px, max-content) 64px minmax(0, 1fr);
+        column-gap: 10px;
       }
 
       body.site-shell.tool-page #classes .scenario-row-meta {
@@ -5190,7 +5523,7 @@
     <section class="hero wizard-screen is-active" data-screen="1" id="inputScreen">
       <div class="container tool-layout">
         <div class="hero-copy">
-          <h1>Turn your SBD <br class="mobile-break" />into real <br class="mobile-break" />competition context</h1>
+          <h1>Compare your SBD <br class="mobile-break" />to real meets</h1>
           <p class="lede">Compare how the same bodyweight and SBD total map across IPF Open, USAPL, USPA / IPL, and WRPF-style powerlifting standards.</p>
         </div>
 
@@ -5270,8 +5603,11 @@
     <section class="wizard-screen" data-screen="2" id="resultsScreen">
       <div class="container">
         <div class="screen-title">
-          <p class="eyebrow">Result Snapshot</p>
-          <h1>Score snapshot</h1>
+          <div>
+            <p class="eyebrow">Result Snapshot</p>
+            <h1>Score snapshot</h1>
+          </div>
+          <div class="snapshot-actions" id="snapshotActions"></div>
         </div>
 
         <div class="results is-visible" id="resultsPanel" aria-live="polite">
@@ -5313,9 +5649,18 @@
 
           <div class="benchmark-panel" id="benchmarkPanel" aria-live="polite">
             <p class="benchmark-state" id="benchmarkState">Benchmark data is loading.</p>
+            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
+              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="no" aria-pressed="false">No</button>
+              </div>
+              <p class="benchmark-quick-feedback__status" id="benchmarkQuickFeedbackStatus" aria-live="polite"></p>
+              <button class="benchmark-quick-feedback__follow-up" type="button" id="benchmarkFeedbackFollowUp" hidden>Tell us what was confusing</button>
+            </div>
             <div class="benchmark-grid">
               <article class="benchmark-card">
-                <span class="result-label">Total Percentile <span class="info-tip" title="P34 means the entered result is at or above approximately 34% of matching historical results. It does not mean 34th place or top 34%." aria-label="Percentile explanation">?</span></span>
+                <span class="result-label">Total Percentile <span class="info-tip-wrap"><button class="info-tip" id="totalPercentileHelp" type="button" aria-label="Explain Total Percentile" aria-expanded="false" aria-controls="totalPercentileHelpPopover">?</button><span class="info-tip-popover" id="totalPercentileHelpPopover" role="tooltip" hidden>Total Percentile shows how your entered SBD total compares with matching historical OpenPowerlifting results for this benchmark group.</span></span></span>
                 <strong class="benchmark-value" id="benchmarkTotalPercentile">-</strong>
                 <p class="benchmark-copy" id="benchmarkTotalCopy">Full SBD required.</p>
                 <div class="benchmark-rail" aria-label="Total percentile from P0 to P100">
@@ -5341,17 +5686,7 @@
                 <p class="benchmark-copy" id="benchmarkNextCopy">Shows the next historical Total threshold.</p>
               </article>
             </div>
-            <p class="benchmark-meta" id="benchmarkMeta">OpenPowerlifting benchmarks are historical dataset context, not official rankings.</p>
-            <p class="benchmark-source-note">Dataset source: OpenPowerlifting, May 2026.</p>
-            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
-              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
-              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
-                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
-                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="no" aria-pressed="false">No</button>
-              </div>
-              <p class="benchmark-quick-feedback__status" id="benchmarkQuickFeedbackStatus" aria-live="polite"></p>
-              <button class="benchmark-quick-feedback__follow-up" type="button" id="benchmarkFeedbackFollowUp" hidden>Tell us what was confusing</button>
-            </div>
+            <p class="benchmark-meta" id="benchmarkMeta"></p>
           </div>
         </section>
 
@@ -5361,6 +5696,7 @@
               <p class="eyebrow">Weight Class Scenario Comparison</p>
               <h2>Historical percentile by weight class</h2>
             </div>
+            <span class="class-help-wrap"><button class="class-help-button" id="nearbyClassesHelp" type="button" aria-label="Explain nearby weight classes" aria-expanded="false" aria-controls="nearbyClassesHelpPopover">?</button><span class="info-tip-popover" id="nearbyClassesHelpPopover" role="tooltip" hidden>Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</span></span>
           </div>
 
           <div class="comparison-card">
@@ -5372,7 +5708,6 @@
               </article>
             </div>
             <div class="class-comparison-controls" id="classComparisonControls" hidden>
-              <p id="classComparisonScope">Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</p>
               <button class="class-comparison-toggle" type="button" id="classComparisonToggle" aria-expanded="false">Compare up to two classes each direction</button>
             </div>
             <p class="class-explanation is-empty-state" id="classExplanation" aria-live="polite">Enter squat, bench, and deadlift to compare historical percentiles across weight classes.</p>
@@ -5410,22 +5745,8 @@
           <div class="benchmark-table-status" id="benchmarkTableStatus" hidden></div>
           <aside class="data-note" aria-label="Historical benchmark data note">
             <strong>Data note</strong>
-            <span>Liftally compares your entered SBD total and DOTS score with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. These benchmarks are for context only and do not predict meet placing or recommend bodyweight or weight-class changes.</span>
+            <span>Liftally compares your entered SBD total and DOTS score with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. Dataset source: OpenPowerlifting, May 2026. These benchmarks are for context only and do not predict meet placing or recommend bodyweight or weight-class changes.</span>
           </aside>
-        </section>
-
-        <section class="section" id="snapshotSection" aria-label="Saved snapshots">
-          <div class="snapshot-panel">
-            <div class="snapshot-panel-header">
-              <div>
-                <p class="eyebrow">Saved Snapshots</p>
-                <p class="snapshot-account-line" id="accountStatus" hidden></p>
-              </div>
-              <div class="snapshot-actions" id="snapshotActions"></div>
-            </div>
-            <p class="snapshot-status" id="snapshotStatus" aria-live="polite"></p>
-            <ul class="snapshot-list" id="snapshotList" aria-label="Recent saved snapshots"></ul>
-          </div>
         </section>
 
         <div class="wizard-actions">
@@ -5463,14 +5784,17 @@
           <div class="scenario-lab" id="scenarioLab" aria-live="polite" hidden>
             <div class="scenario-lab-panel">
               <div class="scenario-selector-head">
-                <p class="eyebrow">SBD Total</p>
                 <p>Select a metric to see the smallest change that moves your percentile.</p>
+                <button class="scenario-pin-button" id="scenarioPinButton" type="button" aria-pressed="false" aria-label="Pin current snapshot" title="Pin current snapshot">📌 <span>Pin snapshot</span></button>
               </div>
 
-              <button class="scenario-current-class-card" id="scenarioBodyweightToggle" type="button" aria-pressed="false" aria-label="Select current bodyweight">
-                <span>Current BW</span>
+              <div class="scenario-summary-grid" id="scenarioSummaryGrid">
+              <div class="scenario-summary-cards">
+              <button class="scenario-summary-card scenario-current-class-card" id="scenarioBodyweightToggle" type="button" aria-pressed="false" aria-label="Select current bodyweight">
+                <span>Current bodyweight</span>
                 <strong id="scenarioCurrentClassValue">—</strong>
                 <span class="scenario-current-class-card__range" id="scenarioCurrentClassRange">—</span>
+                <span class="scenario-current-class-card__context" aria-hidden="true"></span>
                 <span class="scenario-card-selection" aria-hidden="true">✓</span>
               </button>
 
@@ -5505,12 +5829,19 @@
                 </div>
               </section>
 
-              <article class="scenario-result-preview" aria-live="polite">
-                <span class="scenario-lift-card__label">Projected DOTS percentile</span>
+              <article class="scenario-summary-card scenario-result-preview" aria-live="polite">
+                <span class="scenario-lift-card__label" id="scenarioDotsPreviewLabel">Current DOTS percentile</span>
                 <strong id="scenarioDotsPreview">—</strong>
                 <span class="scenario-result-preview__detail" id="scenarioDotsPreviewDetail">— DOTS</span>
-                <span class="scenario-result-preview__context" id="scenarioDotsPreviewContext">Select a metric</span>
+                <span class="scenario-result-preview__context" id="scenarioDotsPreviewContext"></span>
               </article>
+              </div>
+              <div class="scenario-pinned-bar" id="scenarioPinnedBar" aria-label="Pinned current snapshot">
+                <span>BW <strong id="scenarioPinnedBw">—</strong></span>
+                <span>SBD <strong id="scenarioPinnedSbd">—</strong></span>
+                <span>DOTS <strong id="scenarioPinnedDots">—</strong></span>
+              </div>
+              </div>
 
             </div>
 
@@ -5519,14 +5850,15 @@
                 <section class="scenario-impact-results" aria-labelledby="scenarioImpactTitle">
                   <div class="scenario-impact-head">
                     <h3 id="scenarioImpactTitle">Scenario impacts</h3>
+                    <button class="btn btn-secondary scenario-share-button" type="button" data-share-result>Share result</button>
                     <label class="scenario-impact-sort" for="scenarioImpactSort">
                       <span>Sort by</span>
                       <select id="scenarioImpactSort">
-                        <option value="best-gain">Best percentile gain</option>
+                        <option value="best-gain">Best percentile improvement</option>
                         <option value="smallest-change">Smallest kg change</option>
-                        <option value="cut-first">Bodyweight cut first</option>
-                        <option value="gain-first">Bodyweight gain first</option>
-                        <option value="biggest-drop">Biggest ranking drop</option>
+                        <option value="cut-first">Weight loss first</option>
+                        <option value="gain-first">Weight gain first</option>
+                        <option value="biggest-drop">Largest percentile drop</option>
                       </select>
                     </label>
                   </div>
@@ -5542,15 +5874,12 @@
           </div>
         </section>
 
-        <div class="planner-cta-row">
-          <a class="btn btn-primary" href="/request-access" data-gtag="send_feedback" data-propagate-utm="true">Help improve Liftally</a>
-        </div>
-
         <div class="cta-panel">
           <div>
             <p class="eyebrow">Locked Planner Preview</p>
             <h2>Track the full story in Liftally</h2>
             <p>This calculator is one snapshot. Liftally is built for saving, comparing, reporting, and tracking class context over time.</p>
+            <a class="btn btn-primary cta-panel-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&amp;ct=site_weight_class_explorer&amp;mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download Liftally</a>
           </div>
           <img class="app-shot" src="images/homepage-view-1-removed.png" alt="Liftally app progress screen" />
         </div>
@@ -5651,11 +5980,15 @@
       classComparisonControls: document.getElementById('classComparisonControls'),
       classComparisonScope: document.getElementById('classComparisonScope'),
       classComparisonToggle: document.getElementById('classComparisonToggle'),
+      nearbyClassesHelp: document.getElementById('nearbyClassesHelp'),
+      nearbyClassesHelpPopover: document.getElementById('nearbyClassesHelpPopover'),
       classExplanation: document.getElementById('classExplanation'),
       standardRows: document.getElementById('standardRows'),
       benchmarkSection: document.getElementById('benchmarkSection'),
       benchmarkState: document.getElementById('benchmarkState'),
       benchmarkTotalPercentile: document.getElementById('benchmarkTotalPercentile'),
+      totalPercentileHelp: document.getElementById('totalPercentileHelp'),
+      totalPercentileHelpPopover: document.getElementById('totalPercentileHelpPopover'),
       benchmarkTotalCopy: document.getElementById('benchmarkTotalCopy'),
       benchmarkTotalMarker: document.getElementById('benchmarkTotalMarker'),
       benchmarkTotalRailValue: document.getElementById('benchmarkTotalRailValue'),
@@ -5678,6 +6011,11 @@
       scenarioSetupStandard: document.getElementById('scenarioSetupStandard'),
       scenarioSetupSbd: document.getElementById('scenarioSetupSbd'),
       scenarioLab: document.getElementById('scenarioLab'),
+      scenarioSummaryGrid: document.getElementById('scenarioSummaryGrid'),
+      scenarioPinButton: document.getElementById('scenarioPinButton'),
+      scenarioPinnedBw: document.getElementById('scenarioPinnedBw'),
+      scenarioPinnedSbd: document.getElementById('scenarioPinnedSbd'),
+      scenarioPinnedDots: document.getElementById('scenarioPinnedDots'),
       scenarioComparisonWrap: document.getElementById('scenarioComparisonWrap'),
       scenarioImpactList: document.getElementById('scenarioImpactList'),
       scenarioImpactSort: document.getElementById('scenarioImpactSort'),
@@ -5692,6 +6030,7 @@
       scenarioSquatBase: document.getElementById('scenarioSquatBase'),
       scenarioBenchBase: document.getElementById('scenarioBenchBase'),
       scenarioDeadliftBase: document.getElementById('scenarioDeadliftBase'),
+      scenarioDotsPreviewLabel: document.getElementById('scenarioDotsPreviewLabel'),
       scenarioDotsPreview: document.getElementById('scenarioDotsPreview'),
       scenarioDotsPreviewDetail: document.getElementById('scenarioDotsPreviewDetail'),
       scenarioDotsPreviewContext: document.getElementById('scenarioDotsPreviewContext'),
@@ -5743,6 +6082,7 @@
     let classComparisonState = { advanced: false, lastArgs: null };
     let scenarioRenderId = 0;
     let scenarioBodyweightSelected = false;
+    let scenarioSummaryPinned = false;
     let scenarioSortMode = 'best-gain';
     let generatedImpacts = null;
     const scenarioLiftSelection = { squat: false, bench: false, deadlift: false };
@@ -6215,10 +6555,7 @@
 
     function renderSnapshotActions(user) {
       if (!output.snapshotActions) return;
-      const signedIn = isNamedAccount(user);
-      output.snapshotActions.innerHTML = signedIn
-        ? '<button class="btn btn-primary" type="button" id="saveSnapshotButton">SAVE SNAPSHOT</button><a class="btn btn-secondary" id="viewHistoryButton" href="/account">VIEW HISTORY</a>'
-        : '<button class="btn btn-primary" type="button" id="signInToSaveButton" data-auth-action="sign-in-to-save">SIGN IN TO SAVE</button>';
+      output.snapshotActions.innerHTML = '<button class="btn btn-secondary" type="button" data-share-result>SHARE RESULT</button>';
 
       output.saveSnapshotButton = document.getElementById('saveSnapshotButton');
       output.signInToSaveButton = document.getElementById('signInToSaveButton');
@@ -6227,6 +6564,128 @@
       if (output.saveSnapshotButton) output.saveSnapshotButton.addEventListener('click', saveCurrentSnapshot);
       if (output.signInToSaveButton) output.signInToSaveButton.addEventListener('click', openAuthModal);
       updateSaveButtonState();
+    }
+
+    async function shareResultCard() {
+      if (!lastCalculation) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1350;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+      const calc = lastCalculation;
+      const benchmark = lastSelectedBenchmarkContext && lastSelectedBenchmarkContext.status === 'ready'
+        ? lastSelectedBenchmarkContext : null;
+      const benchmarkMatch = benchmark && benchmark.match ? benchmark.match : {};
+      const currentClass = classNameWithSpace(calc.currentClass);
+      const totalPct = percentileDisplay(benchmark && benchmark.total);
+      const dotsPct = percentileDisplay(benchmark && benchmark.dots);
+      const scenario = generatedImpacts && generatedImpacts.length ? generatedImpacts[0] : null;
+      const milestones = [1000, 1200, 1500, 1800, 2000];
+      const totalLb = calc.totalKg * 2.20462;
+      const unlocked = milestones.filter((milestone) => totalLb >= milestone).pop() || null;
+      const nextMilestone = milestones.find((milestone) => totalLb < milestone) || null;
+      const sourceStandard = benchmarkMatch.benchmarkStandard || calc.standardLabel || 'Benchmark';
+      const roundedRect = (x, y, width, height, radius) => {
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, radius);
+        ctx.fill();
+      };
+      const cardLeft = 64;
+      const cardWidth = canvas.width - 128;
+      ctx.fillStyle = '#edf2f0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#303633';
+      roundedRect(cardLeft, 64, cardWidth, canvas.height - 128, 28);
+      ctx.fillStyle = '#ff5a45';
+      ctx.font = '800 38px Arial';
+      ctx.fillText('LIFTALLY', 112, 150);
+      ctx.fillStyle = '#f7f7f3';
+      ctx.font = '700 26px Arial';
+      ctx.fillText('RESULT SNAPSHOT', 112, 198);
+      ctx.font = '800 30px Arial';
+      ctx.fillText('DOTS PERCENTILE', 112, 290);
+      const gaugePct = benchmark && Number.isFinite(scorePercentileNumber(benchmark.dots)) ? scorePercentileNumber(benchmark.dots) / 100 : 0;
+      ctx.lineWidth = 24;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = '#59625d';
+      ctx.beginPath();
+      ctx.arc(540, 470, 180, Math.PI, 0);
+      ctx.stroke();
+      ctx.strokeStyle = '#ff5a45';
+      ctx.beginPath();
+      ctx.arc(540, 470, 180, Math.PI, Math.PI + Math.PI * Math.max(0, Math.min(1, gaugePct)));
+      ctx.stroke();
+      ctx.fillStyle = '#f7f7f3';
+      ctx.font = '800 64px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(dotsPct, 540, 505);
+      ctx.font = '500 24px Arial';
+      ctx.fillText('DOTS PERCENTILE', 540, 545);
+      ctx.textAlign = 'left';
+      const statTop = 635;
+      const statWidth = 270;
+      const stats = [
+        [plannerNumber(calc.totalKg, calc.unit), 'SBD TOTAL'],
+        [plannerDots(calc.dots), 'DOTS'],
+        [currentClass.replace(/\s*class$/i, ''), `${calc.standardLabel} CLASS`]
+      ];
+      stats.forEach(([value, label], index) => {
+        const x = 112 + index * 290;
+        ctx.fillStyle = '#3d4641';
+        roundedRect(x, statTop, statWidth, 150, 16);
+        ctx.fillStyle = '#f7f7f3';
+        ctx.font = '800 38px Arial';
+        ctx.fillText(value, x + 20, statTop + 62);
+        ctx.fillStyle = '#b8c2bb';
+        ctx.font = '700 20px Arial';
+        ctx.fillText(label, x + 20, statTop + 108);
+      });
+      ctx.fillStyle = '#b8c2bb';
+      ctx.font = '700 24px Arial';
+      ctx.fillText('TOTAL PERCENTILE', 112, 875);
+      ctx.strokeStyle = '#59625d';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(112, 900); ctx.lineTo(968, 900); ctx.stroke();
+      ctx.fillStyle = '#f7f7f3';
+      ctx.font = '800 48px Arial';
+      ctx.fillText(totalPct, 112, 970);
+      if (scenario && Number.isFinite(scenario.dotsChange)) {
+        ctx.fillStyle = '#ffb26b';
+        ctx.font = '700 28px Arial';
+        ctx.fillText(`SCENARIO DOTS CHANGE  ${formatSigned(scenario.dotsChange, 2)}`, 112, 1040);
+      }
+      ctx.fillStyle = '#f7f7f3';
+      ctx.font = '700 28px Arial';
+      ctx.fillText(`MILESTONE UNLOCKED  ${unlocked ? `${unlocked} lb Club` : 'Keep lifting'}`, 112, 1090);
+      if (nextMilestone) {
+        ctx.fillStyle = '#b8c2bb';
+        ctx.font = '500 24px Arial';
+        ctx.fillText(`NEXT  ${nextMilestone} lb Club`, 112, 1125);
+      }
+      ctx.fillStyle = '#aeb8b1';
+      ctx.font = '500 22px Arial';
+      ctx.fillText(`Source: OpenPowerlifting · ${sourceStandard} · 2026-05`, 112, 1175);
+      ctx.fillStyle = '#aeb8b1';
+      ctx.font = '500 28px Arial';
+      ctx.fillText('Compare your SBD to real meets · liftally.app', 112, 1230);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) return;
+      const file = new File([blob], 'liftally-result.png', { type: 'image/png' });
+      if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+        try {
+          await navigator.share({ title: 'Liftally result', text: 'My Liftally result', files: [file] });
+          return;
+        } catch (error) {
+          if (error && error.name === 'AbortError') return;
+        }
+      }
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = file.name;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
     }
 
     function setAccountBusy(isBusy) {
@@ -6523,7 +6982,7 @@
 
     function benchmarkMetadataHtml(context) {
       if (!context || context.status !== 'ready') {
-        return '<span class="benchmark-meta-disclaimer">Historical dataset comparison only — not a placing or meet-result prediction.</span>';
+        return '';
       }
       const match = context.match || {};
       const className = match.weightClass ? `${String(match.weightClass).replace(/\s*kg$/i, '')} kg class` : 'Class unavailable';
@@ -6536,8 +6995,7 @@
         <span class="benchmark-meta-chip">${testedStatusLabel(match.testedStatus).replace(' benchmark', '')}</span>
         <span class="benchmark-meta-chip">${match.benchmarkStandard || 'Benchmark'}</span>
         <span class="benchmark-meta-chip">${className}</span>
-        ${n ? `<span class="benchmark-meta-chip">${n}</span>` : ''}
-        <span class="benchmark-meta-disclaimer">Historical dataset comparison only — not a placing or meet-result prediction.</span>`;
+        ${n ? `<span class="benchmark-meta-chip">${n}</span>` : ''}`;
     }
 
     function updateBenchmarkRail(marker, value, scoreContext, railValue) {
@@ -6827,7 +7285,7 @@
       output.benchmarkNextPercentile.textContent = '-';
       output.benchmarkNextGap.textContent = '-';
       output.benchmarkNextCopy.textContent = 'Shows the next historical Total threshold.';
-      output.benchmarkMeta.innerHTML = '<span class="benchmark-meta-disclaimer">Historical dataset comparison only — not a placing or meet-result prediction.</span>';
+      output.benchmarkMeta.innerHTML = '';
     }
 
     function setBenchmarkLoading() {
@@ -6858,7 +7316,7 @@
       output.benchmarkNextPercentile.textContent = '-';
       output.benchmarkNextGap.textContent = '-';
       output.benchmarkNextCopy.textContent = 'There are not enough matching historical results for this class and filter combination.';
-      output.benchmarkMeta.innerHTML = '<span class="benchmark-meta-disclaimer">Historical dataset comparison only — not a placing or meet-result prediction.</span>';
+      output.benchmarkMeta.innerHTML = '';
     }
 
     function renderBenchmarkContext(context, unit) {
@@ -7184,13 +7642,14 @@
       if (scenarioBodyweightSelected) return 'Bodyweight only';
       if (selectedLifts.length === 3) return 'SBD total only';
       if (selectedLifts.length === 1) return `${scenarioLiftLabel(selectedLifts[0])} only`;
-      return selectedLifts.length ? 'Combined lifts' : 'Select a metric';
+      return selectedLifts.length ? 'Combined lifts' : '';
     }
 
-    function setScenarioPreviewEmpty() {
-      if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = 'No change';
-      if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = 'Select another metric or scenario.';
-      if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = 'No meaningful change';
+    function setScenarioPreviewContext(text) {
+      if (!output.scenarioDotsPreviewContext) return;
+      const value = String(text || '');
+      output.scenarioDotsPreviewContext.textContent = value;
+      output.scenarioDotsPreviewContext.hidden = !value;
     }
 
     function scenarioBaseline(calculation, currentContext) {
@@ -7223,17 +7682,19 @@
       return { ...lifts, totalKg: baseline.totalKg + incrementKg };
     }
 
-    function scenarioChangedMetricsHtml(calculation, baseline, projected, projectedBodyweightKg = baseline.bodyweightKg, projectedClass = '') {
+    function scenarioChangedMetricsHtml(calculation, baseline, projected, projectedBodyweightKg = baseline.bodyweightKg, projectedClass = '', { includeBodyweight = true, includeLifts = true } = {}) {
       const rows = [];
       const unit = calculation.unit;
       const addRow = (label, current, next) => {
         if (Math.abs(next - current) < 0.000001) return;
-        rows.push(`<div><strong>${label}</strong><span>${plannerNumber(current, unit)} → ${plannerNumber(next, unit)}</span><small>${formatSigned(fromKg(next - current, unit), 1)} ${appUnitLabels[unit]}</small></div>`);
+        rows.push(`<div>${label ? `<strong>${label}</strong>` : ''}<span>${plannerNumber(current, unit)} → ${plannerNumber(next, unit)}</span><small>${formatSigned(fromKg(next - current, unit), 1)} ${appUnitLabels[unit]}</small></div>`);
       };
-      addRow(`Bodyweight${projectedClass ? ` · ${projectedClass}` : ''}`, baseline.bodyweightKg, projectedBodyweightKg);
-      addRow('Squat', baseline.squatKg, projected.squatKg);
-      addRow('Bench press', baseline.benchKg, projected.benchKg);
-      addRow('Deadlift', baseline.deadliftKg, projected.deadliftKg);
+      if (includeBodyweight) addRow('', baseline.bodyweightKg, projectedBodyweightKg);
+      if (includeLifts) {
+        addRow('Squat', baseline.squatKg, projected.squatKg);
+        addRow('Bench press', baseline.benchKg, projected.benchKg);
+        addRow('Deadlift', baseline.deadliftKg, projected.deadliftKg);
+      }
       return rows.join('');
     }
 
@@ -7258,15 +7719,18 @@
       }
       if (output.scenarioSbdSelector) output.scenarioSbdSelector.classList.toggle('is-selected', allSelected);
       if (output.scenarioSbdValue) output.scenarioSbdValue.textContent = plannerNumber(calculation.totalKg, calculation.unit);
+      if (output.scenarioPinnedBw) output.scenarioPinnedBw.textContent = formatWeightForUnit(calculation.bodyweightKg, calculation.unit);
+      if (output.scenarioPinnedSbd) output.scenarioPinnedSbd.textContent = `${plannerNumber(calculation.totalKg, calculation.unit)} ${appUnitLabels[calculation.unit]}`;
+      if (output.scenarioPinnedDots) output.scenarioPinnedDots.textContent = plannerDots(calculation.dots);
 
       output.scenarioLiftButtons.forEach((button) => {
         const selected = Boolean(scenarioLiftSelection[button.dataset.scenarioLift]);
         button.classList.toggle('is-selected', selected);
         button.setAttribute('aria-pressed', String(selected));
       });
-      if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = '—';
+      if (output.scenarioDotsPreviewLabel) output.scenarioDotsPreviewLabel.textContent = 'Current DOTS percentile';
       if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
-      if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = scenarioPreviewContext(selectedLifts);
+      setScenarioPreviewContext('');
     }
 
     function scenarioPercentileDisplay(context, scoreType) {
@@ -7372,9 +7836,22 @@
       return Math.ceil((raw - 0.000001) / displayStepKg) * displayStepKg;
     }
 
-    function scenarioImpactCard({ name, primary, currentValue, scenarioValue, changesHtml = '', currentDots, scenarioDots, currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct, totalDelta, dotsDelta, dotsChange, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
+    function scenarioProjectedLiftsHtml(calculation, baseline, projected) {
+      if (!calculation || !baseline || !projected) return '';
+      const lifts = [
+        ['Squat', baseline.squatKg, projected.squatKg],
+        ['Bench press', baseline.benchKg, projected.benchKg],
+        ['Deadlift', baseline.deadliftKg, projected.deadliftKg]
+      ];
+      return `<strong class="scenario-impact-card__projected-total">${plannerNumber(baseline.totalKg, calculation.unit)} → ${plannerNumber(projected.totalKg, calculation.unit)}</strong><div class="scenario-impact-card__lifts">${lifts.map(([label, current, next]) => {
+        const changed = Math.abs(next - current) >= 0.000001;
+        const delta = fromKg(next - current, calculation.unit);
+        return `<div class="scenario-impact-card__lift${changed ? ' is-changed' : ''}"><small>${label}</small>${changed ? `<strong>${plannerNumber(current, calculation.unit)} → ${plannerNumber(next, calculation.unit)}</strong><small>${formatSigned(delta, 1)} ${appUnitLabels[calculation.unit]}</small>` : `<strong>${plannerNumber(next, calculation.unit)}</strong>`}</div>`;
+      }).join('')}</div>`;
+    }
+
+    function scenarioImpactCard({ name, primary, currentValue, scenarioValue, changesHtml = '', projectedLiftsHtml = '', currentDots, scenarioDots, currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct, totalDelta, dotsDelta, dotsChange, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
       const largestImpact = Math.max(Math.abs(totalDelta || 0), Math.abs(dotsDelta || 0));
-      const benchmarkUnavailable = [currentTotalPct, scenarioTotalPct, currentDotsPct, scenarioDotsPct].some((value) => value === 'Unavailable');
       const tone = totalDelta > 0 || dotsDelta > 0 || dotsChange > 0
         ? 'is-positive'
         : totalDelta < 0 || dotsDelta < 0 || dotsChange < 0
@@ -7394,18 +7871,32 @@
         previewDots: scenarioDots,
         html: `
           <article class="scenario-impact-card ${tone}">
-            <strong class="scenario-impact-card__name">${name}</strong>
-            <strong class="scenario-impact-card__primary">${primary}</strong>
-            ${changesHtml ? `<div class="scenario-impact-card__changes">${changesHtml}</div>` : `<span class="scenario-impact-card__values">${currentValue} → ${scenarioValue}</span>`}
-            <div class="scenario-impact-card__metrics">
-              <span>DOTS <strong>${plannerDots(currentDots)} → ${plannerDots(scenarioDots)}</strong>${Number.isFinite(dotsChange) && dotsChange !== 0 ? ` (${formatSigned(dotsChange, 2)})` : ''}</span>
-              ${benchmarkUnavailable ? '<span>No benchmark data for this selection. Try the nearest available benchmark.</span>' : `<span>TOTAL PERCENTILE <strong>${currentTotalPct} → ${scenarioTotalPct}</strong>${Number.isFinite(totalDelta) ? ` (${formatPercentileDelta(totalDelta)})` : ''}</span><span>DOTS PERCENTILE <strong>${currentDotsPct} → ${scenarioDotsPct}</strong>${Number.isFinite(dotsDelta) ? ` (${formatPercentileDelta(dotsDelta)})` : ''}</span>`}
+            <div class="scenario-impact-card__header">
+              <strong class="scenario-impact-card__name">${name}</strong>
+              <strong class="scenario-impact-card__primary">${primary}</strong>
+            </div>
+            <div class="scenario-impact-card__groups">
+              <section class="scenario-impact-card__group${Math.abs(bodyweightChangeKg) >= 0.000001 ? ' is-changed' : ''}">
+                <span class="scenario-impact-card__group-title">Projected bodyweight</span>
+                ${changesHtml ? `<div class="scenario-impact-card__changes">${changesHtml}</div>` : `<span class="scenario-impact-card__values">${currentValue} → ${scenarioValue}</span>`}
+              </section>
+              <section class="scenario-impact-card__group">
+                <span class="scenario-impact-card__group-title">Projected SBD</span>
+                ${projectedLiftsHtml || '<span class="scenario-impact-card__values">Unavailable</span>'}
+              </section>
+              <section class="scenario-impact-card__group">
+                <span class="scenario-impact-card__group-title">Projected DOTS percentile</span>
+                <div class="scenario-impact-card__projected-percentile">
+                  <strong>${scenarioDotsPct}${Number.isFinite(dotsDelta) ? ` (${formatPercentileDelta(dotsDelta)})` : ''}</strong>
+                  <span>${plannerDots(scenarioDots)} DOTS${Number.isFinite(dotsChange) ? ` (${formatSigned(dotsChange, 2)})` : ''}</span>
+                </div>
+              </section>
             </div>
           </article>`
       };
     }
 
-    function impactFromContexts({ name, primary, currentValue, scenarioValue, changesHtml, currentDots, scenarioDots, currentContext, scenarioContext, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
+    function impactFromContexts({ name, primary, currentValue, scenarioValue, changesHtml, calculation, baseline, projected, currentDots, scenarioDots, currentContext, scenarioContext, requiredChangeKg, bodyweightChangeKg = 0, performanceChangeKg = requiredChangeKg, forceVisible = false }) {
       const currentTotalPct = percentileDisplay(currentContext && currentContext.total);
       const scenarioTotalPct = percentileDisplay(scenarioContext && scenarioContext.total);
       const currentDotsPct = percentileDisplay(currentContext && currentContext.dots);
@@ -7416,6 +7907,7 @@
         currentValue,
         scenarioValue,
         changesHtml,
+        projectedLiftsHtml: scenarioProjectedLiftsHtml(calculation, baseline, projected),
         currentDots,
         scenarioDots,
         currentTotalPct,
@@ -7453,7 +7945,10 @@
         primary,
         currentValue: plannerNumber(baseline.totalKg, calculation.unit),
         scenarioValue: plannerNumber(projected.totalKg, calculation.unit),
-        changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected),
+        changesHtml: `<div><strong>${selectedLifts.length === 3 ? 'SBD Total change' : selectedLifts.length === 1 ? `${scenarioLiftLabel(selectedLifts[0])} change` : 'Lift change'}</strong><span>${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed</span></div>`,
+        calculation,
+        baseline,
+        projected,
         currentDots: calculation.dots,
         scenarioDots,
         currentContext,
@@ -7495,7 +7990,10 @@
           primary: `${formatSigned(fromKg(deltaKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} to enter ${classNameWithSpace(targetClass)}`,
           currentValue: `${plannerNumber(calculation.bodyweightKg, calculation.unit)} · ${classNameWithSpace(calculation.currentClass)} class`,
           scenarioValue: `${plannerNumber(targetBodyweightKg, calculation.unit)} · ${classNameWithSpace(targetClass)} class`,
-          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass)),
+          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass), { includeLifts: false }),
+          calculation,
+          baseline,
+          projected,
           currentDots: calculation.dots,
           scenarioDots,
           currentContext,
@@ -7552,7 +8050,10 @@
           primary: `${formatSigned(fromKg(incrementKg, calculation.unit), 1)} ${appUnitLabels[calculation.unit]} needed`,
           currentValue: `BW ${plannerNumber(calculation.bodyweightKg, calculation.unit)} · Total ${plannerNumber(calculation.totalKg, calculation.unit)}`,
           scenarioValue: `BW ${plannerNumber(targetBodyweightKg, calculation.unit)} · Total ${plannerNumber(scenarioTotalKg, calculation.unit)}`,
-          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass)),
+          changesHtml: scenarioChangedMetricsHtml(calculation, baseline, projected, targetBodyweightKg, classNameWithSpace(targetClass), { includeLifts: false }),
+          calculation,
+          baseline,
+          projected,
           currentDots: calculation.dots,
           scenarioDots,
           currentContext,
@@ -7690,11 +8191,6 @@
       }
       if (output.scenarioCompareBars) output.scenarioCompareBars.hidden = true;
       if (output.scenarioBenchmarkMeta) output.scenarioBenchmarkMeta.hidden = !hasSelections;
-      if (hasSelections) {
-        if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = '…';
-        if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = 'Calculating scenario…';
-      }
-
       const currentContext = await loadBenchmarkContext({
         standardKey: calculation.standardKey,
         sex: calculation.sex,
@@ -7707,11 +8203,12 @@
       if (renderId !== scenarioRenderId) return;
       const currentTotalPct = percentileDisplay(currentContext && currentContext.total);
       const currentDotsPct = percentileDisplay(currentContext && currentContext.dots);
+      if (output.scenarioDotsPreviewLabel) output.scenarioDotsPreviewLabel.textContent = 'Current DOTS percentile';
+      if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = currentDotsPct;
+      if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
+      setScenarioPreviewContext('');
       if (!hasSelections) {
         generatedImpacts = [];
-        if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = currentDotsPct;
-        if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
-        if (output.scenarioDotsPreviewContext) output.scenarioDotsPreviewContext.textContent = 'Current DOTS percentile';
         return;
       }
 
@@ -7732,13 +8229,6 @@
 
       const impacts = results.flat().filter(Boolean).filter((impact) => impact.forceVisible || impact.sortValue > 0 || impact.dotsSortValue > 0);
       generatedImpacts = impacts;
-      const previewImpact = impacts.slice().sort((a, b) => b.dotsDelta - a.dotsDelta || a.requiredChangeKg - b.requiredChangeKg)[0];
-      if (previewImpact) {
-        if (output.scenarioDotsPreview) output.scenarioDotsPreview.textContent = previewImpact.previewDotsPercentile;
-        if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(previewImpact.previewDots)} DOTS`;
-      } else {
-        setScenarioPreviewEmpty();
-      }
       renderScenarioImpactList(generatedImpacts);
       if (output.scenarioImpactNote) {
         const next = nextThresholdValue(currentContext && currentContext.total);
@@ -7825,7 +8315,7 @@
       if (delta === 0) return '<span class="scenario-delta-pill">Same</span>';
       const direction = delta > 0 ? '▲' : '▼';
       const className = delta > 0 ? 'is-positive' : 'is-negative';
-      return `<span class="scenario-delta-pill ${className}">${direction} ${delta > 0 ? '+' : '−'}${Math.abs(delta)} PR</span>`;
+      return `<span class="scenario-delta-pill ${className}">${direction} ${delta > 0 ? '+' : '−'}${Math.abs(delta)} pts</span>`;
     }
 
     function renderClassPercentileMetric(label, scoreContext, currentScoreContext, isCurrent) {
@@ -7842,7 +8332,7 @@
 
     function renderScenarioChartRow({ item, role, roleLabel: providedRoleLabel, comparisonNote, comparisonNoteClass, unit, benchmarkContext, currentBenchmarkContext, breakEvenThreshold }) {
       const isCurrent = role === 'current';
-      const roleLabel = isCurrent ? 'Baseline' : providedRoleLabel || (role === 'lower' ? 'Nearby lower class' : 'Nearby higher class');
+      const roleLabel = isCurrent ? 'Current class' : providedRoleLabel || (role === 'lower' ? 'Nearby lower class' : 'Nearby higher class');
       const total = benchmarkContext && benchmarkContext.total;
       const dots = benchmarkContext && benchmarkContext.dots;
       const currentTotal = currentBenchmarkContext && currentBenchmarkContext.total;
@@ -7870,6 +8360,7 @@
           <div class="scenario-row-header">
             <span class="scenario-row-class">${item.name}</span>
             <span class="scenario-row-role ${isCurrent ? 'is-current' : ''}">${roleLabel}</span>
+            ${isCurrent ? '<span class="scenario-baseline-badge">Baseline</span>' : ''}
             <div class="scenario-row-details">
               <span>${rangeText(item, unit)}</span>
               <span>${statusLabel}</span>
@@ -7877,8 +8368,8 @@
             </div>
           </div>
           <div class="scenario-percentile-metrics">
-            ${renderClassPercentileMetric('Total', total, currentTotal, isCurrent)}
-            ${renderClassPercentileMetric('DOTS', dots, currentDots, isCurrent)}
+            ${renderClassPercentileMetric('Total percentile', total, currentTotal, isCurrent)}
+            ${renderClassPercentileMetric('DOTS percentile', dots, currentDots, isCurrent)}
           </div>
           <div class="scenario-row-meta">
             ${breakEven}
@@ -7897,60 +8388,6 @@
             unit,
             currentBenchmarkContext
           })).join('')}
-          <footer class="scenario-chart-footnote">
-            <span>Historical benchmark comparison only. Not a placing prediction or weight-class recommendation.</span>
-            <span>Dataset source: OpenPowerlifting, May 2026.</span>
-          </footer>
-        </div>
-      `;
-    }
-
-    function classScenarioInsight(contexts, unit) {
-      const current = contexts.find((item) => item.role === 'current');
-      if (!current || !current.benchmarkContext || current.benchmarkContext.status !== 'ready') return null;
-      const currentTotal = current.benchmarkContext.total;
-      if (!currentTotal || currentTotal.status !== 'ready' || !currentTotal.percentile) return null;
-
-      const candidates = contexts
-        .filter((item) => item.role !== 'current'
-          && item.benchmarkContext
-          && item.benchmarkContext.status === 'ready'
-          && item.benchmarkContext.total
-          && item.benchmarkContext.total.status === 'ready'
-          && item.benchmarkContext.total.percentile)
-        .map((item) => ({
-          ...item,
-          delta: item.benchmarkContext.total.percentile - currentTotal.percentile
-        }))
-        .sort((a, b) => b.delta - a.delta);
-
-      if (!candidates.length) return null;
-      const comparison = candidates[0];
-      const rows = contexts
-        .filter((item) => item.benchmarkContext
-          && item.benchmarkContext.status === 'ready'
-          && item.benchmarkContext.total
-          && item.benchmarkContext.total.status === 'ready'
-          && item.benchmarkContext.total.percentile)
-        .map((item) => {
-          const delta = item.benchmarkContext.total.percentile - currentTotal.percentile;
-          const deltaText = item.role === 'current'
-            ? 'Current'
-            : delta === 0
-              ? 'Same'
-              : `${delta > 0 ? '+' : '−'}${Math.abs(delta)}`;
-          return `<span class="class-insight-item">${item.item.name} · ${percentileDisplay(item.benchmarkContext.total)} (${deltaText})</span>`;
-        }).join('');
-      const delta = comparison.delta;
-      const deltaBadgeText = delta === 0
-        ? 'Same as current'
-        : `${delta > 0 ? '+' : '−'}${Math.abs(delta)} percentile points`;
-      return `
-        <div class="class-insight">
-          <span class="class-insight-title">At the same ${formatBenchmarkValue(fromKg(currentTotal.value, unit), 1, unit)} Total</span>
-          <strong class="class-insight-main">${percentileDisplay(comparison.benchmarkContext.total)} in the ${comparison.item.name} class vs ${percentileDisplay(currentTotal)} in your current ${current.item.name} class</strong>
-          <span class="class-insight-delta">${deltaBadgeText}</span>
-          <span class="class-insight-row">${rows}</span>
         </div>
       `;
     }
@@ -7976,10 +8413,10 @@
       const comparisonNote = role === 'current' || !Number.isFinite(changePercent)
         ? ''
         : changePercent > 15
-          ? `${formatNumber(changePercent, 1)}% boundary change · Context only`
+          ? 'Context only'
           : changePercent > 10
-            ? `${formatNumber(changePercent, 1)}% boundary change · Aggressive`
-            : `${formatNumber(changePercent, 1)}% boundary change`;
+            ? 'Aggressive'
+            : '';
       const comparisonNoteClass = changePercent > 15
         ? 'is-context-only'
         : changePercent > 10
@@ -8013,12 +8450,6 @@
       output.classComparisonControls.hidden = !hasExtendedClasses;
       if (!hasExtendedClasses) return;
       const allCandidates = classComparisonIndices(list, currentIndex, bodyweightKg);
-      const nearbyCount = allCandidates.filter((entry) => entry.role !== 'current').length;
-      output.classComparisonScope.textContent = classComparisonState.advanced
-        ? 'Expanded comparison includes up to two classes in each direction. Labels show the bodyweight change to reach each class boundary.'
-        : nearbyCount
-          ? 'Nearby classes are shown when their boundary is within 10% of your entered bodyweight.'
-          : 'No adjacent class boundary is within 10% of your entered bodyweight. Expand to view more dataset context.';
       output.classComparisonToggle.textContent = classComparisonState.advanced
         ? 'Show nearby classes only'
         : 'Compare up to two classes each direction';
@@ -8127,13 +8558,9 @@
         currentEntry && currentEntry.benchmarkContext
       );
 
-      const insight = classScenarioInsight(entriesWithBreakEven, unit);
-      output.classExplanation.hidden = !insight;
-      output.classExplanation.innerHTML = insight || '';
+      output.classExplanation.hidden = true;
+      output.classExplanation.innerHTML = '';
 
-      if (standardKey === 'wrpf' && insight) {
-        output.classExplanation.innerHTML = `${output.classExplanation.innerHTML} <span class="benchmark-context-line">WRPF classes are common reference classes and may vary by meet.</span>`;
-      }
     }
 
     function renderStandardsComparison(sex, unit, bodyweightKg, totalKg = null, dots = null) {
@@ -8359,6 +8786,44 @@
       }
     });
 
+    if (output.totalPercentileHelp && output.totalPercentileHelpPopover) {
+      const closeTotalPercentileHelp = () => {
+        output.totalPercentileHelpPopover.hidden = true;
+        output.totalPercentileHelp.setAttribute('aria-expanded', 'false');
+      };
+      output.totalPercentileHelp.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = output.totalPercentileHelpPopover.hidden;
+        output.totalPercentileHelpPopover.hidden = !open;
+        output.totalPercentileHelp.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('click', (event) => {
+        if (!output.totalPercentileHelpPopover.hidden && !event.target.closest('.info-tip-wrap')) closeTotalPercentileHelp();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeTotalPercentileHelp();
+      });
+    }
+
+    if (output.nearbyClassesHelp && output.nearbyClassesHelpPopover) {
+      const closeNearbyClassesHelp = () => {
+        output.nearbyClassesHelpPopover.hidden = true;
+        output.nearbyClassesHelp.setAttribute('aria-expanded', 'false');
+      };
+      output.nearbyClassesHelp.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = output.nearbyClassesHelpPopover.hidden;
+        output.nearbyClassesHelpPopover.hidden = !open;
+        output.nearbyClassesHelp.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('click', (event) => {
+        if (!output.nearbyClassesHelpPopover.hidden && !event.target.closest('.class-help-wrap')) closeNearbyClassesHelp();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeNearbyClassesHelp();
+      });
+    }
+
     form.querySelectorAll('input').forEach((input) => {
       input.addEventListener('input', () => {
         updateLivePreview();
@@ -8385,6 +8850,23 @@
         updateScenarioLab();
       });
     }
+
+    if (output.scenarioPinButton) {
+      output.scenarioPinButton.addEventListener('click', () => {
+        scenarioSummaryPinned = !scenarioSummaryPinned;
+        if (output.scenarioSummaryGrid) output.scenarioSummaryGrid.classList.toggle('is-pinned', scenarioSummaryPinned);
+        output.scenarioPinButton.setAttribute('aria-pressed', String(scenarioSummaryPinned));
+        output.scenarioPinButton.setAttribute('aria-label', scenarioSummaryPinned ? 'Unpin current snapshot' : 'Pin current snapshot');
+        output.scenarioPinButton.setAttribute('title', scenarioSummaryPinned ? 'Unpin current snapshot' : 'Pin current snapshot');
+        const label = output.scenarioPinButton.querySelector('span');
+        if (label) label.textContent = scenarioSummaryPinned ? 'Unpin snapshot' : 'Pin snapshot';
+      });
+    }
+
+    document.addEventListener('click', (event) => {
+      const shareButton = event.target.closest('[data-share-result]');
+      if (shareButton) shareResultCard();
+    });
 
     output.scenarioLiftButtons.forEach((button) => {
       button.addEventListener('click', () => {
