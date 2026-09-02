@@ -17,7 +17,9 @@ const ignoredNames = new Set([
   'firebase.json',
   'firebase.production.json',
   'firestore.indexes.json',
-  'firestore.rules'
+  'firestore.rules',
+  'firestore.production.rules',
+  'storage.rules'
 ]);
 
 await rm(outputDir, { recursive: true, force: true });

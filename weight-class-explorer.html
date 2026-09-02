@@ -1359,7 +1359,8 @@
     }
     .feedback-attachment { display: grid; gap: 7px; }
     .feedback-attachment__button { width: fit-content; }
-    .feedback-attachment__note { margin: 0; color: var(--text-muted); font: 0.82rem/1.4 var(--font-body); }
+    .feedback-attachment__meta { color: var(--text-muted); font: 0.82rem/1.4 var(--font-body); }
+    .feedback-attachment__remove { width: fit-content; padding: 0; border: 0; background: transparent; color: var(--accent-text); font: 700 0.82rem/1.4 var(--font-body); cursor: pointer; }
     .feedback-anonymous { display: flex; gap: 9px; align-items: center; color: var(--text-secondary); font: 0.9rem/1.35 var(--font-body); }
     .feedback-anonymous input { width: 18px; height: 18px; accent-color: var(--accent-text); }
     .feedback-actions { display: flex; justify-content: flex-end; gap: 10px; }
@@ -5477,12 +5478,18 @@
         </fieldset>
         <div class="feedback-attachment">
           <span class="feedback-field__label">Attach screenshot</span>
-          <button class="btn btn-secondary feedback-attachment__button" type="button" disabled aria-disabled="true">Add attachment</button>
-          <p class="feedback-attachment__note">Attachment uploads will be available after secure storage is configured.</p>
+          <input id="benchmarkFeedbackAttachment" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden />
+          <button class="btn btn-secondary feedback-attachment__button" id="benchmarkFeedbackAttachmentButton" type="button">Add attachment</button>
+          <span class="feedback-attachment__meta" id="benchmarkFeedbackAttachmentMeta">Sign in to attach a screenshot.</span>
+          <button class="feedback-attachment__remove" id="benchmarkFeedbackAttachmentRemove" type="button" hidden>Remove</button>
         </div>
         <label class="feedback-field">
           <span>Comment <small>(optional)</small></span>
           <textarea id="benchmarkFeedbackComment" maxlength="500" placeholder="Tell us what was helpful or confusing..."></textarea>
+        </label>
+        <label class="feedback-field">
+          <span>Email <small>(optional)</small></span>
+          <input id="benchmarkFeedbackEmail" type="email" autocomplete="email" placeholder="you@example.com" />
         </label>
         <label class="feedback-anonymous"><input id="benchmarkFeedbackAnonymous" type="checkbox" />Submit anonymously</label>
         <p class="feedback-status" id="benchmarkFeedbackStatus" aria-live="polite"></p>
@@ -6051,6 +6058,11 @@
       cancelFeedbackButton: document.getElementById('cancelFeedbackButton'),
       benchmarkFeedbackForm: document.getElementById('benchmarkFeedbackForm'),
       benchmarkFeedbackComment: document.getElementById('benchmarkFeedbackComment'),
+      benchmarkFeedbackEmail: document.getElementById('benchmarkFeedbackEmail'),
+      benchmarkFeedbackAttachment: document.getElementById('benchmarkFeedbackAttachment'),
+      benchmarkFeedbackAttachmentButton: document.getElementById('benchmarkFeedbackAttachmentButton'),
+      benchmarkFeedbackAttachmentMeta: document.getElementById('benchmarkFeedbackAttachmentMeta'),
+      benchmarkFeedbackAttachmentRemove: document.getElementById('benchmarkFeedbackAttachmentRemove'),
       benchmarkFeedbackAnonymous: document.getElementById('benchmarkFeedbackAnonymous'),
       benchmarkFeedbackStatus: document.getElementById('benchmarkFeedbackStatus'),
       submitBenchmarkFeedbackButton: document.getElementById('submitBenchmarkFeedbackButton'),
@@ -6091,6 +6103,8 @@
     let selectedFeedbackRating = 0;
     let selectedFeedbackType = 'helpful';
     let feedbackSubmissionToken = 0;
+    let feedbackEmailTouched = false;
+    let selectedFeedbackAttachment = null;
 
     function setStep(activeStep) {
       document.querySelectorAll('.step').forEach((step) => {
@@ -6368,8 +6382,9 @@
       try {
         await window.liftallyBackend.createSupportRequest({
           type: 'feedback',
-          source: 'weight_class_explorer',
+          source: 'benchmark_helpfulness_modal',
           email: isNamedAccount(user) ? (user.email || '') : '',
+          userId: isNamedAccount(user) ? user.uid : '',
           message: [
             'Quick feedback',
             'Section: step_2_historical_benchmark',
@@ -6437,10 +6452,42 @@
 
     function resetFeedbackForm() {
       if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.reset();
+      feedbackEmailTouched = false;
+      clearFeedbackAttachment();
       setFeedbackRating(0);
       setFeedbackType('helpful');
       setFeedbackStatus('');
       setFeedbackSubmitting(false);
+      syncFeedbackIdentity(activeAuthUser || window.liftallyBackend?.getCurrentUser?.() || null);
+    }
+
+    function syncFeedbackIdentity(user) {
+      if (!output.benchmarkFeedbackEmail || !output.benchmarkFeedbackAnonymous) return;
+      const signedIn = isNamedAccount(user);
+      const anonymous = output.benchmarkFeedbackAnonymous.checked;
+      output.benchmarkFeedbackEmail.disabled = anonymous;
+      const canAttach = signedIn && !anonymous;
+      output.benchmarkFeedbackAttachmentButton.disabled = !canAttach;
+      output.benchmarkFeedbackAttachmentButton.hidden = !canAttach;
+      output.benchmarkFeedbackAttachmentMeta.textContent = canAttach
+        ? (selectedFeedbackAttachment ? selectedFeedbackAttachment.name : 'PNG, JPG, or WEBP under 5MB.')
+        : 'Sign in to attach a screenshot.';
+      if (!canAttach) clearFeedbackAttachment();
+      if (anonymous) {
+        output.benchmarkFeedbackEmail.value = '';
+      } else if (signedIn && !feedbackEmailTouched && user.email) {
+        output.benchmarkFeedbackEmail.value = user.email;
+      } else if (!signedIn && !feedbackEmailTouched) {
+        output.benchmarkFeedbackEmail.value = '';
+      }
+    }
+
+    function clearFeedbackAttachment() {
+      if (!output.benchmarkFeedbackAttachment) return;
+      selectedFeedbackAttachment = null;
+      output.benchmarkFeedbackAttachment.value = '';
+      output.benchmarkFeedbackAttachmentRemove.hidden = true;
+      output.benchmarkFeedbackAttachmentMeta.textContent = 'Sign in to attach a screenshot.';
     }
 
     function openFeedbackModal() {
@@ -6493,8 +6540,10 @@
       try {
         await window.liftallyBackend.createSupportRequest({
           type: 'feedback',
-          source: 'weight_class_explorer',
-          email: !anonymous && isNamedAccount(user) ? (user.email || '') : '',
+          source: 'benchmark_helpfulness_modal',
+          email: !anonymous ? (output.benchmarkFeedbackEmail?.value.trim() || '') : '',
+          userId: !anonymous && isNamedAccount(user) ? user.uid : '',
+          attachment: !anonymous && selectedFeedbackAttachment ? { file: selectedFeedbackAttachment } : null,
           message
         });
         if (submissionToken !== feedbackSubmissionToken) return;
@@ -6502,7 +6551,10 @@
         showFeedbackSuccess();
       } catch (error) {
         if (submissionToken !== feedbackSubmissionToken) return;
-        setFeedbackStatus(`Feedback could not be submitted: ${error.code || error.message}`, true);
+        const hasAttachment = Boolean(selectedFeedbackAttachment);
+        setFeedbackStatus(hasAttachment
+          ? 'Screenshot upload failed. Please try again or remove the attachment.'
+          : `Feedback could not be submitted: ${error.code || error.message}`, true);
       } finally {
         if (submissionToken === feedbackSubmissionToken) setFeedbackSubmitting(false);
       }
@@ -6585,7 +6637,9 @@
       const totalLb = calc.totalKg * 2.20462;
       const unlocked = milestones.filter((milestone) => totalLb >= milestone).pop() || null;
       const nextMilestone = milestones.find((milestone) => totalLb < milestone) || null;
-      const sourceStandard = benchmarkMatch.benchmarkStandard || calc.standardLabel || 'Benchmark';
+      const sourceFederation = benchmarkMatch.benchmarkStandard || calc.standardLabel || 'Benchmark';
+      const sourceStandard = sourceFederation === 'USAPL' ? 'USAPL Raw Open' : sourceFederation;
+      const sourceClass = currentClass !== '-' ? currentClass : '';
       const roundedRect = (x, y, width, height, radius) => {
         ctx.beginPath();
         ctx.roundRect(x, y, width, height, radius);
@@ -6628,7 +6682,7 @@
       const stats = [
         [plannerNumber(calc.totalKg, calc.unit), 'SBD TOTAL'],
         [plannerDots(calc.dots), 'DOTS'],
-        [currentClass.replace(/\s*class$/i, ''), `${calc.standardLabel} CLASS`]
+        [currentClass.replace(/\s*class$/i, ''), 'WEIGHT CLASS']
       ];
       stats.forEach(([value, label], index) => {
         const x = 112 + index * 290;
@@ -6657,18 +6711,16 @@
       }
       ctx.fillStyle = '#f7f7f3';
       ctx.font = '700 28px Arial';
-      ctx.fillText(`MILESTONE UNLOCKED  ${unlocked ? `${unlocked} lb Club` : 'Keep lifting'}`, 112, 1090);
-      if (nextMilestone) {
-        ctx.fillStyle = '#b8c2bb';
-        ctx.font = '500 24px Arial';
-        ctx.fillText(`NEXT  ${nextMilestone} lb Club`, 112, 1125);
-      }
+      const milestoneCopy = unlocked
+        ? `${unlocked} lb Club unlocked${nextMilestone ? ` · Next ${nextMilestone} lb` : ''}`
+        : `Keep lifting${nextMilestone ? ` · Next ${nextMilestone} lb` : ''}`;
+      ctx.fillText(milestoneCopy, 112, 1090);
       ctx.fillStyle = '#aeb8b1';
       ctx.font = '500 22px Arial';
-      ctx.fillText(`Source: OpenPowerlifting · ${sourceStandard} · 2026-05`, 112, 1175);
+      ctx.fillText(`Source: OpenPowerlifting · ${sourceStandard}${sourceClass ? ` · ${sourceClass}` : ''} · Updated 2026-05`, 112, 1145);
       ctx.fillStyle = '#aeb8b1';
       ctx.font = '500 28px Arial';
-      ctx.fillText('Compare your SBD to real meets · liftally.app', 112, 1230);
+      ctx.fillText('Compare your SBD to real meets · liftally.app', 112, 1200);
       const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
       if (!blob) return;
       const file = new File([blob], 'liftally-result.png', { type: 'image/png' });
@@ -8920,6 +8972,32 @@
     if (output.closeFeedbackModalButton) output.closeFeedbackModalButton.addEventListener('click', closeFeedbackModal);
     if (output.cancelFeedbackButton) output.cancelFeedbackButton.addEventListener('click', closeFeedbackModal);
     if (output.benchmarkFeedbackForm) output.benchmarkFeedbackForm.addEventListener('submit', submitBenchmarkFeedback);
+    if (output.benchmarkFeedbackEmail) {
+      output.benchmarkFeedbackEmail.addEventListener('input', () => { feedbackEmailTouched = true; });
+    }
+    if (output.benchmarkFeedbackAttachmentButton) {
+      output.benchmarkFeedbackAttachmentButton.addEventListener('click', () => output.benchmarkFeedbackAttachment?.click());
+    }
+    if (output.benchmarkFeedbackAttachment) {
+      output.benchmarkFeedbackAttachment.addEventListener('change', () => {
+        const file = output.benchmarkFeedbackAttachment.files && output.benchmarkFeedbackAttachment.files[0];
+        const allowed = file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) && file.size < 5 * 1024 * 1024;
+        if (!allowed) {
+          clearFeedbackAttachment();
+          setFeedbackStatus('Please attach a PNG, JPG, or WEBP image under 5MB.', true);
+          return;
+        }
+        selectedFeedbackAttachment = file;
+        output.benchmarkFeedbackAttachmentMeta.textContent = file.name;
+        output.benchmarkFeedbackAttachmentRemove.hidden = false;
+      });
+    }
+    if (output.benchmarkFeedbackAttachmentRemove) {
+      output.benchmarkFeedbackAttachmentRemove.addEventListener('click', clearFeedbackAttachment);
+    }
+    if (output.benchmarkFeedbackAnonymous) {
+      output.benchmarkFeedbackAnonymous.addEventListener('change', () => syncFeedbackIdentity(activeAuthUser || window.liftallyBackend?.getCurrentUser?.() || null));
+    }
     document.querySelectorAll('[data-feedback-rating]').forEach((button) => {
       button.addEventListener('click', () => setFeedbackRating(button.dataset.feedbackRating));
     });
@@ -8973,6 +9051,7 @@
     });
     window.addEventListener('liftally-auth-change', (event) => {
       const activeUser = updateAccountControls(event.detail.user);
+      syncFeedbackIdentity(activeUser);
       if (isNamedAccount(activeUser)) {
         refreshSavedSnapshots();
       } else {

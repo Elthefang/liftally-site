@@ -192,20 +192,45 @@ async function listBenchmarkSnapshots(limitCount = 5) {
   return querySnap.docs.map((docSnap) => ({ id: docSnap.id, ...docSnap.data() }));
 }
 
-async function createSupportRequest({ type, message, email = '', source = 'website' }) {
+function sanitizeAttachmentName(name) {
+  return String(name || 'screenshot').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 120) || 'screenshot';
+}
+
+async function createSupportRequest({ type, message, email = '', source = 'website', userId = '', attachment = null }) {
   const client = await getClient();
   assertStaging(client);
   const { firestore: firestoreSdk } = client.sdk;
   const user = await ensureAnonymousUser();
   const requestRef = firestoreSdk.doc(firestoreSdk.collection(client.db, 'supportRequests'));
+  let attachmentData = {};
+  if (attachment) {
+    if (user.isAnonymous) throw new Error('Sign in to attach a screenshot.');
+    const file = attachment.file;
+    const allowedTypes = new Set(['image/png', 'image/jpeg', 'image/webp']);
+    if (!file || !allowedTypes.has(file.type) || Number(file.size) > 5 * 1024 * 1024) {
+      throw new Error('Please attach a PNG, JPG, or WEBP image under 5MB.');
+    }
+    const storagePath = `feedbackAttachments/${user.uid}/${requestRef.id}/${Date.now()}-${sanitizeAttachmentName(file.name)}`;
+    const storageSdk = client.sdk.storage;
+    const storageRef = storageSdk.ref(client.storage, storagePath);
+    await storageSdk.uploadBytes(storageRef, file, { contentType: file.type });
+    attachmentData = {
+      attachmentPath: storagePath,
+      attachmentFileName: file.name,
+      attachmentContentType: file.type,
+      attachmentSize: Number(file.size)
+    };
+  }
 
   await firestoreSdk.setDoc(requestRef, {
     schemaVersion: 1,
     requesterUid: user.uid,
+    userId: userId || null,
     source,
     type,
     message,
     email,
+    ...attachmentData,
     createdAt: firestoreSdk.serverTimestamp(),
     status: 'open'
   });

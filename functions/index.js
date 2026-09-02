@@ -9,7 +9,7 @@ const notificationRecipient = 'liftally.app@gmail.com';
 function isQuickBenchmarkFeedback(data) {
   return data
     && data.type === 'feedback'
-    && data.source === 'weight_class_explorer'
+    && data.source === 'benchmark_helpfulness_modal'
     && typeof data.message === 'string'
     && data.message.includes('Section: step_2_historical_benchmark');
 }

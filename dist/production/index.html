@@ -954,17 +954,17 @@
         <div class="shot-grid">
           <div class="shot-row primary">
             <figure class="shot small left">
-              <video id="leftShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/1-ai session card-removed.png">
+              <video id="leftShot" class="demo-video" autoplay muted playsinline loop preload="metadata" poster="images/1-ai session card-removed.png">
                 <source src="Videos/tap%20session%20card.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot main swap">
-              <video id="mainShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/homepage-view-1-removed.png">
+              <video id="mainShot" class="demo-video" autoplay muted playsinline loop preload="metadata" poster="images/homepage-view-1-removed.png">
                 <source src="Videos/compare.mp4" type="video/mp4" />
               </video>
             </figure>
             <figure class="shot small right">
-              <video id="rightShot" class="demo-video" muted playsinline loop preload="metadata" poster="images/2-progress tab-removed.png">
+              <video id="rightShot" class="demo-video" autoplay muted playsinline loop preload="metadata" poster="images/2-progress tab-removed.png">
                 <source src="Videos/session%20card%20applyied.mp4" type="video/mp4" />
               </video>
             </figure>
@@ -1172,7 +1172,6 @@
     const screenshotsSection = document.getElementById('screenshots');
     const screenshotVideos = [leftShot, mainShot, rightShot].filter(Boolean);
     const desktopHoverQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
-    let isDesktopScreenshotMode = desktopHoverQuery.matches;
 
     function setScreenshotAutoplay(enabled) {
       screenshotVideos.forEach(video => {
@@ -1228,9 +1227,6 @@
     }
 
     function syncScreenshotPlayback() {
-      if (desktopHoverQuery.matches) {
-        return;
-      }
       screenshotVideos.forEach(video => {
         if (!video || video.closest('.hidden')) return;
         if (isScreenshotVideoInView(video)) {
@@ -1253,31 +1249,30 @@
 
     screenshotVideos.forEach(video => {
       video.addEventListener('mouseenter', () => {
-        if (!desktopHoverQuery.matches || video.closest('.hidden')) return;
+        if (video.closest('.hidden')) return;
         playVideo(video);
       });
 
       video.addEventListener('mouseleave', () => {
-        if (!desktopHoverQuery.matches) return;
-        resetVideo(video);
+        // Videos continue looping after pointer exit; hover is not required for playback.
       });
 
       video.addEventListener('loadeddata', () => {
-        if (!desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+        requestScreenshotPlaybackSync();
       });
       video.addEventListener('canplay', () => {
-        if (!desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+        requestScreenshotPlaybackSync();
       });
     });
 
     window.addEventListener('load', () => {
-      if (!desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+      requestScreenshotPlaybackSync();
     });
     window.addEventListener('resize', () => {
-      if (!desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+      requestScreenshotPlaybackSync();
     }, { passive: true });
     window.addEventListener('scroll', () => {
-      if (!desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+      requestScreenshotPlaybackSync();
     }, { passive: true });
 
     const pages = [
@@ -1300,7 +1295,7 @@
       resetVideo(el);
       source.src = src || '';
       el.load();
-      if (src && !desktopHoverQuery.matches) requestScreenshotPlaybackSync();
+      if (src) requestScreenshotPlaybackSync();
     }
 
     let pageIndex = 0;
@@ -1336,24 +1331,13 @@
       applyPage(pageIndex);
     }
 
-    if (desktopHoverQuery.matches) {
-      setScreenshotAutoplay(false);
-      resetAllScreenshotVideos();
-    } else {
-      setScreenshotAutoplay(true);
-      requestScreenshotPlaybackSync();
-    }
+    setScreenshotAutoplay(true);
+    requestScreenshotPlaybackSync();
 
     desktopHoverQuery.addEventListener('change', (event) => {
       const isDesktop = event.matches;
-      if (isDesktop) {
-        setScreenshotAutoplay(false);
-        resetAllScreenshotVideos();
-      } else if (isDesktopScreenshotMode) {
-        setScreenshotAutoplay(true);
-        requestScreenshotPlaybackSync();
-      }
-      isDesktopScreenshotMode = isDesktop;
+      setScreenshotAutoplay(true);
+      requestScreenshotPlaybackSync();
     });
 
     const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];

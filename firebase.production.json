@@ -2,6 +2,9 @@
   "functions": {
     "source": "functions"
   },
+  "storage": {
+    "rules": "storage.rules"
+  },
   "firestore": {
     "rules": "firestore.production.rules",
     "indexes": "firestore.indexes.json"

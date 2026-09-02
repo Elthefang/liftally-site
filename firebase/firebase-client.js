@@ -2,6 +2,7 @@ const FIREBASE_SDK_VERSION = '10.12.5';
 const appUrl = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-app.js`;
 const authUrl = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-auth.js`;
 const firestoreUrl = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-firestore.js`;
+const storageUrl = `https://www.gstatic.com/firebasejs/${FIREBASE_SDK_VERSION}/firebase-storage.js`;
 
 let clientPromise = null;
 
@@ -19,22 +20,26 @@ export async function getLiftallyFirebaseClient() {
   clientPromise = Promise.all([
     import(appUrl),
     import(authUrl),
-    import(firestoreUrl)
-  ]).then(([appSdk, authSdk, firestoreSdk]) => {
+    import(firestoreUrl),
+    import(storageUrl)
+  ]).then(([appSdk, authSdk, firestoreSdk, storageSdk]) => {
     const env = readEnvironment();
     const app = appSdk.initializeApp(env.firebaseConfig);
     const auth = authSdk.getAuth(app);
     const db = firestoreSdk.getFirestore(app);
+    const storage = storageSdk.getStorage(app);
 
     return {
       environment: env.environment,
       app,
       auth,
       db,
+      storage,
       sdk: {
         app: appSdk,
         auth: authSdk,
-        firestore: firestoreSdk
+        firestore: firestoreSdk,
+        storage: storageSdk
       }
     };
   });

@@ -97,18 +97,14 @@ service cloud.firestore {
 
     function hasValidSupportRequest(data) {
       return data.keys().hasOnly([
-          "schemaVersion",
-          "requesterUid",
-          "source",
-          "type",
-          "message",
-          "email",
-          "createdAt",
-          "status"
+          "schemaVersion", "requesterUid", "userId", "source", "type", "message", "email",
+          "attachmentPath", "attachmentFileName", "attachmentContentType", "attachmentSize",
+          "createdAt", "status"
         ])
         && data.schemaVersion == 1
         && data.requesterUid == request.auth.uid
-        && data.source in ["website", "weight_class_explorer"]
+        && (data.userId == null || data.userId == request.auth.uid)
+        && data.source in ["website", "weight_class_explorer", "feedback_page", "benchmark_helpfulness_modal"]
         && data.type in ["feedback", "competition_planner_access", "support"]
         && data.message is string
         && data.message.size() >= 8
@@ -119,6 +115,14 @@ service cloud.firestore {
           data.email.size() == 0
           || data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
         )
+        && (!data.keys().hasAny(["attachmentPath", "attachmentFileName", "attachmentContentType", "attachmentSize"])
+          || (data.attachmentPath is string
+            && data.attachmentPath.matches("^feedbackAttachments/" + request.auth.uid + "/[^/]+/[^/]+$")
+            && data.attachmentFileName is string
+            && data.attachmentContentType in ["image/png", "image/jpeg", "image/webp"]
+            && data.attachmentSize is int
+            && data.attachmentSize > 0
+            && data.attachmentSize <= 5 * 1024 * 1024))
         && data.createdAt == request.time
         && data.status == "open";
     }
