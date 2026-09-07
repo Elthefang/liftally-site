@@ -32,21 +32,25 @@
   <link rel="stylesheet" href="site.css" />
   <style>
     .request-hero {
-      padding: 72px 0 28px;
+      padding: 56px 0 24px;
     }
+
+    .request-hero .eyebrow { margin: 0 0 8px; }
 
     .request-hero h1 {
       font-family: var(--site-font-display);
       font-size: clamp(3.5rem, 7vw, 5.8rem);
       line-height: 0.92;
       letter-spacing: 0.04em;
-      margin-bottom: 12px;
+      margin: 0 0 8px;
     }
 
     .request-hero p {
+      margin: 0;
       max-width: 660px;
       color: var(--site-muted);
       font-size: 1.15rem;
+      line-height: var(--site-body-leading);
     }
 
     .request-card {
@@ -143,28 +147,45 @@
       font-size: 0.95rem;
     }
 
+    .auth-dialog { position: fixed; inset: 0; width: min(calc(100vw - 32px), 480px); max-width: 480px; max-height: min(720px, calc(100vh - 32px)); margin: auto; padding: 0; border: 1px solid var(--site-border); border-radius: 12px; background: var(--site-surface); color: var(--site-text); box-shadow: 0 24px 70px rgba(21,24,22,.28); }
+    .auth-dialog::backdrop { background: rgba(21,24,22,.5); backdrop-filter: blur(3px); }
+    .auth-dialog__inner { display: grid; gap: 16px; padding: 28px; }
+    .auth-dialog__header { position: relative; display: flex; justify-content: center; text-align: center; }
+    .auth-dialog__header > div { width: 100%; padding: 0 48px; }
+    .auth-dialog h2 { margin: 0; font-size: clamp(1.7rem,4vw,2.15rem); line-height: 1.05; }
+    .auth-dialog p { margin: 8px 0 0; color: var(--site-muted); line-height: 1.5; }
+    .auth-close { position: absolute; top: 0; right: 0; width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: var(--site-muted); font-size: 1.3rem; cursor: pointer; }
+    .auth-email-form { display: grid; gap: 14px; }
+    .auth-email-form label { display: grid; gap: 6px; }
+    .auth-email-form label > span:first-child { color: var(--site-muted); font-size: .78rem; font-weight: 800; }
+    .auth-email-form input { min-height: 44px; padding: 0 12px; border: 1px solid var(--site-border); border-radius: 7px; font: inherit; }
+    .auth-password-field { position: relative; display: flex; align-items: center; }
+    .auth-password-field input { width: 100%; padding-right: 64px; }
+    .auth-password-toggle { position: absolute; right: 8px; border: 0; background: transparent; color: var(--site-accent); font-weight: 700; cursor: pointer; }
+    .auth-modal-actions { display: grid; }
+    .auth-modal-actions .btn { width: 100%; }
+    .auth-modal-status { min-height: 1.3em; margin: 0 !important; }
+    .auth-divider { display: flex; align-items: center; gap: 10px; color: var(--site-muted); font-size: .85rem; }
+    .auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--site-border); }
+    .auth-google-button { width: 100%; }
+    .auth-google-mark { width: 18px; height: 18px; }
+    .auth-provider-note, .auth-mode-switch { text-align: center; font-size: .9rem; }
+    .auth-mode-switch button { border: 0; background: none; color: var(--site-accent); font-weight: 800; cursor: pointer; }
+    .site-auth button[hidden] { display: none !important; }
+
     .request-attachment { display: grid; gap: 7px; }
     .request-attachment__button { width: fit-content; }
     .request-attachment__meta { color: var(--site-muted); font-size: 0.9rem; }
-    .request-attachment__remove { border: 0; background: transparent; color: var(--site-accent); cursor: pointer; font: inherit; font-weight: 700; }
+    .request-attachment__selected { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .request-attachment__selected .request-attachment__meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .request-attachment__remove { width: 28px; height: 28px; flex: 0 0 28px; border: 1px solid var(--site-border); border-radius: 50%; background: var(--site-surface); color: var(--site-accent); cursor: pointer; font: inherit; font-size: 1.15rem; line-height: 1; display: inline-grid; place-items: center; }
 
-    .request-anonymous {
-      display: flex;
-      gap: 9px;
-      align-items: center;
-      color: var(--site-muted);
-      font-weight: 600;
-    }
-
-    .request-anonymous input {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--site-accent);
-    }
+    .request-attachment__selected[hidden],
+    .request-attachment__remove[hidden] { display: none !important; }
 
     @media (max-width: 720px) {
       .request-hero {
-        padding-top: 72px;
+        padding: 40px 0 16px;
       }
 
       .request-card {
@@ -195,15 +216,33 @@
         </button>
         <ul class="nav-links">
           <li><a class="nav-link" href="/">Home</a></li>
-          <li><a class="nav-link" href="/heroboard">HeroBoard</a></li>
           <li><a class="nav-link" href="/weight-class-explorer">Weight Class Explorer</a></li>
-          <li><a class="nav-link" href="/account">Account</a></li>
           <li><a class="nav-link is-active" href="/request-access" aria-current="page">Contact</a></li>
         </ul>
+        <div class="site-auth" aria-live="polite">
+          <button class="btn btn-secondary" type="button" id="requestSignInButton" hidden>Sign in</button>
+          <button class="btn btn-secondary" type="button" id="requestSignOutButton" hidden>Log out</button>
+        </div>
         <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_request_access&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
       </nav>
     </div>
   </header>
+
+  <dialog class="auth-dialog" id="requestAuthDialog" aria-labelledby="authDialogTitle">
+    <div class="auth-dialog__inner">
+      <div class="auth-dialog__header"><div><h2 id="authDialogTitle">SIGN IN</h2><p>Save snapshots and view your history across devices.</p></div><button class="auth-close" type="button" id="requestAuthCancel" aria-label="Close sign-in dialog">&times;</button></div>
+      <form class="auth-email-form" id="requestAuthForm">
+        <label><span>Email</span><input id="requestAuthEmail" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
+        <label><span>Password</span><span class="auth-password-field"><input id="requestAuthPassword" type="password" autocomplete="current-password" minlength="6" placeholder="6+ characters" required /><button class="auth-password-toggle" type="button" id="requestAuthPasswordToggle" aria-label="Show password">Show</button></span></label>
+        <div class="auth-modal-actions"><button class="btn btn-primary" type="submit">SIGN IN</button></div>
+      </form>
+      <p class="auth-modal-status" id="requestAuthStatus" aria-live="polite"></p>
+      <div class="auth-divider" aria-hidden="true">or</div>
+      <button class="btn btn-secondary auth-google-button" type="button" id="requestGoogleSignInButton"><img class="auth-google-mark" src="images/google-g.svg" alt="" aria-hidden="true" /> Continue with Google</button>
+      <p class="auth-provider-note">Apple sign-in is coming soon.</p>
+      <p class="auth-mode-switch">Need an account? <button type="button" id="requestCreateAccountButton">Sign up</button></p>
+    </div>
+  </dialog>
 
   <main>
     <section class="request-hero">
@@ -215,7 +254,7 @@
     </section>
 
     <section class="container request-card site-card" aria-label="Feedback form">
-      <form class="feedback-request-form" id="feedbackRequestForm">
+      <form class="feedback-request-form" id="feedbackRequestForm" novalidate>
         <div>
           <h2>How can we improve?</h2>
           <p>Send a short note about the site, benchmark results, or Competition Planner.</p>
@@ -234,21 +273,23 @@
           </label>
           <label class="request-field" id="requestEmailField">
             <span>Email</span>
-            <input id="requestEmail" type="email" autocomplete="email" placeholder="you@example.com" />
+            <input id="requestEmail" type="email" autocomplete="email" placeholder="you@example.com" required />
           </label>
           <label class="request-field full">
             <span>Message</span>
-            <textarea id="requestMessage" minlength="8" maxlength="5000" required placeholder="Tell us what you want to see next in Liftally."></textarea>
+            <textarea id="requestMessage" maxlength="5000" required placeholder="Tell us what you want to see next in Liftally."></textarea>
           </label>
           <div class="request-field request-field--attachment full" id="requestAttachmentField">
             <span>Attach screenshot</span>
             <input id="requestAttachment" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden />
             <button class="btn btn-secondary request-attachment__button" id="requestAttachmentButton" type="button">Add attachment</button>
-            <span class="request-attachment__meta" id="requestAttachmentMeta">Sign in to attach a screenshot.</span>
-            <button class="request-attachment__remove" id="requestAttachmentRemove" type="button" hidden>Remove</button>
+            <div class="request-attachment__selected" id="requestAttachmentSelected" hidden>
+              <span class="request-attachment__meta" id="requestAttachmentMeta"></span>
+              <button class="request-attachment__remove" id="requestAttachmentRemove" type="button" aria-label="Remove attachment" title="Remove attachment">&times;</button>
+            </div>
+            <span class="request-attachment__meta" id="requestAttachmentHint">Sign in to attach a screenshot.</span>
           </div>
         </div>
-        <label class="request-anonymous"><input id="requestAnonymous" type="checkbox" />Submit anonymously</label>
         <div class="request-form-actions">
           <button class="btn btn-primary" id="submitFeedbackRequest" type="submit">Submit Feedback</button>
           <span class="request-form-status" id="feedbackRequestStatus" aria-live="polite"></span>
@@ -266,7 +307,6 @@
       <div class="footer-links">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="/account">Account</a>
         <a href="/request-access" aria-current="page">Contact</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_request_access&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
       </div>
@@ -297,14 +337,29 @@
     const feedbackStatus = document.getElementById('feedbackRequestStatus');
     const feedbackSubmit = document.getElementById('submitFeedbackRequest');
     const feedbackEmail = document.getElementById('requestEmail');
-    const feedbackAnonymous = document.getElementById('requestAnonymous');
     const feedbackAccountStatus = document.getElementById('requestAccountStatus');
     const feedbackAttachment = document.getElementById('requestAttachment');
     const feedbackAttachmentButton = document.getElementById('requestAttachmentButton');
     const feedbackAttachmentMeta = document.getElementById('requestAttachmentMeta');
+    const feedbackAttachmentSelected = document.getElementById('requestAttachmentSelected');
+    const feedbackAttachmentHint = document.getElementById('requestAttachmentHint');
     const feedbackAttachmentRemove = document.getElementById('requestAttachmentRemove');
+    const requestAuthDialog = document.getElementById('requestAuthDialog');
+    const requestAuthForm = document.getElementById('requestAuthForm');
+    const requestAuthEmail = document.getElementById('requestAuthEmail');
+    const requestAuthPassword = document.getElementById('requestAuthPassword');
+    const requestAuthStatus = document.getElementById('requestAuthStatus');
+    const requestAuthCancel = document.getElementById('requestAuthCancel');
+    const requestAuthPasswordToggle = document.getElementById('requestAuthPasswordToggle');
+    const requestGoogleSignInButton = document.getElementById('requestGoogleSignInButton');
+    const requestCreateAccountButton = document.getElementById('requestCreateAccountButton');
+    const requestAuthTitle = document.getElementById('authDialogTitle');
+    const requestAuthSubmit = requestAuthForm.querySelector('button[type="submit"]');
+    const requestSignInButton = document.getElementById('requestSignInButton');
+    const requestSignOutButton = document.getElementById('requestSignOutButton');
     let selectedFeedbackAttachment = null;
     let feedbackEmailTouched = false;
+    let requestAuthMode = 'sign-in';
 
     function setFeedbackStatus(message = '', isError = false) {
       feedbackStatus.textContent = message;
@@ -327,29 +382,41 @@
 
     function updateFeedbackIdentity(user) {
       const signedIn = isNamedAccount(user);
-      const anonymous = Boolean(feedbackAnonymous.checked);
       feedbackAccountStatus.hidden = !signedIn;
       feedbackAccountStatus.textContent = signedIn ? `Signed in as ${user.email || 'Liftally account'}` : '';
-      feedbackEmail.disabled = anonymous;
-      if (signedIn && !anonymous && !feedbackEmailTouched && user.email) feedbackEmail.value = user.email;
-      if (anonymous) feedbackEmail.value = '';
-      const canAttach = signedIn && !anonymous;
-      feedbackAttachmentButton.disabled = !canAttach;
-      feedbackAttachmentButton.hidden = !canAttach;
-      feedbackAttachmentMeta.textContent = canAttach
-        ? (selectedFeedbackAttachment ? selectedFeedbackAttachment.name : 'PNG, JPG, or WEBP under 5MB.')
-        : 'Sign in to attach a screenshot.';
-      if (!canAttach) clearFeedbackAttachment();
+      feedbackEmail.disabled = false;
+      if (signedIn && !feedbackEmailTouched && user.email) feedbackEmail.value = user.email;
+      const canAttach = signedIn;
+      feedbackAttachmentButton.disabled = false;
+      feedbackAttachmentButton.hidden = false;
+      feedbackAttachmentHint.hidden = !canAttach || Boolean(selectedFeedbackAttachment);
+      feedbackAttachmentHint.textContent = canAttach ? 'PNG, JPG, or WEBP under 5MB.' : 'Sign in to attach a screenshot.';
+      feedbackAttachmentSelected.hidden = !selectedFeedbackAttachment;
+      if (!canAttach) {
+        clearFeedbackAttachment();
+        feedbackAttachmentHint.hidden = false;
+        feedbackAttachmentHint.textContent = 'Sign in to attach a screenshot.';
+      }
     }
 
     function clearFeedbackAttachment() {
       selectedFeedbackAttachment = null;
       feedbackAttachment.value = '';
       feedbackAttachmentRemove.hidden = true;
-      feedbackAttachmentMeta.textContent = 'Sign in to attach a screenshot.';
+      feedbackAttachmentSelected.hidden = true;
+      feedbackAttachmentMeta.textContent = '';
+      feedbackAttachmentHint.hidden = true;
+      feedbackAttachmentHint.textContent = '';
     }
 
-    feedbackAttachmentButton.addEventListener('click', () => feedbackAttachment.click());
+    feedbackAttachmentButton.addEventListener('click', () => {
+      const user = window.liftallyBackend?.getCurrentUser?.() || null;
+      if (!isNamedAccount(user)) {
+        openRequestAuth();
+        return;
+      }
+      feedbackAttachment.click();
+    });
     feedbackAttachment.addEventListener('change', () => {
       const file = feedbackAttachment.files && feedbackAttachment.files[0];
       const allowed = file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type) && file.size < 5 * 1024 * 1024;
@@ -361,15 +428,13 @@
       selectedFeedbackAttachment = file;
       feedbackAttachmentMeta.textContent = file.name;
       feedbackAttachmentRemove.hidden = false;
+      feedbackAttachmentSelected.hidden = false;
+      feedbackAttachmentHint.hidden = true;
     });
     feedbackAttachmentRemove.addEventListener('click', clearFeedbackAttachment);
 
     feedbackEmail.addEventListener('input', () => {
       feedbackEmailTouched = true;
-    });
-
-    feedbackAnonymous.addEventListener('change', () => {
-      updateFeedbackIdentity(window.liftallyBackend?.getCurrentUser?.() || null);
     });
 
     feedbackForm.addEventListener('submit', async (event) => {
@@ -380,22 +445,27 @@
       }
       const selectedType = document.getElementById('requestType').value;
       const message = document.getElementById('requestMessage').value.trim();
-      if (message.length < 8) {
-        setFeedbackStatus('Please enter a longer message.', true);
+      const email = feedbackEmail.value.trim();
+      if (!email || !feedbackEmail.checkValidity()) {
+        setFeedbackStatus('Email is required so we can follow up.', true);
+        feedbackEmail.focus();
         return;
       }
-      const anonymous = feedbackAnonymous.checked;
+      if (!message) {
+        setFeedbackStatus('Please enter a message.', true);
+        return;
+      }
       const user = window.liftallyBackend.getCurrentUser?.() || null;
       feedbackSubmit.disabled = true;
       setFeedbackStatus('Submitting feedback...');
       try {
         await window.liftallyBackend.createSupportRequest({
           type: mappedSupportType(selectedType),
-          email: anonymous ? '' : feedbackEmail.value.trim(),
-          userId: !anonymous && isNamedAccount(user) ? user.uid : '',
-          attachment: !anonymous && selectedFeedbackAttachment ? { file: selectedFeedbackAttachment } : null,
+          email,
+          userId: isNamedAccount(user) ? user.uid : '',
+          attachment: selectedFeedbackAttachment ? { file: selectedFeedbackAttachment } : null,
           source: 'feedback_page',
-          message: [`Feedback type: ${selectedType}`, `Page: ${window.location.pathname}`, `Anonymous: ${anonymous ? 'yes' : 'no'}`, `Message: ${message}`].join('\n')
+          message: [`Feedback type: ${selectedType}`, `Page: ${window.location.pathname}`, `Message: ${message}`].join('\n')
         });
         feedbackForm.reset();
         clearFeedbackAttachment();
@@ -411,8 +481,80 @@
       }
     });
 
-    window.addEventListener('liftally-backend-ready', () => updateFeedbackIdentity(window.liftallyBackend.getCurrentUser?.() || null));
-    window.addEventListener('liftally-auth-change', (event) => updateFeedbackIdentity(event.detail.user));
+    function updateRequestAuth(user) {
+      const signedIn = isNamedAccount(user);
+      requestSignInButton.hidden = true;
+      requestSignOutButton.hidden = true;
+      requestSignInButton.style.display = 'none';
+      requestSignOutButton.style.display = 'none';
+      requestSignInButton.hidden = signedIn;
+      requestSignOutButton.hidden = !signedIn;
+      if (!signedIn) requestSignInButton.style.display = 'inline-flex';
+      if (signedIn) requestSignOutButton.style.display = 'inline-flex';
+      requestSignOutButton.disabled = !signedIn;
+      updateFeedbackIdentity(user);
+    }
+
+    function openRequestAuth() {
+      requestAuthStatus.textContent = '';
+      requestAuthStatus.classList.remove('is-error');
+      requestAuthForm.reset();
+      requestAuthMode = 'sign-in';
+      requestAuthTitle.textContent = 'SIGN IN';
+      requestAuthSubmit.textContent = 'SIGN IN';
+      requestAuthPassword.type = 'password';
+      requestAuthPasswordToggle.textContent = 'Show';
+      if (typeof requestAuthDialog.showModal === 'function') requestAuthDialog.showModal();
+    }
+
+    requestSignInButton.addEventListener('click', openRequestAuth);
+    requestSignOutButton.addEventListener('click', async () => {
+      try { await window.liftallyBackend?.signOut?.(); }
+      catch (error) { setFeedbackStatus(`Could not sign out: ${error.message}`, true); }
+    });
+    requestAuthCancel.addEventListener('click', () => requestAuthDialog.close());
+    requestAuthForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const backend = window.liftallyBackend;
+      if (!backend?.signInWithEmail) {
+        requestAuthStatus.textContent = 'Sign-in service is still loading. Try again in a moment.';
+        requestAuthStatus.classList.add('is-error');
+        return;
+      }
+      const submit = requestAuthForm.querySelector('button[type="submit"]');
+      submit.disabled = true;
+      requestAuthStatus.textContent = 'Signing in...';
+      requestAuthStatus.classList.remove('is-error');
+      try {
+        const authAction = requestAuthMode === 'create-account' ? backend.createAccountWithEmail : backend.signInWithEmail;
+        await authAction(requestAuthEmail.value.trim(), requestAuthPassword.value);
+        requestAuthDialog.close();
+      } catch (error) {
+        requestAuthStatus.textContent = error.message || 'Unable to sign in.';
+        requestAuthStatus.classList.add('is-error');
+      } finally { submit.disabled = false; }
+    });
+    requestAuthPasswordToggle.addEventListener('click', () => {
+      const visible = requestAuthPassword.type === 'text';
+      requestAuthPassword.type = visible ? 'password' : 'text';
+      requestAuthPasswordToggle.textContent = visible ? 'Show' : 'Hide';
+      requestAuthPasswordToggle.setAttribute('aria-label', visible ? 'Show password' : 'Hide password');
+    });
+    requestGoogleSignInButton.addEventListener('click', async () => {
+      try { await window.liftallyBackend?.signInWithGoogle?.(); }
+      catch (error) { requestAuthStatus.textContent = error.message || 'Unable to sign in with Google.'; requestAuthStatus.classList.add('is-error'); }
+    });
+    requestCreateAccountButton.addEventListener('click', () => {
+      requestAuthMode = requestAuthMode === 'create-account' ? 'sign-in' : 'create-account';
+      const creating = requestAuthMode === 'create-account';
+      requestAuthTitle.textContent = creating ? 'Create account' : 'SIGN IN';
+      requestAuthSubmit.textContent = creating ? 'Create account' : 'SIGN IN';
+      requestCreateAccountButton.textContent = creating ? 'Sign in instead' : 'Sign up';
+      requestAuthStatus.textContent = '';
+    });
+
+    window.addEventListener('liftally-backend-ready', () => updateRequestAuth(window.liftallyBackend.getCurrentUser?.() || null));
+    window.addEventListener('liftally-auth-change', (event) => updateRequestAuth(event.detail.user));
     window.addEventListener('liftally-backend-error', () => setFeedbackStatus('Feedback service is unavailable. Try again later.', true));
   </script>
   <script src="site.js"></script>

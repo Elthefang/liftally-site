@@ -86,11 +86,11 @@ service cloud.firestore {
         && data.source in ["website", "weight_class_explorer", "feedback_page", "benchmark_helpfulness_modal"]
         && data.type in ["feedback", "competition_planner_access", "support"]
         && data.message is string
-        && data.message.size() >= 8
+        && data.message.size() > 0
         && data.message.size() <= 5000
         && data.email is string
         && data.email.size() <= 254
-        && (data.email.size() == 0 || data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$"))
+        && data.email.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
         && (!data.keys().hasAny(["attachmentPath", "attachmentFileName", "attachmentContentType", "attachmentSize"])
           || (data.attachmentPath is string
             && data.attachmentPath.matches("^feedbackAttachments/" + request.auth.uid + "/[^/]+/[^/]+$")

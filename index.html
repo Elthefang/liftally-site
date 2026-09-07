@@ -18,6 +18,8 @@
   <title>Liftally — AI Strength Training App</title>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
+  <script src="firebase/firebase-config.staging.js?v=20260803a"></script>
+  <script type="module" src="firebase/liftally-staging-backend.js?v=20260803a"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -817,6 +819,32 @@
         width: min(230px, 82vw);
       }
     }
+
+    /* Shared branded sign-in dialog used by the authenticated tools. */
+    .home-auth-dialog { position: fixed; inset: 0; width: min(calc(100vw - 32px), 480px); max-width: 480px; max-height: min(720px, calc(100vh - 32px)); margin: auto; padding: 0; border: 1px solid var(--site-border); border-radius: 12px; background: var(--site-surface); color: var(--site-text); box-shadow: 0 24px 70px rgba(21,24,22,.28); }
+    .home-auth-dialog::backdrop { background: rgba(21,24,22,.5); backdrop-filter: blur(3px); }
+    .home-auth-dialog__inner { display: grid; gap: 16px; padding: 28px; }
+    .home-auth-dialog__header { position: relative; display: flex; justify-content: center; text-align: center; }
+    .home-auth-dialog__header > div { width: 100%; padding: 0 48px; }
+    .home-auth-dialog h2 { margin: 0; font-size: clamp(1.7rem,4vw,2.15rem); line-height: 1.05; }
+    .home-auth-dialog p { margin: 8px 0 0; color: var(--site-muted); line-height: 1.5; }
+    .home-auth-close { position: absolute; top: 0; right: 0; width: 40px; height: 40px; border: 0; border-radius: 999px; background: transparent; color: var(--site-muted); font-size: 1.3rem; cursor: pointer; }
+    .home-auth-form { display: grid; gap: 14px; }
+    .home-auth-form label { display: grid; gap: 6px; }
+    .home-auth-form label > span:first-child { color: var(--site-muted); font-size: .78rem; font-weight: 800; }
+    .home-auth-form input { min-height: 44px; padding: 0 12px; border: 1px solid var(--site-border); border-radius: 7px; font: inherit; }
+    .home-auth-password { position: relative; display: flex; align-items: center; }
+    .home-auth-password input { width: 100%; padding-right: 64px; }
+    .home-auth-password-toggle { position: absolute; right: 8px; border: 0; background: transparent; color: var(--site-accent); font-weight: 700; cursor: pointer; }
+    .home-auth-actions { display: grid; }
+    .home-auth-actions .btn, .home-auth-google { width: 100%; }
+    .home-auth-status { min-height: 1.3em; margin: 0 !important; }
+    .home-auth-divider { display: flex; align-items: center; gap: 10px; color: var(--site-muted); font-size: .85rem; }
+    .home-auth-divider::before, .home-auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--site-border); }
+    .home-auth-google-mark { width: 18px; height: 18px; }
+    .home-auth-provider-note, .home-auth-mode-switch { text-align: center; font-size: .9rem; }
+    .home-auth-mode-switch button { border: 0; background: none; color: var(--site-accent); font-weight: 800; cursor: pointer; }
+    .site-auth button[hidden] { display: none !important; }
   </style>
   <link rel="stylesheet" href="site.css" />
 </head>
@@ -835,15 +863,39 @@
         </button>
         <ul class="nav-links">
           <li><a href="/" aria-current="page">Home</a></li>
-          <li><a href="/heroboard">HeroBoard</a></li>
           <li><a href="/weight-class-explorer">Weight Class Explorer</a></li>
-          <li><a href="/account">Account</a></li>
           <li><a href="request-access.html">Contact</a></li>
         </ul>
+        <div class="site-auth" aria-live="polite">
+          <button class="btn btn-secondary" type="button" id="homeSignInButton" hidden>SIGN IN</button>
+          <button class="btn btn-secondary" type="button" id="homeSignOutButton" hidden>LOG OUT</button>
+        </div>
         <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Download</a>
       </nav>
     </div>
   </header>
+
+  <dialog class="home-auth-dialog" id="homeAuthDialog" aria-labelledby="homeAuthDialogTitle">
+    <div class="home-auth-dialog__inner">
+      <div class="home-auth-dialog__header">
+        <div>
+          <h2 id="homeAuthDialogTitle">SIGN IN</h2>
+          <p>Save snapshots and view your history across devices.</p>
+        </div>
+        <button class="home-auth-close" type="button" id="homeAuthClose" aria-label="Close sign-in dialog">&times;</button>
+      </div>
+      <form class="home-auth-form" id="homeAuthForm">
+        <label><span>Email</span><input id="homeAuthEmail" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
+        <label><span>Password</span><span class="home-auth-password"><input id="homeAuthPassword" type="password" autocomplete="current-password" minlength="6" placeholder="6+ characters" required /><button class="home-auth-password-toggle" type="button" id="homeAuthPasswordToggle" aria-label="Show password">Show</button></span></label>
+        <div class="home-auth-actions"><button class="btn btn-primary" type="submit" id="homeAuthSubmit">SIGN IN</button></div>
+      </form>
+      <p class="home-auth-status" id="homeAuthStatus" aria-live="polite"></p>
+      <div class="home-auth-divider" aria-hidden="true">or</div>
+      <button class="btn btn-secondary home-auth-google" type="button" id="homeAuthGoogle"><img class="home-auth-google-mark" src="images/google-g.svg" alt="" aria-hidden="true" /> Continue with Google</button>
+      <p class="home-auth-provider-note">Apple sign-in is coming soon.</p>
+      <p class="home-auth-mode-switch">Need an account? <button type="button" id="homeAuthModeToggle">Sign up</button></p>
+    </div>
+  </dialog>
 
   <main>
     <!-- Hero -->
@@ -1008,7 +1060,6 @@
       <div class="footer-links">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="/account">Account</a>
         <a href="request-access.html" data-gtag="feedback_click" data-propagate-utm="true">Contact</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Download</a>
       </div>
@@ -1393,6 +1444,136 @@
           });
         }
       });
+    });
+
+    // Keep Home's auth controls in sync with the shared Firebase backend.
+    const homeAuth = {
+      dialog: document.getElementById('homeAuthDialog'),
+      signIn: document.getElementById('homeSignInButton'),
+      signOut: document.getElementById('homeSignOutButton'),
+      form: document.getElementById('homeAuthForm'),
+      email: document.getElementById('homeAuthEmail'),
+      password: document.getElementById('homeAuthPassword'),
+      submit: document.getElementById('homeAuthSubmit'),
+      google: document.getElementById('homeAuthGoogle'),
+      close: document.getElementById('homeAuthClose'),
+      togglePassword: document.getElementById('homeAuthPasswordToggle'),
+      modeToggle: document.getElementById('homeAuthModeToggle'),
+      title: document.getElementById('homeAuthDialogTitle'),
+      status: document.getElementById('homeAuthStatus')
+    };
+    let homeAuthMode = 'sign-in';
+
+    function homeNamedUser(user) {
+      return Boolean(user && !user.isAnonymous && user.uid);
+    }
+
+    function updateHomeAuthControls(user) {
+      const signedIn = homeNamedUser(user);
+      homeAuth.signIn.hidden = signedIn;
+      homeAuth.signIn.disabled = signedIn;
+      homeAuth.signOut.hidden = !signedIn;
+      homeAuth.signOut.disabled = !signedIn;
+      if (signedIn && homeAuth.email && !homeAuth.email.value) homeAuth.email.value = user.email || '';
+      return user;
+    }
+
+    function setHomeAuthMode(mode) {
+      homeAuthMode = mode === 'create-account' ? 'create-account' : 'sign-in';
+      const creating = homeAuthMode === 'create-account';
+      homeAuth.title.textContent = creating ? 'CREATE ACCOUNT' : 'SIGN IN';
+      homeAuth.submit.textContent = creating ? 'CREATE ACCOUNT' : 'SIGN IN';
+      homeAuth.password.autocomplete = creating ? 'new-password' : 'current-password';
+      homeAuth.modeToggle.textContent = creating ? 'Sign in' : 'Sign up';
+      homeAuth.modeToggle.parentElement.firstChild.textContent = creating ? 'Already have an account? ' : 'Need an account? ';
+      homeAuth.status.textContent = '';
+    }
+
+    function showHomeAuthError(error, fallback) {
+      const code = error && error.code ? String(error.code) : '';
+      const messages = {
+        'auth/invalid-credential': 'Email or password is incorrect.',
+        'auth/invalid-email': 'Enter a valid email address.',
+        'auth/email-already-in-use': 'An account already exists with this email.',
+        'auth/weak-password': 'Use a password with at least 6 characters.'
+      };
+      homeAuth.status.textContent = messages[code] || fallback;
+    }
+
+    homeAuth.signIn.addEventListener('click', () => {
+      setHomeAuthMode('sign-in');
+      if (typeof homeAuth.dialog.showModal === 'function') homeAuth.dialog.showModal();
+      else homeAuth.dialog.setAttribute('open', '');
+    });
+    homeAuth.close.addEventListener('click', () => homeAuth.dialog.close());
+    homeAuth.dialog.addEventListener('click', (event) => {
+      if (event.target === homeAuth.dialog) homeAuth.dialog.close();
+    });
+    homeAuth.togglePassword.addEventListener('click', () => {
+      const visible = homeAuth.password.type === 'text';
+      homeAuth.password.type = visible ? 'password' : 'text';
+      homeAuth.togglePassword.textContent = visible ? 'Show' : 'Hide';
+      homeAuth.togglePassword.setAttribute('aria-label', visible ? 'Show password' : 'Hide password');
+    });
+    homeAuth.modeToggle.addEventListener('click', () => setHomeAuthMode(homeAuthMode === 'sign-in' ? 'create-account' : 'sign-in'));
+    homeAuth.form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const backend = window.liftallyBackend;
+      if (!backend) {
+        homeAuth.status.textContent = 'Account service is still loading.';
+        return;
+      }
+      homeAuth.submit.disabled = true;
+      homeAuth.status.textContent = homeAuthMode === 'create-account' ? 'Creating account...' : 'Signing in...';
+      try {
+        const action = homeAuthMode === 'create-account' ? backend.createAccountWithEmail : backend.signInWithEmail;
+        const user = await action(homeAuth.email.value.trim(), homeAuth.password.value);
+        updateHomeAuthControls(user);
+        homeAuth.dialog.close();
+        homeAuth.password.value = '';
+      } catch (error) {
+        showHomeAuthError(error, homeAuthMode === 'create-account' ? 'Account creation failed. Try again.' : 'Sign in failed. Try again.');
+      } finally {
+        homeAuth.submit.disabled = false;
+      }
+    });
+    homeAuth.google.addEventListener('click', async () => {
+      const backend = window.liftallyBackend;
+      if (!backend || typeof backend.signInWithGoogle !== 'function') {
+        homeAuth.status.textContent = 'Google sign-in is still loading.';
+        return;
+      }
+      homeAuth.google.disabled = true;
+      homeAuth.status.textContent = 'Signing in...';
+      try {
+        const user = await backend.signInWithGoogle();
+        if (user && !user.redirecting) {
+          updateHomeAuthControls(user);
+          homeAuth.dialog.close();
+        }
+      } catch (error) {
+        showHomeAuthError(error, 'Google sign-in failed. Try again.');
+      } finally {
+        homeAuth.google.disabled = false;
+      }
+    });
+    homeAuth.signOut.addEventListener('click', async () => {
+      const backend = window.liftallyBackend;
+      if (!backend || typeof backend.signOut !== 'function') return;
+      homeAuth.signOut.disabled = true;
+      try {
+        await backend.signOut();
+        updateHomeAuthControls(null);
+      } catch (error) {
+        homeAuth.signOut.disabled = false;
+      }
+    });
+    window.addEventListener('liftally-backend-ready', () => updateHomeAuthControls(window.liftallyBackend?.getCurrentUser?.() || null));
+    window.addEventListener('liftally-auth-change', (event) => updateHomeAuthControls(event.detail?.user || null));
+    window.addEventListener('liftally-backend-error', () => {
+      // Keep both controls hidden if auth cannot initialize; no false signed-in state.
+      homeAuth.signIn.hidden = true;
+      homeAuth.signOut.hidden = true;
     });
 
     // Header bg on scroll

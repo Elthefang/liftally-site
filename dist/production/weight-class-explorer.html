@@ -141,7 +141,7 @@
       min-height: 76px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 20px;
     }
 
@@ -645,6 +645,10 @@
       min-height: 22px;
       color: var(--muted);
       font-size: 0.92rem;
+    }
+
+    .form-footer .message:empty {
+      display: none;
     }
 
     .message.error { color: var(--error); }
@@ -1152,6 +1156,11 @@
       align-items: center;
       margin: 0;
       padding-top: 2px;
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      max-width: 62%;
+      justify-content: flex-end;
     }
 
     .benchmark-meta-chip {
@@ -1195,11 +1204,9 @@
     }
 
     .benchmark-panel > .benchmark-quick-feedback {
-      position: absolute;
-      top: 14px;
-      right: 16px;
-      margin: 0;
-      justify-content: flex-end;
+      grid-column: 1 / -1;
+      margin-top: 2px;
+      justify-content: flex-start;
     }
     .benchmark-quick-feedback__question { color: var(--text-on-dark); }
     .benchmark-quick-feedback__choices { display: flex; gap: 7px; }
@@ -1229,10 +1236,19 @@
     }
 
     @media (max-width: 660px) {
+      .benchmark-panel > .benchmark-meta {
+        position: static;
+        max-width: none;
+        justify-content: flex-start;
+        order: 2;
+      }
+
+      .benchmark-panel > .benchmark-grid { order: 3; }
       .benchmark-panel > .benchmark-quick-feedback {
         position: static;
         justify-content: flex-start;
         margin-top: 2px;
+        order: 4;
       }
     }
 
@@ -1491,7 +1507,9 @@
     .class-help-wrap {
       position: relative;
       display: inline-flex;
-      align-self: flex-start;
+      align-items: center;
+      margin-left: 8px;
+      vertical-align: middle;
     }
 
     .class-help-button {
@@ -1514,6 +1532,24 @@
     .class-help-wrap .info-tip-popover {
       right: 0;
       left: auto;
+      font-family: var(--font-body);
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: normal;
+      text-transform: none;
+    }
+
+    /* Keep nearby-class help inline with the section title at every width. */
+    body.site-shell.tool-page #classes .section-head {
+      display: block;
+    }
+
+    body.site-shell.tool-page #classes .section-head h2 {
+      max-width: none;
+    }
+
+    body.site-shell.tool-page #classes .class-help-wrap {
+      z-index: 31;
     }
 
     .benchmark-pill-list {
@@ -2119,7 +2155,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 10px 16px;
       margin-top: 12px;
       color: var(--text-secondary);
@@ -2135,10 +2171,10 @@
     .class-comparison-toggle {
       min-height: 42px;
       padding: 9px 14px;
-      border: 1px solid var(--border-strong);
+      border: 1px solid transparent;
       border-radius: 7px;
-      background: var(--surface-card);
-      color: var(--text-primary);
+      background: transparent;
+      color: var(--text-secondary);
       font: 700 0.78rem/1.2 var(--font-ui);
       letter-spacing: 0.04em;
       cursor: pointer;
@@ -2146,7 +2182,41 @@
 
     .class-comparison-toggle:hover {
       border-color: var(--accent-border);
-      background: var(--accent-surface);
+      background: transparent;
+      color: var(--text-primary);
+    }
+
+    .class-comparison-toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .class-card-grid .class-card--extended,
+    .scenario-chart .scenario-row--extended {
+      animation: nearby-class-enter 220ms ease-out both;
+    }
+
+    .class-card-grid.is-collapsing .class-card--extended,
+    .class-card-grid.is-collapsing .scenario-row--extended {
+      animation: nearby-class-exit 220ms ease-in both;
+      pointer-events: none;
+    }
+
+    @keyframes nearby-class-enter {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes nearby-class-exit {
+      from { opacity: 1; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(8px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .class-card-grid .class-card--extended,
+      .scenario-chart .scenario-row--extended,
+      .class-card-grid.is-collapsing .class-card--extended,
+      .class-card-grid.is-collapsing .scenario-row--extended { animation: none !important; }
     }
 
     .scenario-distance-note {
@@ -2659,13 +2729,7 @@
     .scenario-pinned-bar { display: none; }
 
     .scenario-summary-grid.is-pinned .scenario-summary-cards {
-      position: sticky;
-      top: 88px;
-      z-index: 10;
-      padding: 4px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.96);
-      box-shadow: 0 8px 18px rgba(21, 24, 22, 0.1);
+      position: static;
     }
 
     .scenario-summary-grid.is-pinned .scenario-pinned-bar {
@@ -2686,6 +2750,43 @@
     }
 
     .scenario-pinned-bar strong { color: var(--text-primary); }
+
+    .scenario-pinned-snapshot {
+      position: fixed;
+      top: 88px;
+      left: 50%;
+      z-index: 19;
+      width: min(var(--page-width), calc(100vw - 40px));
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .scenario-pinned-snapshot:not([hidden]) { display: block; }
+    .scenario-pinned-snapshot[hidden] { display: none !important; }
+
+    .scenario-pinned-snapshot .scenario-summary-cards {
+      padding: 4px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: 0 8px 18px rgba(21, 24, 22, 0.1);
+    }
+
+    .scenario-pinned-snapshot button { pointer-events: none; }
+    /* The pinned bar is a mobile-only compact fallback. The desktop pinned
+       snapshot uses the full cloned summary-card row instead. */
+    .scenario-pinned-bar.is-visible {
+      display: none;
+    }
+
+    /* Pinning is intentionally desktop/tablet-wide only until the compact
+       mobile interaction is redesigned. */
+    @media (max-width: 767px) {
+      .scenario-pin-button,
+      .scenario-pinned-snapshot,
+      .scenario-pinned-bar {
+        display: none !important;
+      }
+    }
 
     .scenario-selector-head .eyebrow {
       margin: 0;
@@ -4592,6 +4693,31 @@
         font-size: 0.78rem;
       }
 
+      /* This bar is reparented to <body> for reliable pinning, so scope its
+         fixed positioning and visual treatment to the visible state itself. */
+      .scenario-pinned-bar.is-visible {
+        position: fixed;
+        top: 84px;
+        left: 20px;
+        right: 20px;
+        z-index: 19;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 12px;
+        border: 1px solid var(--border-default);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.96);
+        box-shadow: 0 8px 20px rgba(21, 24, 22, 0.12);
+        color: var(--text-secondary);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .scenario-pinned-bar.is-visible strong {
+        color: var(--text-primary);
+      }
+
       .scenario-summary-grid.is-pinned .scenario-summary-cards {
         display: none;
       }
@@ -5307,6 +5433,23 @@
       }
     }
 
+    /* Keep the results and benchmark sections on the same vertical rhythm.
+       Score Snapshot has no subtitle, so its title margin must not create an
+       extra gap before the cards. The benchmark header uses the same compact
+       title-to-content spacing. */
+    #resultsScreen .screen-title {
+      padding-bottom: 14px;
+    }
+
+    #resultsScreen .screen-title h1,
+    #benchmarkSection .section-head h2 {
+      margin-bottom: 0;
+    }
+
+    #benchmarkSection .section-head {
+      margin-bottom: 14px;
+    }
+
     @media (max-width: 420px) {
       .feedback-dialog {
         width: 100vw;
@@ -5404,14 +5547,12 @@
         </button>
         <ul class="nav-links">
           <li><a class="nav-link" href="/">Home</a></li>
-          <li><a class="nav-link" href="/heroboard">HeroBoard</a></li>
           <li><a class="nav-link is-active" href="/weight-class-explorer" aria-current="page">Weight Class Explorer</a></li>
-          <li><a class="nav-link" href="/account">Account</a></li>
           <li><a class="nav-link" href="/request-access">Contact</a></li>
           <li><a class="nav-link nav-download-link" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a></li>
         </ul>
         <div class="site-auth" aria-live="polite">
-          <button class="btn btn-secondary" type="button" id="openAuthModalButton">Sign in</button>
+          <button class="btn btn-secondary" type="button" id="openAuthModalButton" hidden>Sign in</button>
           <button class="btn btn-secondary" type="button" id="headerSignOutButton" hidden>Sign out</button>
         </div>
         <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
@@ -5423,7 +5564,7 @@
     <div class="auth-dialog__inner">
       <div class="auth-dialog__header">
         <div>
-          <h2 id="authDialogTitle">Login</h2>
+          <h2 id="authDialogTitle">SIGN IN</h2>
           <p>Save snapshots and view your history across devices.</p>
         </div>
         <button class="auth-close" type="button" id="closeAuthModalButton" aria-label="Close sign-in dialog">&times;</button>
@@ -5432,7 +5573,7 @@
         <label><span>Email</span><input id="accountEmail" type="email" autocomplete="email" placeholder="you@example.com" required /></label>
         <label><span>Password</span><span class="auth-password-field"><input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="6+ characters" required /><button class="auth-password-toggle" type="button" id="togglePasswordButton" aria-label="Show password">Show</button></span></label>
         <div class="auth-modal-actions">
-          <button class="btn btn-primary" type="submit" id="signInButton">Login</button>
+          <button class="btn btn-primary" type="submit" id="signInButton">SIGN IN</button>
         </div>
       </form>
       <p class="auth-modal-status" id="authModalStatus" aria-live="polite"></p>
@@ -5634,7 +5775,7 @@
               <strong class="result-value" id="dotsResult">-</strong>
             </article>
             <article class="result-card">
-              <span class="result-label">IPF GL</span>
+              <span class="result-label">Total Percentile</span>
               <strong class="result-value" id="glResult">-</strong>
             </article>
           </div>
@@ -5656,15 +5797,7 @@
 
           <div class="benchmark-panel" id="benchmarkPanel" aria-live="polite">
             <p class="benchmark-state" id="benchmarkState">Benchmark data is loading.</p>
-            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
-              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
-              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
-                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
-                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="no" aria-pressed="false">No</button>
-              </div>
-              <p class="benchmark-quick-feedback__status" id="benchmarkQuickFeedbackStatus" aria-live="polite"></p>
-              <button class="benchmark-quick-feedback__follow-up" type="button" id="benchmarkFeedbackFollowUp" hidden>Tell us what was confusing</button>
-            </div>
+            <p class="benchmark-meta" id="benchmarkMeta"></p>
             <div class="benchmark-grid">
               <article class="benchmark-card">
                 <span class="result-label">Total Percentile <span class="info-tip-wrap"><button class="info-tip" id="totalPercentileHelp" type="button" aria-label="Explain Total Percentile" aria-expanded="false" aria-controls="totalPercentileHelpPopover">?</button><span class="info-tip-popover" id="totalPercentileHelpPopover" role="tooltip" hidden>Total Percentile shows how your entered SBD total compares with matching historical OpenPowerlifting results for this benchmark group.</span></span></span>
@@ -5693,17 +5826,24 @@
                 <p class="benchmark-copy" id="benchmarkNextCopy">Shows the next historical Total threshold.</p>
               </article>
             </div>
-            <p class="benchmark-meta" id="benchmarkMeta"></p>
+            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
+              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
+                <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="no" aria-pressed="false">No</button>
+              </div>
+              <p class="benchmark-quick-feedback__status" id="benchmarkQuickFeedbackStatus" aria-live="polite"></p>
+              <button class="benchmark-quick-feedback__follow-up" type="button" id="benchmarkFeedbackFollowUp" hidden>Tell us what was confusing</button>
+            </div>
           </div>
         </section>
 
         <section class="section" id="classes">
           <div class="section-head">
-            <div>
+              <div>
               <p class="eyebrow">Weight Class Scenario Comparison</p>
-              <h2>Historical percentile by weight class</h2>
+              <h2>Historical percentile by weight class <span class="class-help-wrap"><button class="class-help-button" id="nearbyClassesHelp" type="button" aria-label="Explain nearby weight classes" aria-expanded="false" aria-controls="nearbyClassesHelpPopover">?</button><span class="info-tip-popover" id="nearbyClassesHelpPopover" role="tooltip" hidden>Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</span></span></h2>
             </div>
-            <span class="class-help-wrap"><button class="class-help-button" id="nearbyClassesHelp" type="button" aria-label="Explain nearby weight classes" aria-expanded="false" aria-controls="nearbyClassesHelpPopover">?</button><span class="info-tip-popover" id="nearbyClassesHelpPopover" role="tooltip" hidden>Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</span></span>
           </div>
 
           <div class="comparison-card">
@@ -5715,7 +5855,7 @@
               </article>
             </div>
             <div class="class-comparison-controls" id="classComparisonControls" hidden>
-              <button class="class-comparison-toggle" type="button" id="classComparisonToggle" aria-expanded="false">Compare up to two classes each direction</button>
+              <button class="class-comparison-toggle" type="button" id="classComparisonToggle" aria-expanded="false" aria-controls="classCards">Show more nearby classes</button>
             </div>
             <p class="class-explanation is-empty-state" id="classExplanation" aria-live="polite">Enter squat, bench, and deadlift to compare historical percentiles across weight classes.</p>
           </div>
@@ -5853,6 +5993,7 @@
             </div>
 
             <div class="scenario-live-panel">
+              <div class="scenario-pinned-snapshot" id="scenarioPinnedSnapshot" aria-label="Pinned current snapshot" hidden></div>
               <div class="scenario-comparison-table-wrap" id="scenarioComparisonWrap">
                 <section class="scenario-impact-results" aria-labelledby="scenarioImpactTitle">
                   <div class="scenario-impact-head">
@@ -5909,7 +6050,6 @@
       <div class="footer-links">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="/account">Account</a>
         <a href="/request-access" data-gtag="send_feedback" data-propagate-utm="true">Send Feedback</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
       </div>
@@ -6019,7 +6159,10 @@
       scenarioSetupSbd: document.getElementById('scenarioSetupSbd'),
       scenarioLab: document.getElementById('scenarioLab'),
       scenarioSummaryGrid: document.getElementById('scenarioSummaryGrid'),
+      scenarioSummaryCards: document.querySelector('.scenario-summary-cards'),
       scenarioPinButton: document.getElementById('scenarioPinButton'),
+      scenarioPinnedSnapshot: document.getElementById('scenarioPinnedSnapshot'),
+      scenarioPinnedBar: document.getElementById('scenarioPinnedBar'),
       scenarioPinnedBw: document.getElementById('scenarioPinnedBw'),
       scenarioPinnedSbd: document.getElementById('scenarioPinnedSbd'),
       scenarioPinnedDots: document.getElementById('scenarioPinnedDots'),
@@ -6087,11 +6230,15 @@
       scenarioHigherTitle: document.getElementById('scenarioHigherTitle'),
       scenarioHigherCopy: document.getElementById('scenarioHigherCopy')
     };
+    if (output.scenarioPinnedSnapshot) document.body.appendChild(output.scenarioPinnedSnapshot);
+    if (output.scenarioPinnedBar) document.body.appendChild(output.scenarioPinnedBar);
     let lastBenchmarkTableArgs = null;
     let lastCalculation = null;
     let lastSelectedBenchmarkContext = null;
     let classContextRenderId = 0;
     let classComparisonState = { advanced: false, lastArgs: null };
+    let classComparisonCollapseTimer = null;
+    let pinnedSnapshotAnimationFrame = null;
     let scenarioRenderId = 0;
     let scenarioBodyweightSelected = false;
     let scenarioSummaryPinned = false;
@@ -6309,12 +6456,12 @@
     function setAuthMode(mode) {
       authMode = mode === 'create-account' ? 'create-account' : 'sign-in';
       const isCreateAccount = authMode === 'create-account';
-      if (output.authDialogTitle) output.authDialogTitle.textContent = isCreateAccount ? 'Create account' : 'Login';
-      if (output.signInButton) output.signInButton.textContent = isCreateAccount ? 'Create account' : 'Login';
+      if (output.authDialogTitle) output.authDialogTitle.textContent = isCreateAccount ? 'Create account' : 'SIGN IN';
+      if (output.signInButton) output.signInButton.textContent = isCreateAccount ? 'Create account' : 'SIGN IN';
       if (output.accountPassword) output.accountPassword.autocomplete = isCreateAccount ? 'new-password' : 'current-password';
       if (output.authModeSwitch) {
         output.authModeSwitch.innerHTML = isCreateAccount
-          ? 'Already have an account? <button type="button" id="createAccountButton">Log in</button>'
+          ? 'Already have an account? <button type="button" id="createAccountButton">Sign in</button>'
           : 'Need an account? <button type="button" id="createAccountButton">Sign up</button>';
         output.createAccountButton = document.getElementById('createAccountButton');
         output.createAccountButton.addEventListener('click', () => setAuthMode(isCreateAccount ? 'sign-in' : 'create-account'));
@@ -6562,6 +6709,8 @@
 
     function renderNavbarAuth(user) {
       const signedIn = isNamedAccount(user);
+      if (output.openAuthModalButton) output.openAuthModalButton.hidden = true;
+      if (output.headerSignOutButton) output.headerSignOutButton.hidden = true;
       if (output.openAuthModalButton) output.openAuthModalButton.hidden = signedIn;
       if (output.headerSignOutButton) output.headerSignOutButton.hidden = !signedIn;
       if (output.headerSignOutButton) output.headerSignOutButton.disabled = !signedIn;
@@ -7338,6 +7487,7 @@
       output.benchmarkNextGap.textContent = '-';
       output.benchmarkNextCopy.textContent = 'Shows the next historical Total threshold.';
       output.benchmarkMeta.innerHTML = '';
+      if (output.glResult) output.glResult.textContent = '-';
     }
 
     function setBenchmarkLoading() {
@@ -7346,6 +7496,7 @@
       output.benchmarkState.textContent = 'Loading historical benchmark percentiles...';
       output.benchmarkTotalPercentile.textContent = '-';
       output.benchmarkDotsPercentile.textContent = '-';
+      if (output.glResult) output.glResult.textContent = '-';
       updateBenchmarkRail(output.benchmarkTotalMarker, 'Total percentile', null, output.benchmarkTotalRailValue);
       updateBenchmarkRail(output.benchmarkDotsMarker, 'DOTS percentile', null, output.benchmarkDotsRailValue);
       output.benchmarkNextLabel.textContent = 'To reach next percentile';
@@ -7369,6 +7520,7 @@
       output.benchmarkNextGap.textContent = '-';
       output.benchmarkNextCopy.textContent = 'There are not enough matching historical results for this class and filter combination.';
       output.benchmarkMeta.innerHTML = '';
+      if (output.glResult) output.glResult.textContent = 'Unavailable';
     }
 
     function renderBenchmarkContext(context, unit) {
@@ -7389,6 +7541,9 @@
       const dots = context.dots || {};
       output.benchmarkSection.hidden = false;
       output.benchmarkState.textContent = 'Your benchmark';
+      if (output.glResult) {
+        output.glResult.textContent = total.status === 'ready' ? percentileDisplay(total) : 'Unavailable';
+      }
 
       if (total.status === 'ready') {
         output.benchmarkTotalPercentile.textContent = percentileDisplay(total);
@@ -7568,6 +7723,73 @@
 
     function plannerDots(value) {
       return Number.isFinite(value) ? formatNumber(value, 2) : 'Unavailable';
+    }
+
+    function syncPinnedSnapshot() {
+      const target = output.scenarioPinnedSnapshot;
+      const source = output.scenarioSummaryCards;
+      if (!target || !source) return;
+      const clone = source.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach((element) => element.removeAttribute('id'));
+      clone.querySelectorAll('button').forEach((button) => {
+        button.disabled = true;
+        button.tabIndex = -1;
+      });
+      clone.setAttribute('aria-hidden', 'true');
+      target.replaceChildren(clone);
+    }
+
+    function scenarioPinDisabledOnMobile() {
+      return window.innerWidth <= 767;
+    }
+
+    function updatePinnedSnapshotVisibility() {
+      const lab = output.scenarioLab;
+      const source = output.scenarioSummaryCards;
+      const impact = output.scenarioComparisonWrap;
+      const target = output.scenarioPinnedSnapshot;
+      if (scenarioPinDisabledOnMobile()) {
+        scenarioSummaryPinned = false;
+        if (output.scenarioPinButton) {
+          output.scenarioPinButton.setAttribute('aria-pressed', 'false');
+          output.scenarioPinButton.setAttribute('aria-label', 'Pin current snapshot');
+          output.scenarioPinButton.setAttribute('title', 'Pin current snapshot');
+          const label = output.scenarioPinButton.querySelector('span');
+          if (label) label.textContent = 'Pin snapshot';
+        }
+        if (target) target.hidden = true;
+        if (target) target.classList.remove('is-visible');
+        if (output.scenarioPinnedBar) output.scenarioPinnedBar.classList.remove('is-visible');
+        if (lab) lab.classList.remove('is-pinned-visible');
+        return;
+      }
+      if (!lab || !source || !impact || !target || !scenarioSummaryPinned) {
+        if (target) target.hidden = true;
+        if (target) target.classList.remove('is-visible');
+        if (output.scenarioPinnedBar) output.scenarioPinnedBar.classList.remove('is-visible');
+        if (lab) lab.classList.remove('is-pinned-visible');
+        return;
+      }
+      const navOffset = window.innerWidth <= 660 ? 84 : 88;
+      const sourceRect = source.getBoundingClientRect();
+      const impactRect = impact.getBoundingClientRect();
+      const visible = sourceRect.bottom <= navOffset
+        && impactRect.top < window.innerHeight
+        && impactRect.bottom > navOffset;
+      target.hidden = !visible;
+      target.classList.toggle('is-visible', visible);
+      if (output.scenarioPinnedBar) output.scenarioPinnedBar.classList.toggle('is-visible', visible);
+      lab.classList.toggle('is-pinned-visible', visible);
+      if (visible) syncPinnedSnapshot();
+    }
+
+    function schedulePinnedSnapshotVisibility() {
+      if (pinnedSnapshotAnimationFrame !== null) return;
+      pinnedSnapshotAnimationFrame = window.requestAnimationFrame(() => {
+        pinnedSnapshotAnimationFrame = null;
+        updatePinnedSnapshotVisibility();
+      });
     }
 
     function comparisonDetail(current, scenario) {
@@ -7772,7 +7994,7 @@
       if (output.scenarioSbdSelector) output.scenarioSbdSelector.classList.toggle('is-selected', allSelected);
       if (output.scenarioSbdValue) output.scenarioSbdValue.textContent = plannerNumber(calculation.totalKg, calculation.unit);
       if (output.scenarioPinnedBw) output.scenarioPinnedBw.textContent = formatWeightForUnit(calculation.bodyweightKg, calculation.unit);
-      if (output.scenarioPinnedSbd) output.scenarioPinnedSbd.textContent = `${plannerNumber(calculation.totalKg, calculation.unit)} ${appUnitLabels[calculation.unit]}`;
+      if (output.scenarioPinnedSbd) output.scenarioPinnedSbd.textContent = plannerNumber(calculation.totalKg, calculation.unit);
       if (output.scenarioPinnedDots) output.scenarioPinnedDots.textContent = plannerDots(calculation.dots);
 
       output.scenarioLiftButtons.forEach((button) => {
@@ -7783,6 +8005,8 @@
       if (output.scenarioDotsPreviewLabel) output.scenarioDotsPreviewLabel.textContent = 'Current DOTS percentile';
       if (output.scenarioDotsPreviewDetail) output.scenarioDotsPreviewDetail.textContent = `${plannerDots(calculation.dots)} DOTS`;
       setScenarioPreviewContext('');
+      syncPinnedSnapshot();
+      schedulePinnedSnapshotVisibility();
     }
 
     function scenarioPercentileDisplay(context, scoreType) {
@@ -8382,7 +8606,7 @@
       `;
     }
 
-    function renderScenarioChartRow({ item, role, roleLabel: providedRoleLabel, comparisonNote, comparisonNoteClass, unit, benchmarkContext, currentBenchmarkContext, breakEvenThreshold }) {
+    function renderScenarioChartRow({ item, role, roleLabel: providedRoleLabel, comparisonNote, comparisonNoteClass, unit, benchmarkContext, currentBenchmarkContext, breakEvenThreshold, isExtended = false }) {
       const isCurrent = role === 'current';
       const roleLabel = isCurrent ? 'Current class' : providedRoleLabel || (role === 'lower' ? 'Nearby lower class' : 'Nearby higher class');
       const total = benchmarkContext && benchmarkContext.total;
@@ -8408,7 +8632,7 @@
         : '<span class="scenario-unavailable">There are not enough matching historical results for this class and filter combination.</span>';
 
       return `
-        <article class="scenario-row ${isCurrent ? 'is-current' : ''}">
+        <article class="scenario-row ${isCurrent ? 'is-current' : ''} ${isExtended ? 'scenario-row--extended' : ''}">
           <div class="scenario-row-header">
             <span class="scenario-row-class">${item.name}</span>
             <span class="scenario-row-role ${isCurrent ? 'is-current' : ''}">${roleLabel}</span>
@@ -8432,13 +8656,14 @@
       `;
     }
 
-    function renderScenarioChart(entries, unit, currentBenchmarkContext) {
+    function renderScenarioChart(entries, unit, currentBenchmarkContext, currentIndex) {
       return `
         <div class="scenario-chart" role="group" aria-label="Historical percentile by weight class">
           ${entries.map((entry) => renderScenarioChartRow({
             ...entry,
             unit,
-            currentBenchmarkContext
+            currentBenchmarkContext,
+            isExtended: Number.isFinite(currentIndex) && Math.abs(entry.index - currentIndex) === 2
           })).join('')}
         </div>
       `;
@@ -8501,11 +8726,11 @@
       const hasExtendedClasses = list.some((_, index) => Math.abs(index - currentIndex) <= 2 && index !== currentIndex);
       output.classComparisonControls.hidden = !hasExtendedClasses;
       if (!hasExtendedClasses) return;
-      const allCandidates = classComparisonIndices(list, currentIndex, bodyweightKg);
       output.classComparisonToggle.textContent = classComparisonState.advanced
-        ? 'Show nearby classes only'
-        : 'Compare up to two classes each direction';
+        ? 'Show fewer classes'
+        : 'Show more nearby classes';
       output.classComparisonToggle.setAttribute('aria-expanded', String(classComparisonState.advanced));
+      output.classCards.dataset.comparisonState = classComparisonState.advanced ? 'expanded' : 'collapsed';
     }
 
     async function renderClassContext(standardKey, sex, unit, currentIndex, totalKg, dots, gl, bodyweightKg = null) {
@@ -8528,7 +8753,7 @@
           const isCurrent = role === 'current';
 
           return `
-            <article class="class-card scenario-${index === currentIndex ? 'current' : index < currentIndex ? 'lower' : 'higher'} ${isCurrent ? 'current is-selected' : ''}">
+              <article class="class-card ${Math.abs(index - currentIndex) === 2 ? 'class-card--extended' : ''} scenario-${index === currentIndex ? 'current' : index < currentIndex ? 'lower' : 'higher'} ${isCurrent ? 'current is-selected' : ''}">
               <span class="status ${isCurrent ? 'current' : ''}">${roleLabel}</span>
               <span class="class-name">${item.name}</span>
               <span class="class-range">${rangeText(item, unit)}</span>
@@ -8551,7 +8776,7 @@
         const isCurrent = role === 'current';
 
         return `
-          <article class="class-card scenario-${index === currentIndex ? 'current' : index < currentIndex ? 'lower' : 'higher'} ${isCurrent ? 'current is-selected' : ''}" aria-busy="true">
+          <article class="class-card ${Math.abs(index - currentIndex) === 2 ? 'class-card--extended' : ''} scenario-${index === currentIndex ? 'current' : index < currentIndex ? 'lower' : 'higher'} ${isCurrent ? 'current is-selected' : ''}" aria-busy="true">
             <span class="status ${isCurrent ? 'current' : ''}">${roleLabel.toUpperCase()}</span>
             <span class="class-name">${item.name}</span>
             <span class="class-range">${rangeText(item, unit)}</span>
@@ -8607,7 +8832,8 @@
       output.classCards.innerHTML = renderScenarioChart(
         entriesWithBreakEven,
         unit,
-        currentEntry && currentEntry.benchmarkContext
+        currentEntry && currentEntry.benchmarkContext,
+        currentIndex
       );
 
       output.classExplanation.hidden = true;
@@ -8699,6 +8925,11 @@
       output.glResult.textContent = '-';
       lastCalculation = null;
       lastSelectedBenchmarkContext = null;
+      if (classComparisonCollapseTimer !== null) {
+        window.clearTimeout(classComparisonCollapseTimer);
+        classComparisonCollapseTimer = null;
+        if (output.classCards) output.classCards.classList.remove('is-collapsing');
+      }
       classComparisonState.advanced = false;
       hideMilestoneFeedback();
       updateSaveButtonState();
@@ -8785,7 +9016,6 @@
         updateSaveButtonState();
         animateNumber(output.totalResult, totalInput, 1, unit);
         animateNumber(output.dotsResult, dots, 2);
-        animateNumber(output.glResult, gl, 2);
         renderMilestoneFeedback(lastCalculation);
         renderStandardsComparison(sex, unit, bodyweightKg, totalKg, dots);
       setBenchmarkLoading();
@@ -8798,7 +9028,7 @@
           testedStatus: 'auto'
         }).then((benchmarkContext) => renderBenchmarkContext(benchmarkContext, unit));
         output.formMessage.textContent = dots
-          ? 'Score snapshot calculated from full SBD.'
+          ? ''
           : 'IPF GL calculated. DOTS requires bodyweight of at least 40kg.';
       } else {
         lastCalculation = {
@@ -8905,8 +9135,12 @@
 
     if (output.scenarioPinButton) {
       output.scenarioPinButton.addEventListener('click', () => {
+        if (scenarioPinDisabledOnMobile()) return;
         scenarioSummaryPinned = !scenarioSummaryPinned;
         if (output.scenarioSummaryGrid) output.scenarioSummaryGrid.classList.toggle('is-pinned', scenarioSummaryPinned);
+        if (output.scenarioLab) output.scenarioLab.classList.toggle('is-summary-pinned', scenarioSummaryPinned);
+        syncPinnedSnapshot();
+        schedulePinnedSnapshotVisibility();
         output.scenarioPinButton.setAttribute('aria-pressed', String(scenarioSummaryPinned));
         output.scenarioPinButton.setAttribute('aria-label', scenarioSummaryPinned ? 'Unpin current snapshot' : 'Pin current snapshot');
         output.scenarioPinButton.setAttribute('title', scenarioSummaryPinned ? 'Unpin current snapshot' : 'Pin current snapshot');
@@ -8914,6 +9148,9 @@
         if (label) label.textContent = scenarioSummaryPinned ? 'Unpin snapshot' : 'Pin snapshot';
       });
     }
+
+    window.addEventListener('scroll', schedulePinnedSnapshotVisibility, { passive: true });
+    window.addEventListener('resize', schedulePinnedSnapshotVisibility);
 
     document.addEventListener('click', (event) => {
       const shareButton = event.target.closest('[data-share-result]');
@@ -8945,17 +9182,47 @@
       output.classComparisonToggle.addEventListener('click', () => {
         const args = classComparisonState.lastArgs;
         if (!args) return;
-        classComparisonState.advanced = !classComparisonState.advanced;
-        renderClassContext(
-          args.standardKey,
-          args.sex,
-          args.unit,
-          args.currentIndex,
-          args.totalKg,
-          args.dots,
-          args.gl,
-          args.bodyweightKg
-        );
+        const transitionTarget = output.classCards;
+        if (classComparisonCollapseTimer !== null) {
+          window.clearTimeout(classComparisonCollapseTimer);
+          classComparisonCollapseTimer = null;
+          transitionTarget.classList.remove('is-collapsing');
+          // Keep the expanded DOM in place when a collapse is interrupted.
+          if (classComparisonState.advanced) return;
+        }
+
+        if (!classComparisonState.advanced || prefersReducedMotion) {
+          classComparisonState.advanced = true;
+          renderClassContext(
+            args.standardKey,
+            args.sex,
+            args.unit,
+            args.currentIndex,
+            args.totalKg,
+            args.dots,
+            args.gl,
+            args.bodyweightKg
+          );
+          return;
+        }
+
+        // Keep the expanded cards mounted while their shared exit animation runs.
+        transitionTarget.classList.add('is-collapsing');
+        classComparisonCollapseTimer = window.setTimeout(() => {
+          classComparisonCollapseTimer = null;
+          transitionTarget.classList.remove('is-collapsing');
+          classComparisonState.advanced = false;
+          renderClassContext(
+            args.standardKey,
+            args.sex,
+            args.unit,
+            args.currentIndex,
+            args.totalKg,
+            args.dots,
+            args.gl,
+            args.bodyweightKg
+          );
+        }, 220);
       });
     }
     if (output.openAuthModalButton) output.openAuthModalButton.addEventListener('click', openAuthModal);
