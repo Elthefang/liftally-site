@@ -28,7 +28,6 @@
       "firebase/firebase-config.staging.js",
       "firebase/liftally-staging-backend.js",
       "images/app-store-logo.png",
-      "Videos/**",
       "*.md"
     ],
     "headers": [

@@ -300,6 +300,10 @@ body.site-shell.tool-page .section-head p {
 }
 
 .site-shell .site-footer {
+  display: block;
+  width: 100%;
+  max-width: none;
+  min-width: 100%;
   border-top: 1px solid var(--site-border);
   background: rgba(255, 255, 255, 0.72);
   color: var(--site-muted);

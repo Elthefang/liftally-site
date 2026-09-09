@@ -22,7 +22,6 @@
       "firebase/staging-smoke-test.js",
       "firebase/staging-backend-plan.md",
       "images/app-store-logo.png",
-      "Videos/**",
       "*.md"
     ],
     "headers": [

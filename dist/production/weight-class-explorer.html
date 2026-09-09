@@ -5433,10 +5433,9 @@
       }
     }
 
-    /* Keep the results and benchmark sections on the same vertical rhythm.
-       Score Snapshot has no subtitle, so its title margin must not create an
-       extra gap before the cards. The benchmark header uses the same compact
-       title-to-content spacing. */
+    /* Score Snapshot and Historical Benchmark share one content edge and
+       title-to-content rhythm. Keep the result cards flush with the same
+       container that holds the benchmark panel. */
     #resultsScreen .screen-title {
       padding-bottom: 14px;
     }
@@ -5444,6 +5443,19 @@
     #resultsScreen .screen-title h1,
     #benchmarkSection .section-head h2 {
       margin-bottom: 0;
+    }
+
+    #resultsScreen .screen-title .snapshot-actions {
+      margin-bottom: 0;
+    }
+
+    #resultsScreen .results {
+      padding-inline: 0;
+    }
+
+    #benchmarkSection {
+      width: 100%;
+      margin-inline: 0;
     }
 
     #benchmarkSection .section-head {
@@ -5865,7 +5877,7 @@
           <div class="section-head">
             <div>
               <p class="eyebrow">Standards Table</p>
-              <h2 id="compareTitle">Weight class by competition standard</h2>
+              <h2><span id="compareTitle">Weight class by competition standard</span><span class="class-help-wrap"><button class="class-help-button" id="compareStandardsHelp" type="button" aria-label="Explain comparing other standards" aria-expanded="false" aria-controls="compareStandardsHelpPopover">?</button><span class="info-tip-popover" id="compareStandardsHelpPopover" role="tooltip" hidden>Compare your current class and benchmark percentile across different competition standards.</span></span></h2>
             </div>
             <p id="compareCopy"></p>
           </div>
@@ -6129,6 +6141,8 @@
       classComparisonToggle: document.getElementById('classComparisonToggle'),
       nearbyClassesHelp: document.getElementById('nearbyClassesHelp'),
       nearbyClassesHelpPopover: document.getElementById('nearbyClassesHelpPopover'),
+      compareStandardsHelp: document.getElementById('compareStandardsHelp'),
+      compareStandardsHelpPopover: document.getElementById('compareStandardsHelpPopover'),
       classExplanation: document.getElementById('classExplanation'),
       standardRows: document.getElementById('standardRows'),
       benchmarkSection: document.getElementById('benchmarkSection'),
@@ -7444,6 +7458,23 @@
       return null;
     }
 
+    function milestoneBenchmarkInterpretation(milestone, totalContext) {
+      if (!milestone || !milestone.title.endsWith('unlocked') || !totalContext || totalContext.status !== 'ready') {
+        return milestone ? milestone.detail : '';
+      }
+
+      const percentile = Number.isFinite(Number(totalContext.percentile))
+        ? Number(totalContext.percentile)
+        : 0;
+      if (percentile <= 19) {
+        return `Your total is higher than about ${percentile}% of matching historical meet results.`;
+      }
+      if (percentile <= 39) return 'Building a base you can compare against real meet data.';
+      if (percentile <= 59) return 'Around the middle of this benchmark group.';
+      if (percentile <= 79) return 'Ahead of many lifters in this benchmark group.';
+      return 'A strong result within this benchmark group.';
+    }
+
     function hideMilestoneFeedback() {
       if (!output.milestoneFeedback) return;
       output.milestoneFeedback.hidden = true;
@@ -7452,7 +7483,7 @@
       output.milestoneFeedbackDetail.textContent = '';
     }
 
-    function renderMilestoneFeedback(calculation) {
+    function renderMilestoneFeedback(calculation, totalContext = null) {
       const milestone = calculation && calculation.isFullSbd
         ? selectMilestoneFeedback(calculation)
         : null;
@@ -7462,13 +7493,21 @@
       }
 
       output.milestoneFeedbackTitle.textContent = milestone.title;
-      output.milestoneFeedbackDetail.textContent = milestone.detail;
+      output.milestoneFeedbackDetail.textContent = milestoneBenchmarkInterpretation(milestone, totalContext);
       output.milestoneFeedback.hidden = false;
       output.milestoneFeedback.classList.remove('is-visible');
 
       if (!prefersReducedMotion) {
         window.requestAnimationFrame(() => output.milestoneFeedback.classList.add('is-visible'));
       }
+    }
+
+    function updateMilestoneFeedbackDetail(calculation, totalContext) {
+      const milestone = calculation && calculation.isFullSbd
+        ? selectMilestoneFeedback(calculation)
+        : null;
+      if (!milestone || output.milestoneFeedback.hidden) return;
+      output.milestoneFeedbackDetail.textContent = milestoneBenchmarkInterpretation(milestone, totalContext);
     }
 
     function resetBenchmarkSection() {
@@ -7539,6 +7578,7 @@
       const match = context.match || {};
       const total = context.total || {};
       const dots = context.dots || {};
+      if (lastCalculation && lastCalculation.isFullSbd) updateMilestoneFeedbackDetail(lastCalculation, total);
       output.benchmarkSection.hidden = false;
       output.benchmarkState.textContent = 'Your benchmark';
       if (output.glResult) {
@@ -9103,6 +9143,25 @@
       });
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') closeNearbyClassesHelp();
+      });
+    }
+
+    if (output.compareStandardsHelp && output.compareStandardsHelpPopover) {
+      const closeCompareStandardsHelp = () => {
+        output.compareStandardsHelpPopover.hidden = true;
+        output.compareStandardsHelp.setAttribute('aria-expanded', 'false');
+      };
+      output.compareStandardsHelp.addEventListener('click', (event) => {
+        event.stopPropagation();
+        const open = output.compareStandardsHelpPopover.hidden;
+        output.compareStandardsHelpPopover.hidden = !open;
+        output.compareStandardsHelp.setAttribute('aria-expanded', String(open));
+      });
+      document.addEventListener('click', (event) => {
+        if (!output.compareStandardsHelpPopover.hidden && !event.target.closest('.class-help-wrap')) closeCompareStandardsHelp();
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') closeCompareStandardsHelp();
       });
     }
 
