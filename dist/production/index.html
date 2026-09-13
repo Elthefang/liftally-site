@@ -9,13 +9,15 @@
   <meta property="og:description" content="Training intelligence shaped by your data and performance." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://liftally.app/" />
-  <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta property="og:site_name" content="Liftally" />
+  <meta property="og:image" content="https://liftally.app/images/liftally-social-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Liftally — AI Strength Training App" />
   <meta name="twitter:description" content="Training intelligence shaped by your data and performance." />
-  <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta name="twitter:image" content="https://liftally.app/images/liftally-social-preview.png" />
   <link rel="canonical" href="https://liftally.app/" />
   <title>Liftally — AI Strength Training App</title>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Liftally?","acceptedAnswer":{"@type":"Answer","text":"Liftally is a strength training app for lifters who want to plan sessions, track performance, and understand training progress over time."}},{"@type":"Question","name":"What can I track with Liftally?","acceptedAnswer":{"@type":"Answer","text":"Liftally helps you track lifts, sessions, training trends, strength metrics, and progress context in one place."}},{"@type":"Question","name":"How does Liftally use training data?","acceptedAnswer":{"@type":"Answer","text":"Liftally uses your recorded training information to present performance context and session-level suggestions. Your results should be used alongside your own judgment and training plan."}},{"@type":"Question","name":"Does Liftally include powerlifting tools?","acceptedAnswer":{"@type":"Answer","text":"Liftally's website includes the Weight Class Explorer, which provides powerlifting class, SBD total, DOTS, and historical performance context."}}]}</script>
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
   <script src="firebase/firebase-config.production.js?v=20260803a"></script>
@@ -611,6 +613,14 @@
 
     .shot-nav:hover { transform: translateY(-2px); }
 
+    .website-faq { padding: 112px 0; background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .website-faq h2 { font-family: var(--font-display); font-size: clamp(48px, 6vw, 80px); line-height: .95; letter-spacing: 2px; margin-bottom: 16px; color: var(--text); }
+    .website-faq-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .website-faq-grid article { padding: 28px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
+    .website-faq-grid h3 { margin-bottom: 10px; font-family: var(--font-cond); font-size: 22px; letter-spacing: .7px; color: var(--text); }
+    .website-faq-grid p { color: var(--muted); line-height: 1.6; }
+    .website-faq-grid a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
 
 
     /* ── CTA ── */
@@ -766,6 +776,7 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-visual { display: none; }
       .feature-grid { grid-auto-columns: calc((100% - 20px) / 2.5); }
+      .website-faq-grid { grid-template-columns: 1fr; }
       .feedback-inner { flex-direction: column; text-align: center; }
       .features::after { display: none; }
       /* Do not rely on an intersection observer before product media becomes
@@ -864,7 +875,7 @@
         <ul class="nav-links">
           <li><a href="/" aria-current="page">Home</a></li>
           <li><a href="/weight-class-explorer">Weight Class Explorer</a></li>
-          <li><a href="request-access.html">Contact</a></li>
+          <li><a href="/request-access">Contact</a></li>
         </ul>
         <div class="site-auth" aria-live="polite">
           <button class="btn btn-secondary" type="button" id="homeSignInButton" hidden>SIGN IN</button>
@@ -1027,6 +1038,18 @@
       </div>
     </section>
 
+    <section class="website-faq" aria-labelledby="website-faq-title">
+      <div class="container">
+        <div class="section-header reveal"><h2 id="website-faq-title">Liftally FAQ</h2><p class="section-lede">A quick overview of what Liftally and its website tools are built to help you understand.</p></div>
+        <div class="website-faq-grid">
+          <article><h3>What is Liftally?</h3><p>Liftally is a strength training app for lifters who want to plan sessions, track performance, and understand training progress over time.</p></article>
+          <article><h3>What can I track with Liftally?</h3><p>Liftally helps you track lifts, sessions, training trends, strength metrics, and progress context in one place.</p></article>
+          <article><h3>How does Liftally use training data?</h3><p>Liftally uses your recorded training information to present performance context and session-level suggestions. Your results should be used alongside your own judgment and training plan.</p></article>
+          <article><h3>Does Liftally include powerlifting tools?</h3><p>Liftally's website includes the <a href="/weight-class-explorer">Weight Class Explorer</a>, which provides powerlifting class, SBD total, DOTS, and historical performance context.</p></article>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA -->
     <section class="cta">
       <div class="container cta-inner reveal">
@@ -1045,7 +1068,7 @@
           <h2>Shape What's Next</h2>
           <p class="section-lede">Tell us what to improve, what you love, and what features you wish we’d build next. We read everything.</p>
         </div>
-        <a class="btn btn-primary btn-large" href="request-access.html" data-gtag="feedback_click" data-propagate-utm="true">Send Feedback</a>
+        <a class="btn btn-primary btn-large" href="/request-access" data-gtag="feedback_click" data-propagate-utm="true">Send Feedback</a>
       </div>
     </section>
   </main>
@@ -1060,7 +1083,8 @@
       <div class="footer-links">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="request-access.html" data-gtag="feedback_click" data-propagate-utm="true">Contact</a>
+        <a href="/app-faq">App FAQ</a>
+        <a href="/request-access" data-gtag="feedback_click" data-propagate-utm="true">Contact</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_ao_lift_site_033&mt=8" target="_blank" rel="noopener" data-gtag="start_free" data-propagate-utm="true">Download</a>
       </div>
     </div>

@@ -9,13 +9,15 @@
   <meta property="og:description" content="Turn bodyweight and SBD numbers into powerlifting class context, total, DOTS, and IPF GL." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://liftally.app/weight-class-explorer" />
-  <meta property="og:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta property="og:site_name" content="Liftally" />
+  <meta property="og:image" content="https://liftally.app/images/liftally-social-preview.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Powerlifting Weight Class Explorer - Liftally" />
   <meta name="twitter:description" content="Compare major powerlifting class standards, SBD total, DOTS, and IPF GL score snapshots." />
-  <meta name="twitter:image" content="https://elthefang.github.io/liftally-site/images/homepage-view-1-removed.png" />
+  <meta name="twitter:image" content="https://liftally.app/images/liftally-social-preview.png" />
   <link rel="canonical" href="https://liftally.app/weight-class-explorer" />
   <title>Powerlifting Weight Class Explorer - Liftally</title>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does Weight Class Explorer do?","acceptedAnswer":{"@type":"Answer","text":"Weight Class Explorer uses your entered bodyweight, competition standard, and lifts to show powerlifting class context, SBD total, DOTS, and historical comparison context."}},{"@type":"Question","name":"What is included in SBD total?","acceptedAnswer":{"@type":"Answer","text":"SBD total is the sum of your best squat, bench press, and deadlift. Enter all three lifts for the most complete total and DOTS context."}},{"@type":"Question","name":"What does the DOTS score mean in this tool?","acceptedAnswer":{"@type":"Answer","text":"The DOTS score uses bodyweight and SBD total to provide a bodyweight-adjusted performance context. Liftally shows it alongside available historical context."}},{"@type":"Question","name":"What does OpenPowerlifting percentile mean?","acceptedAnswer":{"@type":"Answer","text":"An OpenPowerlifting percentile indicates where an entered result falls within matching historical data available to this tool. Data coverage can vary by class and filter combination."}},{"@type":"Question","name":"Where does the benchmark data come from?","acceptedAnswer":{"@type":"Answer","text":"The benchmark data comes from OpenPowerlifting’s May 2026 public dataset. Liftally uses filtered historical raw SBD results to estimate weight class, DOTS, and percentile context. The results are for training and meet-planning reference only, not official rankings."}},{"@type":"Question","name":"What does nearby weight class comparison mean?","acceptedAnswer":{"@type":"Answer","text":"Your bodyweight is mapped to the selected federation-style standard. Nearby weight class comparison shows how the same entered lifts are contextualized around adjacent class boundaries."}},{"@type":"Question","name":"What is Scenario Lab?","acceptedAnswer":{"@type":"Answer","text":"Scenario Lab lets you preview how selected bodyweight or lift changes affect the tool's displayed class, total, DOTS, and percentile context."}},{"@type":"Question","name":"Does the tool predict meet placing?","acceptedAnswer":{"@type":"Answer","text":"No. The tool provides historical and class context only; it does not predict meet placing, determine whether you should compete, or recommend bodyweight changes."}}]}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
   <script src="benchmark-provider.js"></script>
   <script src="firebase/firebase-config.production.js?v=20260803a"></script>
@@ -787,7 +789,7 @@
       padding: 38px 0 16px;
     }
 
-    .screen-title h1 {
+    .screen-title h2 {
       font-size: clamp(2.2rem, 4vw, 3.45rem);
       margin-bottom: 18px;
     }
@@ -801,13 +803,84 @@
       padding-bottom: 6px;
     }
 
-    .screen-title--scenario h1 {
+    .screen-title--scenario h2 {
       margin-bottom: 8px;
     }
 
     #scenarioLabSection {
       padding-top: 12px;
     }
+
+    .seo-content {
+      padding: 80px 0 24px;
+    }
+
+    .seo-content__panel {
+      display: grid;
+      gap: 22px;
+      padding: clamp(24px, 4vw, 42px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: rgba(31, 37, 33, 0.94);
+      box-shadow: 0 20px 52px var(--shadow);
+    }
+
+    .seo-content__panel > div:first-child {
+      display: grid;
+      justify-items: start;
+      text-align: left;
+    }
+
+    .seo-content__panel h2 {
+      max-width: 760px;
+      font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+      margin-bottom: 12px;
+      color: #fff8ee !important;
+      line-height: 1.02;
+      text-shadow: 0 1px 14px rgba(0, 0, 0, 0.28);
+    }
+
+    .seo-content summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      cursor: pointer;
+      color: var(--text);
+      font-family: var(--font-cond);
+      font-size: 1.1rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      list-style: none;
+    }
+
+    .seo-content summary::-webkit-details-marker { display: none; }
+    .seo-content summary::after { content: '+'; color: var(--accent-2); font: 400 1.5rem/1 var(--font-body); }
+    .seo-content details[open] summary::after { content: '−'; }
+    .seo-content summary:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 5px; border-radius: 2px; }
+
+    .seo-content__panel > div:first-child > p:last-child {
+      width: 100%;
+      max-width: 820px;
+      margin: 0;
+      color: rgba(243, 240, 232, 0.78);
+      line-height: 1.65;
+      text-align: left;
+    }
+
+    .seo-content__faq { display: grid; gap: 12px; }
+
+    .seo-content__faq details {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .seo-content__faq details[open] { background: rgba(255, 255, 255, 0.06); border-color: rgba(247, 178, 103, 0.38); }
+    .seo-content__faq details p { margin-top: 14px; color: rgba(243, 240, 232, 0.78); line-height: 1.65; }
+
+    @media (max-width: 700px) { .seo-content { padding-top: 60px; } }
 
     .results {
       padding: 0 22px 18px;
@@ -948,7 +1021,8 @@
       font-size: 0.72rem;
       font-weight: 800;
       letter-spacing: 0.07em;
-      text-transform: uppercase;
+      text-transform: none;
+      letter-spacing: 0.01em;
     }
 
     .milestone-feedback__title {
@@ -5765,7 +5839,7 @@
         <div class="screen-title">
           <div>
             <p class="eyebrow">Result Snapshot</p>
-            <h1>Score snapshot</h1>
+            <h2>Score snapshot</h2>
           </div>
           <div class="snapshot-actions" id="snapshotActions"></div>
         </div>
@@ -5919,7 +5993,7 @@
       <div class="container">
         <div class="screen-title screen-title--scenario">
           <p class="eyebrow">Liftally Competition Planner</p>
-          <h1>Scenario Lab</h1>
+          <h2>Scenario Lab</h2>
           <p>Preview how bodyweight or lift changes affect DOTS and percentile.</p>
         </div>
 
@@ -6050,6 +6124,49 @@
         </div>
       </div>
     </section>
+
+    <section class="seo-content" aria-labelledby="how-it-works-title">
+      <div class="container">
+        <div class="seo-content__panel">
+          <div>
+            <p class="eyebrow">How it works</p>
+            <h2 id="how-it-works-title">Powerlifting class and performance context</h2>
+            <p>Enter your bodyweight, competition standard, and best squat, bench, and deadlift. Liftally shows your weight class, SBD total, DOTS score, and nearby class context using historical OpenPowerlifting data when available. These results are for training and meet-planning context, not an official ranking.</p>
+          </div>
+          <div class="seo-content__faq" aria-label="Weight Class Explorer frequently asked questions">
+            <details><summary>What does Weight Class Explorer do?</summary><p>Weight Class Explorer uses your entered bodyweight, competition standard, and lifts to show powerlifting class context, SBD total, DOTS, and historical comparison context.</p></details>
+            <details>
+              <summary>What does nearby weight class comparison mean?</summary>
+              <p>Your bodyweight is mapped to the selected federation-style standard. Nearby weight class comparison shows how the same entered lifts are contextualized around adjacent class boundaries.</p>
+            </details>
+            <details>
+              <summary>What is included in SBD total?</summary>
+              <p>SBD total is the sum of your best squat, bench press, and deadlift. Enter all three lifts for the most complete total and DOTS context.</p>
+            </details>
+            <details>
+              <summary>What does the DOTS score mean in this tool?</summary>
+              <p>The DOTS score uses bodyweight and SBD total to provide a bodyweight-adjusted performance context. Liftally shows it alongside available historical context.</p>
+            </details>
+            <details>
+              <summary>What does OpenPowerlifting percentile mean?</summary>
+              <p>An OpenPowerlifting percentile indicates where an entered result falls within matching historical data available to this tool. Data coverage can vary by class and filter combination.</p>
+            </details>
+            <details>
+              <summary>Where does the benchmark data come from?</summary>
+              <p>The benchmark data comes from OpenPowerlifting’s May 2026 public dataset. Liftally uses filtered historical raw SBD results to estimate weight class, DOTS, and percentile context. The results are for training and meet-planning reference only, not official rankings.</p>
+            </details>
+            <details>
+              <summary>What is Scenario Lab?</summary>
+              <p>Scenario Lab lets you preview how selected bodyweight or lift changes affect the tool's displayed class, total, DOTS, and percentile context.</p>
+            </details>
+            <details>
+              <summary>Does the tool predict meet placing?</summary>
+              <p>No. The tool provides historical and class context only; it does not predict meet placing, determine whether you should compete, or recommend bodyweight changes.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -6062,6 +6179,7 @@
       <div class="footer-links">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
+        <a href="/app-faq">App FAQ</a>
         <a href="/request-access" data-gtag="send_feedback" data-propagate-utm="true">Send Feedback</a>
         <a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_weight_class_explorer&mt=8" target="_blank" rel="noopener" data-gtag="download_liftally" data-propagate-utm="true">Download</a>
       </div>
