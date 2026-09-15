@@ -669,7 +669,7 @@
       position: absolute;
       inset: 0 auto auto 0;
       width: 100%;
-      min-height: calc(100vh - 104px);
+      min-height: 0;
       opacity: 0;
       transform: translateX(8%) scale(0.985);
       visibility: hidden;
@@ -680,6 +680,7 @@
 
     .wizard-screen.is-active {
       position: relative;
+      min-height: 0;
       opacity: 1;
       transform: translateX(0) scale(1);
       visibility: visible;
@@ -5619,6 +5620,62 @@
     }
   </style>
   <link rel="stylesheet" href="site.css" />
+  <style>
+    .cross-chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; }
+    .cross-chart-toolbar::before { content:'Percentile by weight class'; color:var(--text-secondary); font:700 .88rem/1.2 var(--font-ui); }
+    .cross-chart-toggle { display:inline-flex; gap:3px; padding:3px; border:1px solid var(--border-default); border-radius:999px; background:rgba(255,255,255,.7); }
+    .cross-chart-toggle__button { border:0; border-radius:999px; padding:7px 11px; background:transparent; color:var(--text-secondary); font:700 .74rem/1.2 var(--font-ui); cursor:pointer; }
+    .cross-chart-toggle__button.is-selected { background:var(--accent); color:#fff; }
+    .cross-chart-toggle__button:focus-visible, .cross-chart-bar:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    .cross-chart-scroll { overflow-x:hidden; overflow-anchor:none; padding:4px 4px 0 34px; }
+    .cross-chart-scroll.is-expanded { overflow-x:auto; }
+    .cross-chart { position:relative; width:100%; min-width:0; padding-top:4px; }
+    .cross-chart-scroll.is-expanded .cross-chart { min-width:100%; }
+    .cross-chart-axis { position:absolute; left:-30px; top:4px; bottom:34px; display:flex; flex-direction:column; justify-content:space-between; color:var(--text-muted); font-size:.68rem; }
+    .cross-chart-bars { display:grid; grid-template-columns:repeat(var(--visible-class-count), minmax(64px,1fr)); align-items:end; min-height:264px; border-bottom:1px solid var(--border-default); background:repeating-linear-gradient(to bottom, transparent 0, transparent calc(25% - 1px), rgba(32,35,33,.07) calc(25% - 1px), rgba(32,35,33,.07) 25%); }
+    .cross-chart-bar { position:relative; width:100%; height:248px; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:5px; padding:0 2px; border:0; background:transparent; color:var(--text-primary); cursor:pointer; text-align:center; }
+    .cross-chart-bar__track { width:min(52px,80%); height:205px; display:flex; align-items:flex-end; justify-content:center; }
+    .cross-chart-bar__fill { width:100%; height:var(--bar-height); min-height:6px; border-radius:7px 7px 2px 2px; background:#c9cdca; transition:height .2s ease, background .2s ease; }
+    .cross-chart-bar.is-current .cross-chart-bar__fill { background:var(--accent); }
+    .cross-chart-bar.is-below-p1 .cross-chart-bar__fill { height:8px; background:repeating-linear-gradient(135deg,#c5cbc7 0,#c5cbc7 4px,#8f9892 4px,#8f9892 8px); }
+    .cross-chart-bar.is-unavailable .cross-chart-bar__fill { height:8px; background:transparent; border:1px dashed #9ba29e; }
+    .cross-chart-bar.is-selected .cross-chart-bar__fill { box-shadow:0 0 0 3px rgba(228,91,61,.28); }
+    .cross-chart-bar__value { min-height:16px; color:var(--text-secondary); font-size:.72rem; font-weight:800; white-space:nowrap; }
+    .cross-chart-bar__label { font-weight:700; font-size:.82rem; white-space:nowrap; }
+    .cross-chart-bar.is-current .cross-chart-bar__label { font-weight:800; }
+    .cross-chart-you { position:absolute; bottom:var(--you-bottom); padding:4px 9px; border-radius:7px; background:#202523; color:#fff; font-size:.7rem; font-weight:800; }
+    .cross-chart-you::after { content:''; position:absolute; left:50%; bottom:-5px; width:10px; height:10px; background:#202523; transform:translateX(-50%) rotate(45deg); z-index:-1; }
+    .cross-chart-detail { margin-top:18px; padding:16px; border:1px solid var(--border-default); border-radius:10px; background:rgba(255,255,255,.75); }
+    .cross-chart-detail__head { display:flex; justify-content:space-between; gap:12px; align-items:baseline; margin-bottom:12px; }
+    .cross-chart-detail__head strong { color:#202523; font-size:1.2rem; }
+    .cross-chart-detail__head span { color:var(--text-secondary); font-weight:700; }
+    .cross-chart-detail__grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; color:var(--text-secondary); font-size:.82rem; }
+    .cross-chart-detail__grid span { display:grid; gap:4px; }
+    .cross-chart-detail__grid strong { color:var(--text-primary); font-size:.98rem; }
+    .cross-chart-detail__grid small { color:var(--text-muted); line-height:1.35; }
+    .cross-chart-note { margin:14px 0 0; max-width:760px; color:var(--text-secondary); font-size:.9rem; line-height:1.5; }
+    .cross-chart-detail { margin-top:14px; padding:14px 16px; }
+    .cross-chart-detail__head { margin-bottom:12px; }
+    .cross-chart-detail__head > div:first-child { display:flex; align-items:baseline; flex-wrap:wrap; gap:8px 12px; }
+    .cross-chart-detail__range { font-size:.82rem; font-weight:600 !important; color:var(--text-secondary) !important; }
+    .cross-chart-detail__badges { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; }
+    .cross-chart-detail__badge { padding:4px 8px; border:1px solid var(--border-default); border-radius:999px; color:#3d4540 !important; font-size:.66rem; letter-spacing:.04em; line-height:1; }
+    .cross-chart-detail__badge.is-current { border-color:rgba(228,91,61,.35); background:rgba(228,91,61,.12); color:#a33d28 !important; }
+    .cross-chart-detail__metrics { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .cross-chart-detail__metric { display:grid; gap:3px; padding:10px 12px; border:1px solid rgba(32,35,33,.12); border-radius:8px; background:rgba(255,255,255,.72); }
+    .cross-chart-detail__metric > span { color:var(--text-secondary); font-size:.68rem; font-weight:800; letter-spacing:.08em; }
+    .cross-chart-detail__metric > strong { color:#202523; font-size:1.45rem; line-height:1.05; }
+    .cross-chart-detail__metric > small { color:var(--text-muted); font-size:.74rem; line-height:1.3; }
+    .cross-chart-detail__footer { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; margin-top:10px; color:var(--text-muted); font-size:.75rem; line-height:1.35; }
+    .cross-chart-detail__disclaimer { flex:1 1 360px; }
+    .cross-chart-sample-info { position:relative; display:inline-grid; place-items:center; width:17px; height:17px; margin-left:3px; padding:0; border:1px solid var(--text-muted); border-radius:50%; background:transparent; color:var(--text-secondary); font:700 .68rem/1 var(--font-ui); cursor:pointer; }
+    .cross-chart-sample-info:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+    .cross-chart-sample-tooltip { position:absolute; z-index:4; left:0; bottom:calc(100% + 8px); width:min(280px, calc(100vw - 48px)); padding:8px 10px; border:1px solid var(--border-default); border-radius:7px; background:#202523; color:#fff; box-shadow:0 8px 18px rgba(0,0,0,.16); font-size:.74rem; font-weight:500; }
+    body.site-shell.tool-page #classes .class-card-grid { display:block; width:100%; min-width:0; overflow:visible; padding:0; }
+    @media (max-width:700px) { .cross-chart-scroll.is-expanded { overflow-x:auto; } .cross-chart-scroll.is-expanded .cross-chart { min-width:calc(var(--visible-class-count) * 72px); } }
+    @media (max-width:640px) { .cross-chart-toolbar { align-items:stretch; flex-direction:column; } .cross-chart-toolbar::before { content:'Percentile by weight class'; } .cross-chart-toggle { width:100%; } .cross-chart-toggle__button { flex:1; } .cross-chart-detail__head { align-items:flex-start; flex-direction:column; gap:8px; } .cross-chart-detail__badges { justify-content:flex-start; } .cross-chart-detail__footer { display:block; } .cross-chart-detail__disclaimer { display:block; margin-top:8px; } }
+    @media (max-width:420px) { .cross-chart-detail__metrics { grid-template-columns:1fr; } }
+  </style>
 </head>
 <body class="site-shell tool-page">
   <header class="site-header">
@@ -5933,7 +5990,13 @@
           </div>
 
           <div class="comparison-card">
-            <div class="class-card-grid" id="classCards" aria-label="Nearby powerlifting class context">
+            <div class="cross-chart-toolbar" aria-label="Percentile metric">
+              <div class="cross-chart-toggle" role="group" aria-label="Select percentile metric">
+                <button type="button" class="cross-chart-toggle__button is-selected" id="crossChartTotalToggle" aria-pressed="true">Total percentile</button>
+                <button type="button" class="cross-chart-toggle__button" id="crossChartDotsToggle" aria-pressed="false">DOTS percentile</button>
+              </div>
+            </div>
+            <div class="class-card-grid" id="classCards" aria-label="Historical percentile by weight class">
               <article class="class-card" aria-disabled="true">
                 <span class="status">Waiting</span>
                 <span class="class-name">-</span>
@@ -5941,8 +6004,10 @@
               </article>
             </div>
             <div class="class-comparison-controls" id="classComparisonControls" hidden>
-              <button class="class-comparison-toggle" type="button" id="classComparisonToggle" aria-expanded="false" aria-controls="classCards">Show more nearby classes</button>
+              <button class="class-comparison-toggle" type="button" id="classComparisonToggle" aria-expanded="false" aria-controls="classCards">Show all classes</button>
             </div>
+            <section class="cross-chart-detail" id="crossChartDetail" aria-live="polite" aria-label="Selected weight class details" hidden></section>
+            <p class="cross-chart-note">This compares the same entered performance with historical results in each class. It does not predict how changing bodyweight would affect your strength, eligibility, or meet placing.</p>
             <p class="class-explanation is-empty-state" id="classExplanation" aria-live="polite">Enter squat, bench, and deadlift to compare historical percentiles across weight classes.</p>
           </div>
         </section>
@@ -6138,7 +6203,6 @@
             <details>
               <summary>What does nearby weight class comparison mean?</summary>
               <p>Your bodyweight is mapped to the selected federation-style standard. Nearby weight class comparison shows how the same entered lifts are contextualized around adjacent class boundaries.</p>
-            </details>
             <details>
               <summary>What is included in SBD total?</summary>
               <p>SBD total is the sum of your best squat, bench press, and deadlift. Enter all three lifts for the most complete total and DOTS context.</p>
@@ -6257,6 +6321,9 @@
       classComparisonControls: document.getElementById('classComparisonControls'),
       classComparisonScope: document.getElementById('classComparisonScope'),
       classComparisonToggle: document.getElementById('classComparisonToggle'),
+      crossChartTotalToggle: document.getElementById('crossChartTotalToggle'),
+      crossChartDotsToggle: document.getElementById('crossChartDotsToggle'),
+      crossChartDetail: document.getElementById('crossChartDetail'),
       nearbyClassesHelp: document.getElementById('nearbyClassesHelp'),
       nearbyClassesHelpPopover: document.getElementById('nearbyClassesHelpPopover'),
       compareStandardsHelp: document.getElementById('compareStandardsHelp'),
@@ -6370,6 +6437,9 @@
     let classContextRenderId = 0;
     let classComparisonState = { advanced: false, lastArgs: null };
     let classComparisonCollapseTimer = null;
+    let crossChartMetric = 'total';
+    let crossChartEntries = [];
+    let crossChartSelectedIndex = null;
     let pinnedSnapshotAnimationFrame = null;
     let scenarioRenderId = 0;
     let scenarioBodyweightSelected = false;
@@ -8814,17 +8884,83 @@
       `;
     }
 
-    function renderScenarioChart(entries, unit, currentBenchmarkContext, currentIndex) {
-      return `
-        <div class="scenario-chart" role="group" aria-label="Historical percentile by weight class">
-          ${entries.map((entry) => renderScenarioChartRow({
-            ...entry,
-            unit,
-            currentBenchmarkContext,
-            isExtended: Number.isFinite(currentIndex) && Math.abs(entry.index - currentIndex) === 2
-          })).join('')}
+    function crossChartScore(entry) {
+      return entry && entry.benchmarkContext ? entry.benchmarkContext[crossChartMetric] : null;
+    }
+
+    function crossChartDisplay(score) {
+      return score && score.status === 'ready' ? percentileDisplay(score) : 'Unavailable';
+    }
+
+    function crossChartHeight(score) {
+      if (!score || score.status !== 'ready') return 0;
+      return percentileBarValue(score);
+    }
+
+    function centerCrossChartBar(index) {
+      const viewport = output.classCards && output.classCards.querySelector('.cross-chart-scroll');
+      const bar = viewport && viewport.querySelector(`[data-cross-chart-index="${index}"]`);
+      if (!viewport || !bar || viewport.scrollWidth <= viewport.clientWidth) return;
+      const targetLeft = bar.offsetLeft - (viewport.clientWidth - bar.offsetWidth) / 2;
+      const left = Math.max(0, Math.min(targetLeft, viewport.scrollWidth - viewport.clientWidth));
+      if (typeof viewport.scrollTo === 'function') viewport.scrollTo({ left, behavior: 'auto' });
+      else viewport.scrollLeft = left;
+    }
+
+    function renderCrossChartDetail(entry, currentEntry, unit, currentIndex) {
+      if (!output.crossChartDetail || !entry) return;
+      const total = entry.benchmarkContext && entry.benchmarkContext.total;
+      const dots = entry.benchmarkContext && entry.benchmarkContext.dots;
+      const currentTotal = currentEntry && currentEntry.benchmarkContext && currentEntry.benchmarkContext.total;
+      const currentDots = currentEntry && currentEntry.benchmarkContext && currentEntry.benchmarkContext.dots;
+      const match = entry.benchmarkContext && entry.benchmarkContext.match ? entry.benchmarkContext.match : {};
+      const delta = (score, current) => score && current && score.status === 'ready' && current.status === 'ready' && score.percentile !== null && current.percentile !== null
+        ? `${score.percentile - current.percentile > 0 ? '+' : ''}${score.percentile - current.percentile} pts`
+        : 'Unavailable';
+      const totalN = total && total.status === 'ready' && Number.isFinite(Number(total.sampleSize)) ? Number(total.sampleSize) : null;
+      const dotsN = dots && dots.status === 'ready' && Number.isFinite(Number(dots.sampleSize)) ? Number(dots.sampleSize) : null;
+      const sameSample = totalN !== null && dotsN !== null && totalN === dotsN;
+      const sampleInfo = 'Entries are deduplicated historical lifter results used for the selected benchmark group.';
+      const sampleLine = (label, value) => value === null ? `${label} sample: unavailable` : `${label} sample: ${formatSampleSize(value)} entries`;
+      output.crossChartDetail.hidden = false;
+      output.crossChartDetail.innerHTML = `
+        <div class="cross-chart-detail__head">
+          <div><strong>${entry.item.name}</strong><span class="cross-chart-detail__range">${rangeText(entry.item, unit)}</span></div>
+          <div class="cross-chart-detail__badges"><span class="cross-chart-detail__badge ${entry.role === 'current' ? 'is-current' : ''}">${entry.role === 'current' ? 'CURRENT CLASS' : 'COMPARISON CLASS'}</span><span class="cross-chart-detail__badge">${match.benchmarkStandard || 'Unavailable'}</span><span class="cross-chart-detail__badge">${testedStatusLabel(match.testedStatus).replace(' benchmark', '').toUpperCase()}</span></div>
         </div>
-      `;
+        <div class="cross-chart-detail__metrics">
+          <div class="cross-chart-detail__metric"><span>TOTAL PERCENTILE</span><strong>${crossChartDisplay(total)}</strong><small>${entry.role === 'current' ? 'Baseline' : `${delta(total, currentTotal)} vs current class`}${!sameSample ? ` · ${sampleLine('Total', totalN)}` : ''}</small></div>
+          <div class="cross-chart-detail__metric"><span>DOTS PERCENTILE</span><strong>${crossChartDisplay(dots)}</strong><small>${entry.role === 'current' ? 'Baseline' : `${delta(dots, currentDots)} vs current class`}${!sameSample ? ` · ${sampleLine('DOTS', dotsN)}` : ''}</small></div>
+        </div>
+        <div class="cross-chart-detail__footer">
+          ${sameSample ? `<span>Based on ${formatSampleSize(totalN)} historical entries <button type="button" class="cross-chart-sample-info" aria-label="Explain historical entries" aria-expanded="false" title="${sampleInfo}">i</button><span class="cross-chart-sample-tooltip" role="tooltip" hidden>${sampleInfo}</span></span>` : ''}
+          <span class="cross-chart-detail__disclaimer">Compares the same entered performance across historical weight-class benchmarks. It does not predict strength changes or meet placing.</span>
+        </div>`;
+    }
+
+    function renderScenarioChart(entries, unit, currentBenchmarkContext, currentIndex) {
+      const currentEntry = entries.find((entry) => entry.role === 'current') || entries.find((entry) => entry.index === currentIndex);
+      if (crossChartSelectedIndex === null || !entries.some((entry) => entry.index === crossChartSelectedIndex)) crossChartSelectedIndex = currentIndex;
+      const selected = entries.find((entry) => entry.index === crossChartSelectedIndex) || currentEntry;
+      crossChartEntries = entries;
+      if (selected) window.setTimeout(() => {
+        renderCrossChartDetail(selected, currentEntry, unit, currentIndex);
+        const currentBar = output.classCards && output.classCards.querySelector('.cross-chart-bar.is-current');
+        if (currentBar) centerCrossChartBar(currentIndex);
+      }, 0);
+      const chartMode = entries.length > 5 ? 'is-expanded' : 'is-nearby';
+      return `<div class="cross-chart-scroll ${chartMode}" style="--visible-class-count:${entries.length}"><div class="cross-chart" role="list" aria-label="Historical percentile by weight class">
+        <div class="cross-chart-axis" aria-hidden="true"><span>P100</span><span>P75</span><span>P50</span><span>P25</span><span>P0</span></div>
+        <div class="cross-chart-bars">${entries.map((entry) => {
+          const score = crossChartScore(entry);
+          const selectedState = selected && selected.index === entry.index;
+          const isCurrent = entry.role === 'current';
+          const label = `${entry.item.name} class${isCurrent ? ', current class' : ', comparison class'}, ${crossChartMetric === 'total' ? 'Total' : 'DOTS'} percentile ${crossChartDisplay(score)}, ${crossChartMetric === 'total' ? 'Total' : 'DOTS'} sample size ${score && score.status === 'ready' ? formatSampleSize(score.sampleSize) : 'unavailable'}`;
+          const stateClass = score && score.status === 'ready' && !score.percentile ? 'is-below-p1' : (!score || score.status !== 'ready' ? 'is-unavailable' : '');
+          return `<button type="button" class="cross-chart-bar ${isCurrent ? 'is-current' : ''} ${selectedState ? 'is-selected' : ''} ${stateClass}" data-cross-chart-index="${entry.index}" aria-pressed="${selectedState}" aria-label="${label}" title="${label}" style="--bar-height:${crossChartHeight(score)}%; --you-bottom:${28 + (crossChartHeight(score) * 2.05)}px">
+            ${isCurrent ? '<span class="cross-chart-you">You</span>' : ''}<span class="cross-chart-bar__value">${crossChartDisplay(score)}</span><span class="cross-chart-bar__track"><span class="cross-chart-bar__fill"></span></span><span class="cross-chart-bar__label">${entry.item.name}</span>
+          </button>`;
+        }).join('')}</div></div></div>`;
     }
 
     function classComparisonTargetBodyweight(item, index, currentIndex, bodyweightKg) {
@@ -8875,8 +9011,8 @@
         .filter((index) => index >= 0 && index < list.length)
         .map((index) => classComparisonEntry(list, index, currentIndex, bodyweightKg));
 
-      if (classComparisonState.advanced) return candidates;
-      return candidates.filter((entry) => entry.role === 'current' || (Math.abs(entry.index - currentIndex) === 1 && entry.changePercent !== null && entry.changePercent <= 10));
+      if (classComparisonState.advanced) return list.map((item, index) => classComparisonEntry(list, index, currentIndex, bodyweightKg));
+      return candidates;
     }
 
     function updateClassComparisonControls(list, currentIndex, bodyweightKg) {
@@ -8885,8 +9021,8 @@
       output.classComparisonControls.hidden = !hasExtendedClasses;
       if (!hasExtendedClasses) return;
       output.classComparisonToggle.textContent = classComparisonState.advanced
-        ? 'Show fewer classes'
-        : 'Show more nearby classes';
+        ? 'Show nearby classes'
+        : 'Show all classes';
       output.classComparisonToggle.setAttribute('aria-expanded', String(classComparisonState.advanced));
       output.classCards.dataset.comparisonState = classComparisonState.advanced ? 'expanded' : 'collapsed';
     }
@@ -9359,6 +9495,24 @@
       output.classComparisonToggle.addEventListener('click', () => {
         const args = classComparisonState.lastArgs;
         if (!args) return;
+        const documentScrollY = window.scrollY;
+        const renderAndRestoreScroll = () => {
+          const renderPromise = renderClassContext(
+            args.standardKey,
+            args.sex,
+            args.unit,
+            args.currentIndex,
+            args.totalKg,
+            args.dots,
+            args.gl,
+            args.bodyweightKg
+          );
+          if (renderPromise && typeof renderPromise.then === 'function') {
+            renderPromise.then(() => {
+              if (window.scrollY !== documentScrollY) window.scrollTo({ top: documentScrollY, behavior: 'auto' });
+            });
+          }
+        };
         const transitionTarget = output.classCards;
         if (classComparisonCollapseTimer !== null) {
           window.clearTimeout(classComparisonCollapseTimer);
@@ -9370,16 +9524,7 @@
 
         if (!classComparisonState.advanced || prefersReducedMotion) {
           classComparisonState.advanced = true;
-          renderClassContext(
-            args.standardKey,
-            args.sex,
-            args.unit,
-            args.currentIndex,
-            args.totalKg,
-            args.dots,
-            args.gl,
-            args.bodyweightKg
-          );
+          renderAndRestoreScroll();
           return;
         }
 
@@ -9389,19 +9534,61 @@
           classComparisonCollapseTimer = null;
           transitionTarget.classList.remove('is-collapsing');
           classComparisonState.advanced = false;
-          renderClassContext(
-            args.standardKey,
-            args.sex,
-            args.unit,
-            args.currentIndex,
-            args.totalKg,
-            args.dots,
-            args.gl,
-            args.bodyweightKg
-          );
+          renderAndRestoreScroll();
         }, 220);
       });
     }
+
+    function selectCrossChartBar(index, moveFocus = false) {
+      const entry = crossChartEntries.find((item) => item.index === index);
+      if (!entry) return;
+      crossChartSelectedIndex = index;
+      const currentEntry = crossChartEntries.find((item) => item.role === 'current');
+      output.classCards.innerHTML = renderScenarioChart(crossChartEntries, getSelected('unit'), currentEntry && currentEntry.benchmarkContext, currentEntry ? currentEntry.index : index);
+      renderCrossChartDetail(entry, currentEntry, getSelected('unit'), currentEntry ? currentEntry.index : index);
+      const button = output.classCards.querySelector(`[data-cross-chart-index="${index}"]`);
+      if (button && moveFocus) button.focus();
+      if (button) centerCrossChartBar(index);
+    }
+
+    output.classCards.addEventListener('click', (event) => {
+      const bar = event.target.closest('[data-cross-chart-index]');
+      if (bar) selectCrossChartBar(Number(bar.dataset.crossChartIndex));
+    });
+    output.classCards.addEventListener('keydown', (event) => {
+      const bar = event.target.closest('[data-cross-chart-index]');
+      if (!bar || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+      const indexes = crossChartEntries.map((entry) => entry.index);
+      const current = indexes.indexOf(Number(bar.dataset.crossChartIndex));
+      const next = event.key === 'Home' ? 0 : event.key === 'End' ? indexes.length - 1 : current + (event.key === 'ArrowRight' ? 1 : -1);
+      if (next < 0 || next >= indexes.length) return;
+      event.preventDefault();
+      selectCrossChartBar(indexes[next], true);
+    });
+    const setCrossChartMetric = (metric) => {
+      crossChartMetric = metric;
+      output.crossChartTotalToggle?.classList.toggle('is-selected', metric === 'total');
+      output.crossChartDotsToggle?.classList.toggle('is-selected', metric === 'dots');
+      output.crossChartTotalToggle?.setAttribute('aria-pressed', String(metric === 'total'));
+      output.crossChartDotsToggle?.setAttribute('aria-pressed', String(metric === 'dots'));
+      if (crossChartEntries.length) {
+        const currentEntry = crossChartEntries.find((entry) => entry.role === 'current');
+        output.classCards.innerHTML = renderScenarioChart(crossChartEntries, getSelected('unit'), currentEntry && currentEntry.benchmarkContext, currentEntry ? currentEntry.index : 0);
+        const selected = crossChartEntries.find((entry) => entry.index === crossChartSelectedIndex) || currentEntry;
+        renderCrossChartDetail(selected, currentEntry, getSelected('unit'), currentEntry ? currentEntry.index : 0);
+      }
+    };
+    output.crossChartTotalToggle?.addEventListener('click', () => setCrossChartMetric('total'));
+    output.crossChartDotsToggle?.addEventListener('click', () => setCrossChartMetric('dots'));
+    output.crossChartDetail.addEventListener('click', (event) => {
+      const info = event.target.closest('.cross-chart-sample-info');
+      if (!info) return;
+      const tooltip = info.parentElement.querySelector('.cross-chart-sample-tooltip');
+      if (!tooltip) return;
+      const open = tooltip.hidden;
+      tooltip.hidden = !open;
+      info.setAttribute('aria-expanded', String(open));
+    });
     if (output.openAuthModalButton) output.openAuthModalButton.addEventListener('click', openAuthModal);
     if (output.closeAuthModalButton) output.closeAuthModalButton.addEventListener('click', closeAuthModal);
     quickBenchmarkFeedbackButtons().forEach((button) => {
