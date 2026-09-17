@@ -17,7 +17,7 @@
   <meta name="twitter:image" content="https://liftally.app/images/liftally-social-preview.png" />
   <link rel="canonical" href="https://liftally.app/weight-class-explorer" />
   <title>Powerlifting Weight Class Explorer - Liftally</title>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does Weight Class Explorer do?","acceptedAnswer":{"@type":"Answer","text":"Weight Class Explorer uses your entered bodyweight, competition standard, and lifts to show powerlifting class context, SBD total, DOTS, and historical comparison context."}},{"@type":"Question","name":"What is included in SBD total?","acceptedAnswer":{"@type":"Answer","text":"SBD total is the sum of your best squat, bench press, and deadlift. Enter all three lifts for the most complete total and DOTS context."}},{"@type":"Question","name":"What does the DOTS score mean in this tool?","acceptedAnswer":{"@type":"Answer","text":"The DOTS score uses bodyweight and SBD total to provide a bodyweight-adjusted performance context. Liftally shows it alongside available historical context."}},{"@type":"Question","name":"What does OpenPowerlifting percentile mean?","acceptedAnswer":{"@type":"Answer","text":"An OpenPowerlifting percentile indicates where an entered result falls within matching historical data available to this tool. Data coverage can vary by class and filter combination."}},{"@type":"Question","name":"Where does the benchmark data come from?","acceptedAnswer":{"@type":"Answer","text":"The benchmark data comes from OpenPowerlifting’s May 2026 public dataset. Liftally uses filtered historical raw SBD results to estimate weight class, DOTS, and percentile context. The results are for training and meet-planning reference only, not official rankings."}},{"@type":"Question","name":"What does nearby weight class comparison mean?","acceptedAnswer":{"@type":"Answer","text":"Your bodyweight is mapped to the selected federation-style standard. Nearby weight class comparison shows how the same entered lifts are contextualized around adjacent class boundaries."}},{"@type":"Question","name":"What is Scenario Lab?","acceptedAnswer":{"@type":"Answer","text":"Scenario Lab lets you preview how selected bodyweight or lift changes affect the tool's displayed class, total, DOTS, and percentile context."}},{"@type":"Question","name":"Does the tool predict meet placing?","acceptedAnswer":{"@type":"Answer","text":"No. The tool provides historical and class context only; it does not predict meet placing, determine whether you should compete, or recommend bodyweight changes."}}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does Weight Class Explorer do?","acceptedAnswer":{"@type":"Answer","text":"Weight Class Explorer uses your entered bodyweight, competition standard, and lifts to show powerlifting class context, SBD total, DOTS, and historical comparison context."}},{"@type":"Question","name":"What is included in SBD total?","acceptedAnswer":{"@type":"Answer","text":"SBD total is the sum of your best squat, bench press, and deadlift. Enter all three lifts for the most complete total and DOTS context."}},{"@type":"Question","name":"What does the DOTS score mean in this tool?","acceptedAnswer":{"@type":"Answer","text":"The DOTS score uses bodyweight and SBD total to provide a bodyweight-adjusted performance context. Liftally shows it alongside available historical context."}},{"@type":"Question","name":"What does OpenPowerlifting percentile mean?","acceptedAnswer":{"@type":"Answer","text":"An OpenPowerlifting percentile indicates where an entered result falls within matching historical data available to this tool. Data coverage can vary by class and filter combination."}},{"@type":"Question","name":"Where does the benchmark data come from?","acceptedAnswer":{"@type":"Answer","text":"The benchmark data comes from OpenPowerlifting’s May 2026 public dataset. Liftally uses filtered historical raw SBD results to estimate weight class, DOTS, and percentile context. The results are for training and meet-planning reference only, not official rankings."}},{"@type":"Question","name":"How are historical results organized?","acceptedAnswer":{"@type":"Answer","text":"Your best squat, bench press, and deadlift are compared with the best valid results retained for each approximate historical lifter within the same benchmark group and recent ten-year period. Groups are separated by competition standard, sex, weight class, testing status, Raw equipment, and SBD event. Historical lifter identity is approximated using name and sex, and the three lift samples may include different historical entries."}},{"@type":"Question","name":"What does nearby weight class comparison mean?","acceptedAnswer":{"@type":"Answer","text":"Your bodyweight is mapped to the selected federation-style standard. Nearby weight class comparison shows how the same entered lifts are contextualized around adjacent class boundaries."}},{"@type":"Question","name":"What is Scenario Lab?","acceptedAnswer":{"@type":"Answer","text":"Scenario Lab lets you preview how selected bodyweight or lift changes affect the tool's displayed class, total, DOTS, and percentile context."}},{"@type":"Question","name":"Does the tool predict meet placing?","acceptedAnswer":{"@type":"Answer","text":"No. The tool provides historical and class context only; it does not predict meet placing, determine whether you should compete, or recommend bodyweight changes."}}]}</script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-H20Z94NQHJ"></script>
   <script src="benchmark-provider.js"></script>
   <script src="firebase/firebase-config.production.js?v=20260803a"></script>
@@ -1286,7 +1286,7 @@
     .benchmark-quick-feedback__question { color: var(--text-on-dark); }
     .benchmark-quick-feedback__choices { display: flex; gap: 7px; }
     .benchmark-quick-feedback__chip {
-      min-height: 32px;
+      min-height: 44px;
       padding: 5px 11px;
       border: 1px solid rgba(247, 247, 243, 0.48);
       border-radius: 999px;
@@ -1309,6 +1309,12 @@
       font: inherit;
       cursor: pointer;
     }
+    .section-feedback:not(#benchmarkQuickFeedback) { color:var(--text-secondary); }
+    .section-feedback:not(#benchmarkQuickFeedback) .benchmark-quick-feedback__question { color:var(--text-primary); }
+    .section-feedback:not(#benchmarkQuickFeedback) .benchmark-quick-feedback__chip { border-color:var(--border-default); color:var(--text-secondary); }
+    .section-feedback:not(#benchmarkQuickFeedback) .benchmark-quick-feedback__chip:hover,
+    .section-feedback:not(#benchmarkQuickFeedback) .benchmark-quick-feedback__chip:focus-visible { border-color:var(--accent); color:var(--text-primary); }
+    .section-feedback:not(#benchmarkQuickFeedback) .benchmark-quick-feedback__status { color:var(--text-secondary); }
 
     @media (max-width: 660px) {
       .benchmark-panel > .benchmark-meta {
@@ -5621,6 +5627,34 @@
   </style>
   <link rel="stylesheet" href="site.css" />
   <style>
+    .sbd-profile-card { margin:18px 0 16px; padding:16px; border:1px solid var(--border-default); border-radius:12px; background:#fffdf8; box-shadow:0 8px 20px rgba(32,35,33,.06); }
+    .sbd-profile-card__header { display:flex; align-items:center; gap:16px; justify-content:space-between; }
+    .profile-card-title { margin:0; color:var(--text-primary); font:700 clamp(26px,2.4vw,34px)/1 var(--font-display); letter-spacing:.01em; }
+    .sbd-profile-card__body { display:grid; grid-template-columns:1fr; justify-items:center; gap:0; margin-top:12px; }
+    .sbd-profile-chart-wrap { min-width:280px; position:relative; }
+    .sbd-profile-axis-labels { position:absolute; inset:0; pointer-events:none; }
+    .sbd-profile-axis-labels > div { position:absolute; display:grid; gap:5px; color:var(--text-primary); font:700 clamp(16px,1.5vw,18px)/1.1 var(--font-ui); letter-spacing:.02em; }
+    .sbd-profile-axis-labels strong { color:var(--text-primary); font-size:inherit; }
+    .sbd-profile-axis-labels span { display:none; }
+    .sbd-profile-axis-labels .is-squat { top:0; left:50%; transform:translateX(-50%); text-align:center; }
+    .sbd-profile-axis-labels .is-deadlift { left:4%; bottom:0; text-align:left; }
+    .sbd-profile-axis-labels .is-bench { right:4%; bottom:0; text-align:right; }
+    .sbd-profile-chart { display:block; width:100%; height:380px; overflow:visible; }
+    .sbd-profile-grid { fill:none; stroke:rgba(90,96,91,.2); stroke-width:1; }
+    .sbd-profile-axis { stroke:rgba(90,96,91,.28); stroke-width:1; }
+    .sbd-profile-axis-label { fill:var(--text-secondary); font:700 9px var(--font-ui); letter-spacing:.03em; }
+    .sbd-profile-guide-label { fill:var(--text-muted); font:600 12px var(--font-ui); pointer-events:none; }
+    .sbd-profile-scale-dot, .sbd-profile-endpoint { fill:var(--text-muted); }
+    .sbd-profile-scale-dot { r:2.5; }
+    .sbd-profile-endpoint { r:3.5; }
+    .sbd-profile-axis-name { fill:var(--text-primary); font:700 15px var(--font-display); letter-spacing:.02em; }
+    .sbd-profile-point-label { fill:var(--accent); font:700 20px var(--font-display); pointer-events:none; }
+    .sbd-profile-area { fill:rgba(228,91,61,.14); stroke:var(--accent); stroke-width:2; stroke-linejoin:round; }
+    .sbd-profile-point { cursor:default; }
+    .sbd-profile-point circle { fill:var(--accent); stroke:#fff; stroke-width:2; }
+    @media (max-width:700px) { .sbd-profile-card__body { grid-template-columns:1fr; } .sbd-profile-chart-wrap { width:min(100%,340px); margin:0 auto; } .sbd-profile-chart { height:330px; } }
+    @media (max-width:700px) { .sbd-profile-guide-label.is-low-priority { display:none; } }
+    @media (max-width:420px) { .sbd-profile-card { padding:13px; } .sbd-profile-card__header { gap:9px; } .profile-card-title { font-size:26px; } .sbd-profile-axis-name { font-size:13px; } .sbd-profile-point-label { font-size:16px; } .sbd-profile-axis-labels > div { font-size:14px; gap:4px; } .sbd-profile-axis-labels span { font-size:21px; } .sbd-profile-guide-label.is-low-priority { display:none; } }
     .cross-chart-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; }
     .cross-chart-toolbar::before { content:'Percentile by weight class'; color:var(--text-secondary); font:700 .88rem/1.2 var(--font-ui); }
     .cross-chart-toggle { display:inline-flex; gap:3px; padding:3px; border:1px solid var(--border-default); border-radius:999px; background:rgba(255,255,255,.7); }
@@ -5675,6 +5709,20 @@
     @media (max-width:700px) { .cross-chart-scroll.is-expanded { overflow-x:auto; } .cross-chart-scroll.is-expanded .cross-chart { min-width:calc(var(--visible-class-count) * 72px); } }
     @media (max-width:640px) { .cross-chart-toolbar { align-items:stretch; flex-direction:column; } .cross-chart-toolbar::before { content:'Percentile by weight class'; } .cross-chart-toggle { width:100%; } .cross-chart-toggle__button { flex:1; } .cross-chart-detail__head { align-items:flex-start; flex-direction:column; gap:8px; } .cross-chart-detail__badges { justify-content:flex-start; } .cross-chart-detail__footer { display:block; } .cross-chart-detail__disclaimer { display:block; margin-top:8px; } }
     @media (max-width:420px) { .cross-chart-detail__metrics { grid-template-columns:1fr; } }
+    .section-heading { margin-bottom:30px; }
+    .section-heading .section-eyebrow { margin:0 0 8px; color:var(--text-secondary); font:700 clamp(14px,1.2vw,18px)/1.2 var(--font-body); letter-spacing:.055em; text-transform:uppercase; }
+    .section-heading .section-title { margin:0; color:var(--text-primary); font:700 clamp(38px,4vw,56px)/.98 var(--font-display); letter-spacing:.01em; text-transform:uppercase; text-wrap:balance; max-width:none; }
+    body.site-shell.tool-page #resultsScreen .section-title,
+    body.site-shell.tool-page #benchmarkSection .section-title,
+    body.site-shell.tool-page #classes .section-title,
+    body.site-shell.tool-page #compare .section-title,
+    body.site-shell.tool-page #plannerScreen .section-title { font-size:clamp(38px,4vw,56px) !important; line-height:.98 !important; letter-spacing:.01em !important; margin:0 !important; }
+    .section-title-row { display:flex; align-items:center; gap:12px; }
+    .section-title-row .section-title { flex:0 1 auto; }
+    .section-title-row .class-help-wrap { flex:0 0 auto; }
+    .screen-title.section-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; }
+    .screen-title.section-heading > div:first-child { min-width:0; }
+    @media (max-width:640px) { .section-heading { margin-bottom:22px; } .section-heading .section-title { font-size:38px; } .screen-title.section-heading { display:block; } .screen-title.section-heading .snapshot-actions { margin-top:16px; } .section-title-row { align-items:flex-start; } }
   </style>
 </head>
 <body class="site-shell tool-page">
@@ -5893,10 +5941,10 @@
 
     <section class="wizard-screen" data-screen="2" id="resultsScreen">
       <div class="container">
-        <div class="screen-title">
+        <div class="screen-title section-heading">
           <div>
-            <p class="eyebrow">Result Snapshot</p>
-            <h2>Score snapshot</h2>
+            <p class="eyebrow section-eyebrow">Result Snapshot</p>
+            <h2 class="section-title">Score snapshot</h2>
           </div>
           <div class="snapshot-actions" id="snapshotActions"></div>
         </div>
@@ -5932,10 +5980,16 @@
           </aside>
         </div>
 
+        <div class="benchmark-quick-feedback section-feedback" data-section-feedback="score_snapshot">
+          <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+          <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was the Score Snapshot helpful?"><button class="benchmark-quick-feedback__chip" type="button" data-section-response="yes" aria-pressed="false">Yes</button><button class="benchmark-quick-feedback__chip" type="button" data-section-response="no" aria-pressed="false">No</button></div>
+          <p class="benchmark-quick-feedback__status" aria-live="polite"></p>
+        </div>
+
         <section class="section" id="benchmarkSection" hidden>
-          <div class="section-head">
-            <p class="eyebrow">Historical Benchmark</p>
-            <h2>OpenPowerlifting comparison</h2>
+          <div class="section-head section-heading">
+            <p class="eyebrow section-eyebrow">Historical Benchmark</p>
+            <h2 class="section-title">OpenPowerlifting comparison</h2>
           </div>
 
           <div class="benchmark-panel" id="benchmarkPanel" aria-live="polite">
@@ -5969,7 +6023,20 @@
                 <p class="benchmark-copy" id="benchmarkNextCopy">Shows the next historical Total threshold.</p>
               </article>
             </div>
-            <div class="benchmark-quick-feedback" id="benchmarkQuickFeedback">
+            <section class="sbd-profile-card" id="sbdProfileCard" aria-labelledby="sbdProfileTitle" hidden>
+              <div class="sbd-profile-card__header">
+                <div>
+                  <h3 class="profile-card-title" id="sbdProfileTitle">SBD Percentile Profile</h3>
+                </div>
+              </div>
+              <div class="sbd-profile-card__body">
+                <div class="sbd-profile-chart-wrap">
+                  <div class="sbd-profile-axis-labels" id="sbdProfileAxisLabels" aria-label="Lift percentiles"></div><span id="sbdChartTitle" class="sr-only">SBD percentile profile</span><span id="sbdChartDescription" class="sr-only">Individual squat, bench press, and deadlift percentiles from P0 to P100.</span><span id="sbdProfileAccessibleSummary" class="sr-only"></span><svg id="sbdProfileChart" class="sbd-profile-chart" viewBox="0 0 320 286" role="img" aria-labelledby="sbdChartTitle" aria-describedby="sbdChartDescription">
+                  </svg>
+                </div>
+              </div>
+            </section>
+            <div class="benchmark-quick-feedback section-feedback" id="benchmarkQuickFeedback" data-section-feedback="historical_benchmark">
               <span class="benchmark-quick-feedback__question">Was this helpful?</span>
               <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was this historical benchmark helpful?">
                 <button class="benchmark-quick-feedback__chip" type="button" data-benchmark-feedback="yes" aria-pressed="false">Yes</button>
@@ -5982,10 +6049,10 @@
         </section>
 
         <section class="section" id="classes">
-          <div class="section-head">
+          <div class="section-head section-heading">
               <div>
-              <p class="eyebrow">Weight Class Scenario Comparison</p>
-              <h2>Historical percentile by weight class <span class="class-help-wrap"><button class="class-help-button" id="nearbyClassesHelp" type="button" aria-label="Explain nearby weight classes" aria-expanded="false" aria-controls="nearbyClassesHelpPopover">?</button><span class="info-tip-popover" id="nearbyClassesHelpPopover" role="tooltip" hidden>Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</span></span></h2>
+              <p class="eyebrow section-eyebrow">Weight Class Scenario Comparison</p>
+              <div class="section-title-row"><h2 class="section-title">Historical percentile by weight class</h2><span class="class-help-wrap"><button class="class-help-button" id="nearbyClassesHelp" type="button" aria-label="Explain nearby weight classes" aria-expanded="false" aria-controls="nearbyClassesHelpPopover">?</button><span class="info-tip-popover" id="nearbyClassesHelpPopover" role="tooltip" hidden>Nearby classes are shown when their boundary is within 10% of your entered bodyweight.</span></span></div>
             </div>
           </div>
 
@@ -6009,14 +6076,19 @@
             <section class="cross-chart-detail" id="crossChartDetail" aria-live="polite" aria-label="Selected weight class details" hidden></section>
             <p class="cross-chart-note">This compares the same entered performance with historical results in each class. It does not predict how changing bodyweight would affect your strength, eligibility, or meet placing.</p>
             <p class="class-explanation is-empty-state" id="classExplanation" aria-live="polite">Enter squat, bench, and deadlift to compare historical percentiles across weight classes.</p>
+            <div class="benchmark-quick-feedback section-feedback" data-section-feedback="weight_class_scenario">
+              <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+              <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was the Weight Class Scenario Comparison helpful?"><button class="benchmark-quick-feedback__chip" type="button" data-section-response="yes" aria-pressed="false">Yes</button><button class="benchmark-quick-feedback__chip" type="button" data-section-response="no" aria-pressed="false">No</button></div>
+              <p class="benchmark-quick-feedback__status" aria-live="polite"></p>
+            </div>
           </div>
         </section>
 
         <section class="section" id="compare">
-          <div class="section-head">
+          <div class="section-head section-heading">
             <div>
-              <p class="eyebrow">Standards Table</p>
-              <h2><span id="compareTitle">Weight class by competition standard</span><span class="class-help-wrap"><button class="class-help-button" id="compareStandardsHelp" type="button" aria-label="Explain comparing other standards" aria-expanded="false" aria-controls="compareStandardsHelpPopover">?</button><span class="info-tip-popover" id="compareStandardsHelpPopover" role="tooltip" hidden>Compare your current class and benchmark percentile across different competition standards.</span></span></h2>
+              <p class="eyebrow section-eyebrow">Standards Table</p>
+              <div class="section-title-row"><h2 class="section-title"><span id="compareTitle">Weight class by competition standard</span></h2><span class="class-help-wrap"><button class="class-help-button" id="compareStandardsHelp" type="button" aria-label="Explain comparing other standards" aria-expanded="false" aria-controls="compareStandardsHelpPopover">?</button><span class="info-tip-popover" id="compareStandardsHelpPopover" role="tooltip" hidden>Compare your current class and benchmark percentile across different competition standards.</span></span></div>
             </div>
             <p id="compareCopy"></p>
           </div>
@@ -6045,6 +6117,11 @@
             <strong>Data note</strong>
             <span>Liftally compares your entered SBD total and DOTS score with matching historical <a href="https://openpowerlifting.org/" target="_blank" rel="noopener">OpenPowerlifting</a> results. Dataset source: OpenPowerlifting, May 2026. These benchmarks are for context only and do not predict meet placing or recommend bodyweight or weight-class changes.</span>
           </aside>
+          <div class="benchmark-quick-feedback section-feedback" data-section-feedback="standards_comparison">
+            <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+            <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was the Standards Table helpful?"><button class="benchmark-quick-feedback__chip" type="button" data-section-response="yes" aria-pressed="false">Yes</button><button class="benchmark-quick-feedback__chip" type="button" data-section-response="no" aria-pressed="false">No</button></div>
+            <p class="benchmark-quick-feedback__status" aria-live="polite"></p>
+          </div>
         </section>
 
         <div class="wizard-actions">
@@ -6056,9 +6133,9 @@
 
     <section class="wizard-screen" data-screen="3" id="plannerScreen">
       <div class="container">
-        <div class="screen-title screen-title--scenario">
-          <p class="eyebrow">Liftally Competition Planner</p>
-          <h2>Scenario Lab</h2>
+        <div class="screen-title screen-title--scenario section-heading">
+          <p class="eyebrow section-eyebrow">Liftally Competition Planner</p>
+          <h2 class="section-title">Scenario Lab</h2>
           <p>Preview how bodyweight or lift changes affect DOTS and percentile.</p>
         </div>
 
@@ -6171,6 +6248,11 @@
               <div class="scenario-status" id="scenarioBenchmarkMeta"></div>
             </div>
           </div>
+          <div class="benchmark-quick-feedback section-feedback" data-section-feedback="scenario_lab">
+            <span class="benchmark-quick-feedback__question">Was this helpful?</span>
+            <div class="benchmark-quick-feedback__choices" role="group" aria-label="Was the Scenario Lab helpful?"><button class="benchmark-quick-feedback__chip" type="button" data-section-response="yes" aria-pressed="false">Yes</button><button class="benchmark-quick-feedback__chip" type="button" data-section-response="no" aria-pressed="false">No</button></div>
+            <p class="benchmark-quick-feedback__status" aria-live="polite"></p>
+          </div>
         </section>
 
         <div class="cta-panel">
@@ -6214,6 +6296,10 @@
             <details>
               <summary>What does OpenPowerlifting percentile mean?</summary>
               <p>An OpenPowerlifting percentile indicates where an entered result falls within matching historical data available to this tool. Data coverage can vary by class and filter combination.</p>
+            </details>
+            <details>
+              <summary>How are historical results organized?</summary>
+              <p>Your best squat, bench press, and deadlift are compared with the best valid results retained for each approximate historical lifter within the same benchmark group and recent ten-year period. Groups are separated by competition standard, sex, weight class, testing status, Raw equipment, and SBD event. Historical lifter identity is approximated using name and sex, and the three lift samples may include different historical entries.</p>
             </details>
             <details>
               <summary>Where does the benchmark data come from?</summary>
@@ -6346,6 +6432,13 @@
       benchmarkNextPercentile: document.getElementById('benchmarkNextPercentile'),
       benchmarkNextGap: document.getElementById('benchmarkNextGap'),
       benchmarkNextCopy: document.getElementById('benchmarkNextCopy'),
+      sbdProfileCard: document.getElementById('sbdProfileCard'),
+      sbdProfileChart: document.getElementById('sbdProfileChart'),
+      sbdProfileChartWrap: document.querySelector('.sbd-profile-chart-wrap'),
+      sbdChartDescription: document.getElementById('sbdChartDescription'),
+      sbdProfileAxisLabels: document.getElementById('sbdProfileAxisLabels'),
+      sbdProfileAccessibleSummary: document.getElementById('sbdProfileAccessibleSummary'),
+      sbdProfileChartDescription: document.getElementById('sbdProfileChartDescription'),
       benchmarkMeta: document.getElementById('benchmarkMeta'),
       benchmarkTableStatus: document.getElementById('benchmarkTableStatus'),
       benchmarkTableHelper: document.getElementById('benchmarkTableHelper'),
@@ -6736,12 +6829,12 @@
           userId: isNamedAccount(user) ? user.uid : '',
           message: [
             'Quick feedback',
-            'Section: step_2_historical_benchmark',
+            'Section: historical_benchmark',
             `Response: ${response}`,
             `Context: ${feedbackContextText()}`
           ].join('\n')
         });
-        if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Thanks for the feedback.';
+        if (output.benchmarkQuickFeedbackStatus) output.benchmarkQuickFeedbackStatus.textContent = 'Thanks for your feedback.';
         if (output.benchmarkFeedbackFollowUp) output.benchmarkFeedbackFollowUp.hidden = response !== 'no';
       } catch (error) {
         buttons.forEach((button) => { button.disabled = false; });
@@ -6983,6 +7076,27 @@
       const currentClass = classNameWithSpace(calc.currentClass);
       const totalPct = percentileDisplay(benchmark && benchmark.total);
       const dotsPct = percentileDisplay(benchmark && benchmark.dots);
+      let liftContext = null;
+      if (window.benchmarkProvider && typeof window.benchmarkProvider.getLiftBenchmarkContext === 'function' && calc.isFullSbd) {
+        try {
+          liftContext = await window.benchmarkProvider.getLiftBenchmarkContext({
+            standardKey: calc.standardKey,
+            sex: calc.sex,
+            weightClass: benchmarkClassValue(calc.currentClass),
+            testedStatus: 'auto',
+            squatKg: toKg(calc.squat, calc.unit),
+            benchKg: toKg(calc.bench, calc.unit),
+            deadliftKg: toKg(calc.deadlift, calc.unit)
+          });
+        } catch (_) {
+          liftContext = null;
+        }
+      }
+      const shareScores = liftContext && liftContext.status === 'ready' ? [
+        { key: 'squat_kg', label: 'Squat', angle: -90, score: liftContext.squat_kg || { status: 'unavailable' } },
+        { key: 'bench_kg', label: 'Bench Press', angle: 30, score: liftContext.bench_kg || { status: 'unavailable' } },
+        { key: 'deadlift_kg', label: 'Deadlift', angle: 150, score: liftContext.deadlift_kg || { status: 'unavailable' } }
+      ] : null;
       const scenario = generatedImpacts && generatedImpacts.length ? generatedImpacts[0] : null;
       const milestones = [1000, 1200, 1500, 1800, 2000];
       const totalLb = calc.totalKg * 2.20462;
@@ -7046,15 +7160,30 @@
         ctx.font = '700 20px Arial';
         ctx.fillText(label, x + 20, statTop + 108);
       });
-      ctx.fillStyle = '#b8c2bb';
-      ctx.font = '700 24px Arial';
-      ctx.fillText('TOTAL PERCENTILE', 112, 875);
-      ctx.strokeStyle = '#59625d';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(112, 900); ctx.lineTo(968, 900); ctx.stroke();
-      ctx.fillStyle = '#f7f7f3';
-      ctx.font = '800 48px Arial';
-      ctx.fillText(totalPct, 112, 970);
+      // Replace the former standalone Total-percentile block with a compact SBD profile.
+      const profileReady = shareScores ? shareScores.filter((item) => item.score && item.score.status === 'ready') : [];
+      if (profileReady.length) {
+        const profileCenter = { x: 430, y: 935 };
+        const profileRadius = 92;
+        const profileValues = shareScores.map((item) => item.score && item.score.status === 'ready' ? (item.score.percentileLabel === 'P99+' ? 100 : item.score.percentileLabel === 'Below P1' ? 0.5 : Number(item.score.percentile)) : null).filter((value) => Number.isFinite(value));
+        const profileHighest = profileValues.length ? Math.max(...profileValues) : 100;
+        const profileScale = profileHighest <= 5 ? 5 : profileHighest <= 10 ? 10 : profileHighest <= 25 ? 25 : profileHighest <= 50 ? 50 : 100;
+        const profileTicks = profileScale === 100 ? [25, 50, 75, 100] : profileScale === 50 ? [10, 20, 30, 40, 50] : profileScale === 25 ? [5, 10, 15, 20, 25] : profileScale === 10 ? [2, 4, 6, 8, 10] : [1, 2, 3, 4, 5];
+        const profilePoint = (angle, ratio) => { const radians = angle * Math.PI / 180; return { x: profileCenter.x + Math.cos(radians) * profileRadius * ratio, y: profileCenter.y + Math.sin(radians) * profileRadius * ratio }; };
+        const profilePoly = (ratio) => shareScores.map((item) => { const p = profilePoint(item.angle, ratio); return p; });
+        ctx.fillStyle = '#f7f7f3'; ctx.font = '700 24px Arial'; ctx.fillText('SBD PERCENTILE PROFILE', 112, 875);
+        ctx.fillStyle = '#b8c2bb'; ctx.font = '700 20px Arial'; ctx.fillText(`TOTAL ${totalPct}`, 790, 875);
+        ctx.strokeStyle = 'rgba(184,194,187,.5)'; ctx.lineWidth = 2;
+        profileTicks.forEach((tick) => { const pts = profilePoly(tick / profileScale); ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach((p) => ctx.lineTo(p.x, p.y)); ctx.closePath(); ctx.stroke(); });
+        shareScores.forEach((item) => { const p = profilePoint(item.angle, 1); ctx.beginPath(); ctx.moveTo(profileCenter.x, profileCenter.y); ctx.lineTo(p.x, p.y); ctx.stroke(); ctx.fillStyle = '#66716b'; ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill(); });
+        if (profileReady.length >= 2) { const pts = shareScores.map((item) => { const score = item.score && item.score.status === 'ready' ? (item.score.percentileLabel === 'P99+' ? 100 : item.score.percentileLabel === 'Below P1' ? 0.5 : Number(item.score.percentile)) : null; return Number.isFinite(score) ? profilePoint(item.angle, score / profileScale) : null; }).filter(Boolean); ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); pts.slice(1).forEach((p) => ctx.lineTo(p.x, p.y)); if (pts.length === 3) ctx.closePath(); ctx.fillStyle = 'rgba(255,90,69,.14)'; if (pts.length === 3) ctx.fill(); ctx.strokeStyle = '#ff5a45'; ctx.lineWidth = 4; ctx.stroke(); }
+        shareScores.forEach((item) => { const score = item.score && item.score.status === 'ready' ? (item.score.percentileLabel === 'P99+' ? 100 : item.score.percentileLabel === 'Below P1' ? 0.5 : Number(item.score.percentile)) : null; const p = Number.isFinite(score) ? profilePoint(item.angle, score / profileScale) : null; if (p) { ctx.fillStyle = '#ff5a45'; ctx.beginPath(); ctx.arc(p.x, p.y, 9, 0, Math.PI * 2); ctx.fill(); } const end = profilePoint(item.angle, 1); ctx.fillStyle = '#f7f7f3'; ctx.font = '700 24px "Barlow Condensed", Arial'; ctx.textAlign = item.angle === -90 ? 'center' : item.angle < 90 ? 'left' : 'right'; ctx.fillText(item.label, end.x + (item.angle === -90 ? 0 : item.angle < 90 ? 18 : -18), end.y + (item.angle === -90 ? -18 : 34)); ctx.fillStyle = '#ff5a45'; ctx.font = '800 26px "Bebas Neue", Arial'; ctx.fillText(item.score && item.score.status === 'ready' ? sbdProfileDisplay(item.score) : 'Unavailable', end.x + (item.angle === -90 ? 0 : item.angle < 90 ? 18 : -18), end.y + (item.angle === -90 ? 10 : 60)); });
+        ctx.textAlign = 'left';
+      } else {
+        ctx.fillStyle = '#b8c2bb'; ctx.font = '700 24px Arial'; ctx.fillText('TOTAL PERCENTILE', 112, 875);
+        ctx.strokeStyle = '#59625d'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(112, 900); ctx.lineTo(968, 900); ctx.stroke();
+        ctx.fillStyle = '#f7f7f3'; ctx.font = '800 48px Arial'; ctx.fillText(totalPct, 112, 970);
+      }
       if (scenario && Number.isFinite(scenario.dotsChange)) {
         ctx.fillStyle = '#ffb26b';
         ctx.font = '700 28px Arial';
@@ -7809,6 +7938,7 @@
       }
 
       output.benchmarkMeta.innerHTML = benchmarkMetadataHtml(context);
+      renderSbdProfile(context, unit);
     }
 
     function compactBenchmarkCell(context) {
@@ -7833,6 +7963,116 @@
       }
       await ensureBenchmarkDataLoaded().catch(() => null);
       return window.benchmarkProvider.getBenchmarkContext(input);
+    }
+
+    async function loadLiftBenchmarkContext(input) {
+      if (!window.benchmarkProvider || typeof window.benchmarkProvider.getLiftBenchmarkContext !== 'function') {
+        return { status: 'fetch_error', reason: 'Individual lift benchmark provider is unavailable.' };
+      }
+      return window.benchmarkProvider.getLiftBenchmarkContext(input);
+    }
+
+    const sbdProfileLifts = [
+      { key: 'squat_kg', label: 'Squat', angle: -90 },
+      { key: 'bench_kg', label: 'Bench press', angle: 30 },
+      { key: 'deadlift_kg', label: 'Deadlift', angle: 150 }
+    ];
+
+    function sbdProfilePoint(score) {
+      if (!score || score.status !== 'ready') return null;
+      if (score.percentileLabel === 'Below P1') return 0.5;
+      if (score.percentileLabel === 'P99+') return 99;
+      return Number.isFinite(Number(score.percentile)) ? Math.max(0, Math.min(100, Number(score.percentile))) : null;
+    }
+
+    function sbdProfileDisplay(score) {
+      if (!score || score.status !== 'ready') return 'Unavailable';
+      return score.percentileLabel === 'Below P1' ? 'Below P1' : score.percentileLabel === 'P99+' ? 'P99+' : `P${score.percentile}`;
+    }
+
+    function sbdProfileScale(scores) {
+      const values = scores.map((item) => item.score && item.score.status === 'ready' ? (item.score.percentileLabel === 'P99+' ? 100 : item.score.percentileLabel === 'Below P1' ? 0.5 : Number(item.score.percentile)) : null).filter((value) => Number.isFinite(value));
+      const highest = values.length ? Math.max(...values) : 100;
+      if (highest <= 5) return { maximum: 5, ticks: [1, 2, 3, 4, 5] };
+      if (highest <= 10) return { maximum: 10, ticks: [2, 4, 6, 8, 10] };
+      if (highest <= 25) return { maximum: 25, ticks: [5, 10, 15, 20, 25] };
+      if (highest <= 50) return { maximum: 50, ticks: [10, 20, 30, 40, 50] };
+      return { maximum: 100, ticks: [25, 50, 75, 100] };
+    }
+
+    function renderSbdProfileChart(scores, totalScore, unit) {
+      const svg = output.sbdProfileChart;
+      if (!svg) return;
+      const scale = sbdProfileScale(scores);
+      const center = { x: 160, y: 145 };
+      const radius = 100;
+      const pointAt = (angle, scale) => { const radians = angle * Math.PI / 180; return { x: center.x + Math.cos(radians) * radius * scale, y: center.y + Math.sin(radians) * radius * scale }; };
+      const polygon = (scale) => sbdProfileLifts.map((lift) => { const point = pointAt(lift.angle, scale); return `${point.x.toFixed(1)},${point.y.toFixed(1)}`; }).join(' ');
+      const rings = scale.ticks.map((value) => `<polygon class="sbd-profile-grid" points="${polygon(value / scale.maximum)}" />`).join('');
+      const axes = sbdProfileLifts.map((lift) => { const point = pointAt(lift.angle, 1); return `<line class="sbd-profile-axis" x1="${center.x}" y1="${center.y}" x2="${point.x.toFixed(1)}" y2="${point.y.toFixed(1)}" />`; }).join('');
+      const readyPoints = scores.map((item) => { const value = sbdProfilePoint(item.score); return value === null ? null : pointAt(item.angle, value / scale.maximum); });
+      const validPointCount = readyPoints.filter(Boolean).length;
+      const area = validPointCount === 3 ? `<polygon class="sbd-profile-area" points="${readyPoints.map((point) => `${point.x.toFixed(1)},${point.y.toFixed(1)}`).join(' ')}" />` : '';
+      const pointMarkup = scores.map((item, index) => {
+        const value = readyPoints[index];
+        const entered = Number.isFinite(item.score && item.score.enteredValueKg) ? `${formatWeightForUnit(item.score.enteredValueKg, unit)} ${appUnitLabels[unit]}` : 'Not entered';
+        const scoreLabel = sbdProfileDisplay(item.score);
+        const status = item.score && item.score.testedStatus === 'unknown' ? 'Testing status not reported' : testedStatusLabel(item.score && item.score.testedStatus).replace(' benchmark', '');
+        const accessible = `${item.label}, ${scoreLabel}, ${entered}, ${status}`;
+        if (!value) return `<g class="sbd-profile-point" aria-label="${accessible}" data-sbd-profile-index="${index}"></g>`;
+        const labelOffset = index === 0 ? { x: 8, y: -8, anchor: 'start' } : index === 1 ? { x: 8, y: 15, anchor: 'start' } : { x: -8, y: 15, anchor: 'end' };
+        return `<g class="sbd-profile-point" aria-label="${accessible}" data-sbd-profile-index="${index}"><circle cx="${value.x.toFixed(1)}" cy="${value.y.toFixed(1)}" r="5" /><text class="sbd-profile-point-label" x="${(value.x + labelOffset.x).toFixed(1)}" y="${(value.y + labelOffset.y).toFixed(1)}" text-anchor="${labelOffset.anchor}">${scoreLabel}</text></g>`;
+      }).join('');
+      const pointLabelBoxes = readyPoints.map((point, index) => {
+        if (!point) return null;
+        const label = sbdProfileDisplay(scores[index].score);
+        const width = Math.max(18, label.length * 5.8);
+        const offset = index === 0 ? { x: 8, y: -8, anchor: 'start' } : index === 1 ? { x: 8, y: 15, anchor: 'start' } : { x: -8, y: 15, anchor: 'end' };
+        const left = offset.anchor === 'end' ? point.x + offset.x - width : point.x + offset.x;
+        return { left, right: left + width, top: point.y + offset.y - 10, bottom: point.y + offset.y + 2 };
+      }).filter(Boolean);
+      const overlaps = (a, b) => a.left < b.right + 3 && a.right > b.left - 3 && a.top < b.bottom + 3 && a.bottom > b.top - 3;
+      const reservedLabelBoxes = [
+        { left: 34, right: 286, top: 0, bottom: 38 },
+        { left: 0, right: 48, top: 242, bottom: 286 },
+        { left: 272, right: 320, top: 242, bottom: 286 }
+      ];
+      const guideLabels = scale.ticks.map((value, index) => {
+        const text = `P${value}`;
+        const width = Math.max(18, text.length * 7);
+        const point = pointAt(-90, value / scale.maximum);
+        const isMaximum = value === scale.maximum;
+        const labelX = isMaximum ? point.x + 9 : point.x;
+        const box = { left: labelX - (isMaximum ? 0 : width / 2), right: labelX + (isMaximum ? width : width / 2), top: point.y - 8, bottom: point.y + 4 };
+        if (box.left < 8 || box.right > 312 || box.top < 8 || box.bottom > 278) return '';
+        if (!isMaximum && (reservedLabelBoxes.some((other) => overlaps(box, other)) || pointLabelBoxes.some((other) => overlaps(box, other)))) return '';
+        const priority = scale.maximum === 100 && value !== 50 && value !== 100 ? ' is-low-priority' : '';
+        return `<circle class="sbd-profile-scale-dot is-p${value}${priority}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="2.5" /><text class="sbd-profile-guide-label is-p${value}${priority}" x="${labelX.toFixed(1)}" y="${(point.y + 3).toFixed(1)}" text-anchor="start">${text}</text>`;
+      }).join('');
+      const endpoints = sbdProfileLifts.map((lift) => { const point = pointAt(lift.angle, 1); return `<circle class="sbd-profile-endpoint" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4" />`; }).join('');
+      const axisNames = `<text class="sbd-profile-axis-name" x="160" y="23" text-anchor="middle">Squat</text><text class="sbd-profile-axis-name" x="48" y="225" text-anchor="end">Deadlift</text><text class="sbd-profile-axis-name" x="272" y="225" text-anchor="start">Bench Press</text>`;
+      const description = `${scale.maximum === 100 ? 'Standard scale from P0 to P100.' : `The radar is enlarged for readability. Its outer ring represents P${scale.maximum}.`} Squat ${sbdProfileDisplay(scores[0].score)}, bench press ${sbdProfileDisplay(scores[1].score)}, deadlift ${sbdProfileDisplay(scores[2].score)}. Exact percentile values remain unchanged.`;
+      if (output.sbdChartDescription) output.sbdChartDescription.textContent = description;
+      svg.innerHTML = `${rings}${axes}${endpoints}${guideLabels}${axisNames}${area}${pointMarkup}`;
+      if (output.sbdProfileAxisLabels) output.sbdProfileAxisLabels.innerHTML = '';
+      if (output.sbdProfileAccessibleSummary) output.sbdProfileAccessibleSummary.textContent = scores.map((item) => {
+        const score = item.score || {};
+        const value = Number.isFinite(score.enteredValueKg) ? formatWeightForUnit(score.enteredValueKg, unit) : 'weight unavailable';
+        const sample = Number.isFinite(score.sampleSize) ? `, sample ${formatSampleSize(score.sampleSize)} matching historical lifter entries` : '';
+        return `${item.label} ${sbdProfileDisplay(score)}, ${value}${sample}`;
+      }).join('. ') + '.';
+    }
+
+    async function renderSbdProfile(totalContext, unit) {
+      if (!output.sbdProfileCard) return;
+      if (!lastCalculation || !lastCalculation.isFullSbd) { output.sbdProfileCard.hidden = true; return; }
+      output.sbdProfileCard.hidden = false;
+      const calculation = lastCalculation;
+      const context = await loadLiftBenchmarkContext({ standardKey: calculation.standardKey, sex: calculation.sex, weightClass: benchmarkClassValue(calculation.currentClass), testedStatus: 'auto', squatKg: toKg(calculation.squat, unit), benchKg: toKg(calculation.bench, unit), deadliftKg: toKg(calculation.deadlift, unit) });
+      if (lastCalculation !== calculation) return;
+      if (!context || context.status === 'fetch_error') { output.sbdProfileCard.hidden = true; return; }
+      const scores = sbdProfileLifts.map((lift) => ({ ...lift, score: context[lift.key] || { status: 'unavailable' } }));
+      renderSbdProfileChart(scores, context.total, unit);
     }
 
     async function loadBenchmarkThreshold(input) {
@@ -9591,9 +9831,33 @@
     });
     if (output.openAuthModalButton) output.openAuthModalButton.addEventListener('click', openAuthModal);
     if (output.closeAuthModalButton) output.closeAuthModalButton.addEventListener('click', closeAuthModal);
-    quickBenchmarkFeedbackButtons().forEach((button) => {
-      button.addEventListener('click', () => submitQuickBenchmarkFeedback(button.dataset.benchmarkFeedback));
-    });
+        quickBenchmarkFeedbackButtons().forEach((button) => {
+          button.addEventListener('click', () => submitQuickBenchmarkFeedback(button.dataset.benchmarkFeedback));
+        });
+        document.querySelectorAll('[data-section-feedback]:not(#benchmarkQuickFeedback)').forEach((group) => {
+          const buttons = Array.from(group.querySelectorAll('[data-section-response]'));
+          const status = group.querySelector('.benchmark-quick-feedback__status');
+          buttons.forEach((button) => button.addEventListener('click', async () => {
+            if (group.dataset.submitting === 'true') return;
+            if (!window.liftallyBackend || typeof window.liftallyBackend.createSupportRequest !== 'function') {
+              if (status) status.textContent = 'Feedback service is still loading. Try again in a moment.';
+              return;
+            }
+            group.dataset.submitting = 'true';
+            const response = button.dataset.sectionResponse;
+            buttons.forEach((item) => { item.disabled = true; item.classList.toggle('is-selected', item === button); item.setAttribute('aria-pressed', String(item === button)); });
+            if (status) status.textContent = 'Sending feedback...';
+            const user = activeAuthUser || window.liftallyBackend.getCurrentUser?.();
+            try {
+              await window.liftallyBackend.createSupportRequest({ type: 'feedback', source: 'benchmark_helpfulness_modal', email: isNamedAccount(user) ? (user.email || '') : '', userId: isNamedAccount(user) ? user.uid : '', message: ['Quick feedback', `Section: ${group.dataset.sectionFeedback}`, `Response: ${response}`, `Context: ${feedbackContextText()}`].join('\n') });
+              if (status) status.textContent = 'Thanks for your feedback.';
+            } catch (_) {
+              group.dataset.submitting = 'false';
+              buttons.forEach((item) => { item.disabled = false; });
+              if (status) status.textContent = 'Feedback could not be submitted. Please try again.';
+            }
+          }));
+        });
     if (output.benchmarkFeedbackFollowUp) {
       output.benchmarkFeedbackFollowUp.addEventListener('click', () => {
         openFeedbackModal();
