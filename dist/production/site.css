@@ -98,7 +98,7 @@ body.site-shell.tool-page .section-head p {
   min-height: var(--site-header-height);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 24px;
 }
 
@@ -127,14 +127,16 @@ body.site-shell.tool-page .section-head p {
   font-weight: 400;
   line-height: 1;
   letter-spacing: 2px;
-  text-transform: none;
+  text-transform: uppercase;
 }
 
 .site-shell .site-nav {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin-left: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 14px;
+  margin-left: 48px;
 }
 
 /* Reserve one stable auth slot so resolving Firebase auth cannot move the
@@ -173,8 +175,22 @@ body.site-shell.tool-page .section-head p {
 .site-shell .nav-links {
   display: flex;
   align-items: center;
-  gap: clamp(14px, 1.8vw, 24px);
+  gap: 32px;
+  margin-right: auto;
   list-style: none;
+}
+
+.site-shell .nav-links > li,
+.site-shell .nav-help {
+  flex: 0 0 auto;
+}
+
+.site-shell .site-nav > .site-auth + .site-download {
+  margin-left: 14px;
+}
+
+.site-shell .site-nav > .site-download {
+  margin-left: auto;
 }
 
 .site-shell .nav-link,
@@ -182,6 +198,7 @@ body.site-shell.tool-page .section-head p {
   position: relative;
   color: var(--site-muted);
   font: 500 clamp(13px, 1.1vw, 15px) var(--site-font-cond);
+  font-synthesis: none;
   letter-spacing: 1.25px;
   text-transform: uppercase;
   text-decoration: none;
@@ -190,6 +207,23 @@ body.site-shell.tool-page .section-head p {
   overflow-wrap: normal;
   hyphens: none;
   transition: color 0.18s ease;
+}
+
+/* Active/hover/focus states must never change text metrics or shift neighbors. */
+.site-shell .nav-link:hover,
+.site-shell .nav-link:focus,
+.site-shell .nav-link:focus-visible,
+.site-shell .nav-link.is-active,
+.site-shell .nav-link[aria-current='page'],
+.site-shell .nav-links a:hover,
+.site-shell .nav-links a:focus,
+.site-shell .nav-links a:focus-visible,
+.site-shell .nav-links a[aria-current='page'] {
+  font-family: var(--site-font-cond);
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  font-synthesis: none;
 }
 
 .site-shell .nav-label,
@@ -230,6 +264,67 @@ body.site-shell.tool-page .section-head p {
 .site-shell .nav-links a[aria-current='page']::after {
   transform: scaleX(1);
 }
+
+.site-shell .nav-help {
+  position: relative;
+}
+
+.site-shell .nav-help-toggle {
+  display: inline-flex;
+  align-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.site-shell .help-menu {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 12px);
+  left: 50%;
+  width: min(240px, calc(100vw - 32px));
+  padding: 5px;
+  transform: translateX(-50%);
+  border: 1px solid var(--site-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, .98);
+  box-shadow: 0 18px 38px rgba(38, 38, 38, .16);
+}
+
+.site-shell .help-menu[hidden] {
+  display: none;
+}
+
+.site-shell .help-menu__link {
+  display: flex;
+  align-items: center;
+  min-height: 46px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--site-text);
+  text-decoration: none;
+  white-space: normal;
+}
+
+.site-shell .help-menu__link:hover,
+.site-shell .help-menu__link:focus-visible,
+.site-shell .help-menu__link[aria-current='page'] {
+  background: var(--site-surface-2);
+}
+
+.site-shell .help-menu__link::after {
+  display: none;
+}
+
+.site-shell .help-menu__link strong {
+  color: var(--site-text);
+  font: 700 15px/1.1 var(--site-font-cond);
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.site-shell .help-menu__link[aria-current='page'] strong { color: var(--site-accent); }
 
 .site-shell .nav-toggle {
   position: static;
@@ -367,6 +462,8 @@ body.site-shell.tool-page .section-head p {
 @media (max-width: 1120px) {
   .site-shell .site-nav {
     gap: 12px;
+    flex: 0 0 auto;
+    margin-left: auto;
   }
 
   .site-shell .nav-toggle {
@@ -396,6 +493,26 @@ body.site-shell.tool-page .section-head p {
     border-bottom: 1px solid var(--site-border);
     background: rgba(255, 255, 255, 0.96);
     box-shadow: 0 16px 32px rgba(38, 38, 38, 0.12);
+  }
+
+  .site-shell .nav-help {
+    width: 100%;
+  }
+
+  .site-shell .nav-help-toggle {
+    width: 100%;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+
+  .site-shell .help-menu {
+    position: static;
+    width: 100%;
+    margin-top: 4px;
+    padding: 3px;
+    transform: none;
+    box-shadow: none;
+    background: var(--site-surface-2);
   }
 
   .site-shell .nav-links.open {
@@ -485,4 +602,45 @@ body.site-shell.tool-page .section-head p {
     font-size: 12px;
     letter-spacing: 1px;
   }
+}
+
+/* FAQ pages share the Weight Class Explorer page surface and a single-column accordion. */
+.site-shell.faq-page {
+  background:
+    radial-gradient(circle at 85% 4%, rgba(251, 77, 61, 0.12), transparent 30rem),
+    radial-gradient(circle at 4% 24%, rgba(255, 255, 255, 0.9), transparent 24rem),
+    linear-gradient(180deg, #eef3f2 0%, var(--site-bg) 44%, #e9e1de 100%);
+  color: var(--site-text);
+}
+.site-shell.faq-page .policy { background: transparent; }
+.site-shell.faq-page .policy-hero { padding: 64px 0 28px; }
+.site-shell.faq-page .policy-hero > .container,
+.site-shell.faq-page .policy-body > .container { width: min(920px, calc(100% - 40px)); margin-inline: auto; }
+.site-shell.faq-page .faq-eyebrow { margin: 0 0 8px; color: var(--site-accent); font: 700 clamp(14px, 1.2vw, 18px)/1.2 var(--site-font-body); letter-spacing: .055em; text-transform: uppercase; }
+.site-shell.faq-page .policy-hero h1 { margin: 0; color: var(--site-text); font: 400 clamp(46px, 6vw, 80px)/.95 var(--site-font-display); letter-spacing: .01em; text-transform: uppercase; text-wrap: balance; }
+.site-shell.faq-page .policy-hero .subtext { display: none; }
+.site-shell.faq-page .policy-body { padding: 0 0 72px; }
+.site-shell.faq-page .faq-accordion { display: grid; grid-template-columns: 1fr; gap: 14px; }
+.site-shell.faq-page .faq-accordion__item { overflow: hidden; border: 1px solid rgba(38, 38, 38, .22); border-radius: 12px; background: rgba(255, 255, 255, .2); box-shadow: none; }
+.site-shell.faq-page .faq-accordion__heading { margin: 0; }
+.site-shell.faq-page .faq-accordion__trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 68px; padding: 18px 22px; border: 0; background: transparent; color: var(--site-text); font: 700 21px/1.15 var(--site-font-cond); letter-spacing: .02em; text-align: left; cursor: pointer; }
+.site-shell.faq-page .faq-accordion__trigger:hover,
+.site-shell.faq-page .faq-accordion__trigger:focus-visible { background: rgba(38,38,38,.06); }
+.site-shell.faq-page .faq-accordion__trigger:focus-visible { outline: 2px solid var(--site-accent); outline-offset: -2px; }
+.site-shell.faq-page .faq-accordion__icon { flex: 0 0 auto; margin-left: 18px; color: #ffb36b; font: 400 30px/1 var(--site-font-body); }
+.site-shell.faq-page .faq-accordion__answer { max-height: 0; overflow: hidden; padding: 0 22px; opacity: 0; transition: max-height .24s ease, opacity .2s ease, padding-bottom .24s ease; }
+.site-shell.faq-page .faq-accordion__answer[aria-hidden="false"] { padding-bottom: 20px; opacity: 1; }
+.site-shell.faq-page .faq-accordion__answer p { margin: 0; color: var(--site-muted); font: 400 1.05rem/1.6 var(--site-font-body); }
+.site-shell.faq-page .faq-accordion__answer a, .site-shell.faq-page .faq-cross-link a { color: #ffb36b; text-decoration: underline; text-underline-offset: 3px; }
+.site-shell.faq-page .faq-cross-link { margin: 24px 0 0; color: rgba(247,243,237,.75); font: 400 1rem/1.5 var(--site-font-body); }
+.site-shell.faq-page .app-faq-group { margin: 0 0 20px; }
+.site-shell.faq-page .app-faq-group-title { margin: 0 0 10px; color: var(--site-accent) !important; font: 700 14px/1.2 var(--site-font-body) !important; letter-spacing: .055em; text-transform: uppercase; }
+.site-shell.faq-page .app-faq-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media (max-width: 700px) {
+  .site-shell.faq-page .policy-hero { padding-top: 44px; }
+  .site-shell.faq-page .policy-hero > .container, .site-shell.faq-page .policy-body > .container { width: min(100% - 28px, 920px); }
+  .site-shell.faq-page .policy-hero h1 { font-size: clamp(42px, 13vw, 58px); }
+  .site-shell.faq-page .faq-accordion__trigger { min-height: 62px; padding: 16px 17px; font-size: 19px; }
+  .site-shell.faq-page .faq-accordion__answer { padding-inline: 17px; }
+  .site-shell.faq-page .faq-accordion__answer p { font-size: 1rem; }
 }

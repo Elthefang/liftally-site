@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet" />
+  <meta name="description" content="Website FAQ for Liftally benchmarks, percentiles, data sources, accounts, and website tools." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://liftally.app/website-faq" />
+  <title>Liftally Website FAQ | Benchmarks and Website Tools</title>
+  <link rel="icon" href="favicon.ico" />
+  <script src="firebase/firebase-config.production.js?v=20260803a"></script>
+  <script type="module" src="firebase/liftally-production-backend.js?v=20260803a"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="site.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type":"Question","name":"What is the Weight Class Explorer?","acceptedAnswer":{"@type":"Answer","text":"The Weight Class Explorer compares your entered squat, bench press, deadlift, Total, and DOTS with matching historical powerlifting results."}},
+      {"@type":"Question","name":"What does a percentile mean?","acceptedAnswer":{"@type":"Answer","text":"A percentile shows how your result compares with matching historical entries. For example, P34 means your result is higher than approximately 34% of the results in the selected benchmark group."}},
+      {"@type":"Question","name":"What is the difference between Total and DOTS percentile?","acceptedAnswer":{"@type":"Answer","text":"Total percentile compares your combined squat, bench press, and deadlift weight. DOTS percentile compares your DOTS score, which adjusts performance relative to bodyweight."}},
+      {"@type":"Question","name":"Where does the benchmark data come from?","acceptedAnswer":{"@type":"Answer","text":"The benchmarks are calculated from historical OpenPowerlifting results using the filters shown with your result, such as sex, equipment, federation, tested status, and weight class."}},
+      {"@type":"Question","name":"Can I compare the same performance across weight classes?","acceptedAnswer":{"@type":"Answer","text":"Yes. The weight-class comparison applies the same entered Total or DOTS to historical benchmarks from other classes. It does not predict how changing bodyweight would affect your strength, eligibility, or meet placing."}},
+      {"@type":"Question","name":"What does the SBD Percentile Profile show?","acceptedAnswer":{"@type":"Answer","text":"The radar chart compares your squat, bench press, and deadlift percentiles. It helps show whether one lift ranks higher or lower than your other lifts within the selected historical benchmark."}},
+      {"@type":"Question","name":"Why is a percentile unavailable?","acceptedAnswer":{"@type":"Answer","text":"A percentile may be unavailable when there are not enough matching historical entries or when the selected benchmark combination is not supported."}},
+      {"@type":"Question","name":"Are these results training recommendations?","acceptedAnswer":{"@type":"Answer","text":"No. The results provide historical comparison context only. They are not training, medical, competition, or weight-management recommendations."}},
+      {"@type":"Question","name":"Can I save my results?","acceptedAnswer":{"@type":"Answer","text":"You can explore results without signing in. Sign in to save supported benchmark snapshots and access them again later."}}
+    ]
+  }
+  </script>
+</head>
+<body class="site-shell legal-page faq-page">
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="Liftally home"><img src="images/logo.png" alt="Liftally logo" class="logo" /><span class="brand-name">Liftally</span></a>
+      <nav class="nav site-nav" aria-label="Main navigation">
+        <button class="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+        <ul class="nav-links"><li><a class="nav-link" href="/">Home</a></li><li><a class="nav-link" href="/weight-class-explorer">Weight Class Explorer</a></li><li><a class="nav-link" href="/request-access">Contact</a></li></ul>
+        <div class="site-auth" aria-live="polite" data-site-auth>
+          <button class="btn btn-secondary" type="button" data-site-sign-in>SIGN IN</button>
+          <button class="btn btn-secondary" type="button" data-site-sign-out hidden>LOG OUT</button>
+        </div>
+        <a class="btn btn-primary site-download" href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_website_faq&mt=8" target="_blank" rel="noopener">Download</a>
+      </nav>
+    </div>
+  </header>
+  <main class="policy faq-page-content">
+    <section class="policy-hero"><div class="container"><p class="faq-eyebrow">Website FAQ</p><h1>Liftally Website FAQ</h1></div></section>
+    <section class="policy-body"><div class="container"><div class="faq-grid">
+      <article class="faq-card"><h2>What is the Weight Class Explorer?</h2><p>The <a href="/weight-class-explorer">Weight Class Explorer</a> compares your entered squat, bench press, deadlift, Total, and DOTS with matching historical powerlifting results.</p></article>
+      <article class="faq-card"><h2>What does a percentile mean?</h2><p>A percentile shows how your result compares with matching historical entries. For example, P34 means your result is higher than approximately 34% of the results in the selected benchmark group.</p></article>
+      <article class="faq-card"><h2>What is the difference between Total and DOTS percentile?</h2><p>Total percentile compares your combined squat, bench press, and deadlift weight. DOTS percentile compares your DOTS score, which adjusts performance relative to bodyweight.</p></article>
+      <article class="faq-card"><h2>Where does the benchmark data come from?</h2><p>The benchmarks are calculated from historical OpenPowerlifting results using the filters shown with your result, such as sex, equipment, federation, tested status, and weight class.</p></article>
+      <article class="faq-card"><h2>Can I compare the same performance across weight classes?</h2><p>Yes. The weight-class comparison applies the same entered Total or DOTS to historical benchmarks from other classes. It does not predict how changing bodyweight would affect your strength, eligibility, or meet placing.</p></article>
+      <article class="faq-card"><h2>What does the SBD Percentile Profile show?</h2><p>The radar chart compares your squat, bench press, and deadlift percentiles. It helps show whether one lift ranks higher or lower than your other lifts within the selected historical benchmark.</p></article>
+      <article class="faq-card"><h2>Why is a percentile unavailable?</h2><p>A percentile may be unavailable when there are not enough matching historical entries or when the selected benchmark combination is not supported.</p></article>
+      <article class="faq-card"><h2>Are these results training recommendations?</h2><p>No. The results provide historical comparison context only. They are not training, medical, competition, or weight-management recommendations.</p></article>
+      <article class="faq-card"><h2>Can I save my results?</h2><p>You can explore results without signing in. Sign in to save supported benchmark snapshots and access them again later.</p></article>
+    </div><p class="faq-cross-link">Looking for app guidance? <a href="/app-faq">View the App FAQ</a>.</p></div></section>
+  </main>
+  <footer class="site-footer"><div class="container footer-inner"><div class="footer-brand"><span class="footer-title">Liftally</span><p>© 2026 YI SHAN FANG</p></div><div class="footer-links"><a href="/privacy">Privacy</a><a href="/terms">Terms</a><a href="/website-faq" aria-current="page">Website FAQ</a><a href="/app-faq">App FAQ</a><a href="/request-access">Contact</a><a href="https://apps.apple.com/app/apple-store/id6751095631?pt=128058775&ct=site_website_faq&mt=8" target="_blank" rel="noopener">Download</a></div></div></footer>
+  <script src="site.js"></script>
+</body>
+</html>
